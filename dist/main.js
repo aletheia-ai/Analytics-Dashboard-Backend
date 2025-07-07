@@ -2,10 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = require("@nestjs/core");
 const swagger_1 = require("@nestjs/swagger");
-const app_module_1 = require("./presentations/module/app.module");
-const bodyParser = require("body-parser");
 const helmet_1 = require("helmet");
+const bodyParser = require("body-parser");
 const express_rate_limit_1 = require("express-rate-limit");
+const app_module_1 = require("./presentations/module/app.module");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     const config = new swagger_1.DocumentBuilder()

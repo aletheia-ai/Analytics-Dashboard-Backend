@@ -1,3 +1,4 @@
+import { CreateUserDto } from '@presentations/dto/user';
 export declare class UserController {
-    findAll(): string;
+    Create(createUserDto: CreateUserDto): string;
 }

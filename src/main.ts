@@ -1,3 +1,5 @@
+// import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from '@presentations/module/app.module';
@@ -20,6 +22,13 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
   app.use(bodyParser.json({ limit: '50mb' }));
   app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    })
+  );
   app.use(
     rateLimit({
       windowMs: 60 * 60 * 1000,
@@ -34,10 +43,4 @@ async function bootstrap() {
   app.enableShutdownHooks();
   await app.listen(process.env.PORT ?? 3000);
 }
-bootstrap()
-  .then(() => {
-    console.log('hello world');
-  })
-  .catch(() => {
-    console.log('error');
-  });
+bootstrap();

@@ -1,10 +1,23 @@
-import { Controller, Get, HttpCode } from '@nestjs/common';
-
+import {
+  Body,
+  Controller,
+  Post,
+  HttpCode,
+  PreconditionFailedException,
+  InternalServerErrorException,
+} from '@nestjs/common';
+import { CreateUserDto } from '@presentations/dto/user';
 @Controller('user')
 export class UserController {
-  @Get()
+  @Post()
   @HttpCode(200)
-  findAll(): string {
-    return 'Heo orld';
+  // @UsePipes(ValidationPipe)
+  Create(@Body() createUserDto: CreateUserDto): string {
+    try {
+      console.log(createUserDto);
+      return 'Heo orld';
+    } catch (err) {
+      throw new InternalServerErrorException();
+    }
   }
 }

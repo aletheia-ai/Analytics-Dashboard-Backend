@@ -8,9 +8,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
+const app_service_1 = require("../../applications/use-case/app.service");
 const app_controller_1 = require("../controller/app.controller");
 const user_controller_1 = require("../controller/user.controller");
-const app_service_1 = require("../../applications/use-case/app.service");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;

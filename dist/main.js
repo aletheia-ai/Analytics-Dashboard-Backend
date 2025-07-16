@@ -7,6 +7,7 @@ const app_module_1 = require("./presentations/module/app.module");
 const bodyParser = require("body-parser");
 const express_rate_limit_1 = require("express-rate-limit");
 const helmet_1 = require("helmet");
+console.log(process.env.MONGO_URL);
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     const config = new swagger_1.DocumentBuilder()

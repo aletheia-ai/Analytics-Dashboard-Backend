@@ -15,11 +15,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserController = void 0;
 const common_1 = require("@nestjs/common");
 const user_1 = require("../dto/user");
+const user_service_1 = require("../service/user.service");
 let UserController = class UserController {
-    Create(createUserDto) {
+    userService;
+    constructor(userService) {
+        this.userService = userService;
+    }
+    async Create(createUserDto) {
         try {
-            console.log(createUserDto);
-            return 'Heo orld';
+            await this.userService.create(createUserDto);
+            const data = await this.userService.findAll();
+            return data;
         }
         catch (err) {
             throw new common_1.InternalServerErrorException();
@@ -28,14 +34,15 @@ let UserController = class UserController {
 };
 exports.UserController = UserController;
 __decorate([
-    (0, common_1.Post)(),
+    (0, common_1.Post)('create-user'),
     (0, common_1.HttpCode)(200),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [user_1.CreateUserDto]),
-    __metadata("design:returntype", String)
+    __metadata("design:returntype", Promise)
 ], UserController.prototype, "Create", null);
 exports.UserController = UserController = __decorate([
-    (0, common_1.Controller)('user')
+    (0, common_1.Controller)('user'),
+    __metadata("design:paramtypes", [user_service_1.UserService])
 ], UserController);
 //# sourceMappingURL=user.controller.js.map

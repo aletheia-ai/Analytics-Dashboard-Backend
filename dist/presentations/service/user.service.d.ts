@@ -1,6 +1,16 @@
 import { User } from '@utils/types';
+import { Model } from 'mongoose';
 export declare class UserService {
-    private readonly users;
-    create(user: User): void;
-    findAll(): User[];
+    private userModel;
+    constructor(userModel: Model<User>);
+    create(user: User): Promise<(import("mongoose").Document<unknown, {}, User, {}> & User & {
+        _id: import("mongoose").Types.ObjectId;
+    } & {
+        __v: number;
+    }) | undefined>;
+    findAll(): Promise<(import("mongoose").Document<unknown, {}, User, {}> & User & {
+        _id: import("mongoose").Types.ObjectId;
+    } & {
+        __v: number;
+    })[]>;
 }

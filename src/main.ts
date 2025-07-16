@@ -6,7 +6,7 @@ import { AppModule } from '@presentations/module/app.module';
 import * as bodyParser from 'body-parser';
 import rateLimit from 'express-rate-limit';
 import Helmet from 'helmet';
-
+console.log(process.env.MONGO_URL);
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const config = new DocumentBuilder()

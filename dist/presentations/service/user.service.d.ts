@@ -13,4 +13,10 @@ export declare class UserService {
     } & {
         __v: number;
     })[]>;
+    getUser(email: string): Promise<{
+        success: true;
+        data: User;
+    } | {
+        success: false;
+    }>;
 }

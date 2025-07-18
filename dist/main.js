@@ -1,13 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const common_1 = require("@nestjs/common");
-const core_1 = require("@nestjs/core");
-const swagger_1 = require("@nestjs/swagger");
-const app_module_1 = require("./presentations/module/app.module");
+const helmet_1 = require("helmet");
 const bodyParser = require("body-parser");
 const express_rate_limit_1 = require("express-rate-limit");
-const helmet_1 = require("helmet");
-console.log(process.env.MONGO_URL);
+const core_1 = require("@nestjs/core");
+const common_1 = require("@nestjs/common");
+const swagger_1 = require("@nestjs/swagger");
+const rate_limiter_1 = require("./utils/constants/rate-limiter");
+const app_module_1 = require("./presentations/module/app.module");
+const exception_factory_1 = require("./utils/methods/exception-factory");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     const config = new swagger_1.DocumentBuilder()
@@ -24,15 +25,11 @@ async function bootstrap() {
     app.useGlobalPipes(new common_1.ValidationPipe({
         whitelist: true,
         forbidNonWhitelisted: true,
+        validationError: { target: true, value: true },
         transform: true,
+        exceptionFactory: exception_factory_1.exceptionFactory,
     }));
-    app.use((0, express_rate_limit_1.default)({
-        windowMs: 60 * 60 * 1000,
-        max: 1000,
-        message: 'Too many requests, please try again after an hour',
-        standardHeaders: true,
-        legacyHeaders: false,
-    }));
+    app.use((0, express_rate_limit_1.default)(rate_limiter_1.rateLimiter));
     app.use((0, helmet_1.default)());
     app.enableCors();
     app.enableShutdownHooks();

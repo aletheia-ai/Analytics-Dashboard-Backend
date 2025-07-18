@@ -1,5 +1,15 @@
-import { Body, Controller, Post, HttpCode, InternalServerErrorException } from '@nestjs/common';
-import { CreateUserDto } from '@presentations/dto/user';
+import {
+  Body,
+  Param,
+  Controller,
+  Post,
+  HttpCode,
+  InternalServerErrorException,
+  Get,
+  NotFoundException,
+  HttpException,
+} from '@nestjs/common';
+import { CreateUserDto, GetUserDto } from '@presentations/dto/user';
 import { UserService } from '@presentations/service/user.service';
 import { User } from '@src/utils/types';
 @Controller('user')
@@ -13,6 +23,24 @@ export class UserController {
       const data = await this.userService.findAll();
       return data;
     } catch (err) {
+      throw new InternalServerErrorException();
+    }
+  }
+
+  @Get('get-user/:email')
+  @HttpCode(200)
+  async getUser(@Param() { email }: GetUserDto): Promise<User> {
+    try {
+      const result = await this.userService.getUser(email);
+      if (result.success) {
+        return result.data;
+      } else {
+        throw new HttpException('Not Found', 404);
+      }
+    } catch (err) {
+      if (err instanceof HttpException) {
+        throw new HttpException(err.message, err.getStatus());
+      }
       throw new InternalServerErrorException();
     }
   }

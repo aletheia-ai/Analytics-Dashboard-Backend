@@ -22,4 +22,16 @@ export class UserService {
   findAll() {
     return this.userModel.find().exec();
   }
+  async getUser(email: string): Promise<{ success: true; data: User } | { success: false }> {
+    try {
+      const data = await this.userModel.findOne({ email }).exec();
+      if (data) {
+        return { success: true, data };
+      } else {
+        return { success: false };
+      }
+    } catch {
+      return { success: false };
+    }
+  }
 }

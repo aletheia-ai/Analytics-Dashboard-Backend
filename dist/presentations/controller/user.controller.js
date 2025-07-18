@@ -31,6 +31,23 @@ let UserController = class UserController {
             throw new common_1.InternalServerErrorException();
         }
     }
+    async getUser({ email }) {
+        try {
+            const result = await this.userService.getUser(email);
+            if (result.success) {
+                return result.data;
+            }
+            else {
+                throw new common_1.HttpException('Not Found', 404);
+            }
+        }
+        catch (err) {
+            if (err instanceof common_1.HttpException) {
+                throw new common_1.HttpException(err.message, err.getStatus());
+            }
+            throw new common_1.InternalServerErrorException();
+        }
+    }
 };
 exports.UserController = UserController;
 __decorate([
@@ -41,6 +58,14 @@ __decorate([
     __metadata("design:paramtypes", [user_1.CreateUserDto]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "Create", null);
+__decorate([
+    (0, common_1.Get)('get-user/:email'),
+    (0, common_1.HttpCode)(200),
+    __param(0, (0, common_1.Param)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [user_1.GetUserDto]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "getUser", null);
 exports.UserController = UserController = __decorate([
     (0, common_1.Controller)('user'),
     __metadata("design:paramtypes", [user_service_1.UserService])

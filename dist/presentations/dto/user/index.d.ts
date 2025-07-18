@@ -7,3 +7,6 @@ export declare class CreateUserDto {
     password: string;
     phone: string;
 }
+export declare class GetUserDto {
+    email: string;
+}

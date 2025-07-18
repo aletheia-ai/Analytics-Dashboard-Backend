@@ -6,6 +6,7 @@ import {
   MinLength,
   MaxLength,
   Matches,
+  IsUUID,
 } from 'class-validator';
 
 export class CreateUserDto {
@@ -42,4 +43,9 @@ export class CreateUserDto {
     message: 'Phone number must be a valid international number',
   })
   phone: string;
+}
+
+export class GetUserDto {
+  @IsString()
+  email: string;
 }

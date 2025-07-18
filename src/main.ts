@@ -1,16 +1,18 @@
-// import { ValidationPipe } from '@nestjs/common';
-import { ValidationPipe } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { AppModule } from '@presentations/module/app.module';
+import Helmet from 'helmet';
 import * as bodyParser from 'body-parser';
 import rateLimit from 'express-rate-limit';
-import Helmet from 'helmet';
-console.log(process.env.MONGO_URL);
+
+import { NestFactory } from '@nestjs/core';
+import { ValidationPipe } from '@nestjs/common';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+
+import { rateLimiter } from '@utils/constants/rate-limiter';
+import { AppModule } from '@presentations/module/app.module';
+import { exceptionFactory } from '@utils/methods/exception-factory';
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const config = new DocumentBuilder()
-
     .setTitle('Brick&Mortars.ai')
     .setDescription('Endpoints')
     .setVersion('1.0')
@@ -26,18 +28,12 @@ async function bootstrap() {
     new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
+      validationError: { target: true, value: true },
       transform: true,
+      exceptionFactory,
     })
   );
-  app.use(
-    rateLimit({
-      windowMs: 60 * 60 * 1000,
-      max: 1000,
-      message: 'Too many requests, please try again after an hour',
-      standardHeaders: true,
-      legacyHeaders: false,
-    })
-  );
+  app.use(rateLimit(rateLimiter));
   app.use(Helmet());
   app.enableCors();
   app.enableShutdownHooks();

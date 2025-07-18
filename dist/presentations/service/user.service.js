@@ -39,6 +39,20 @@ let UserService = class UserService {
     findAll() {
         return this.userModel.find().exec();
     }
+    async getUser(email) {
+        try {
+            const data = await this.userModel.findOne({ email }).exec();
+            if (data) {
+                return { success: true, data };
+            }
+            else {
+                return { success: false };
+            }
+        }
+        catch {
+            return { success: false };
+        }
+    }
 };
 exports.UserService = UserService;
 exports.UserService = UserService = __decorate([

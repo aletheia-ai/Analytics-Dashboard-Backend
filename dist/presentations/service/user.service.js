@@ -24,7 +24,6 @@ let UserService = class UserService {
     async create(user) {
         try {
             const data = await this.userModel.create(user);
-            console.log(data);
             return data;
         }
         catch (err) {
@@ -48,6 +47,29 @@ let UserService = class UserService {
             else {
                 return { success: false };
             }
+        }
+        catch {
+            return { success: false };
+        }
+    }
+    async getAllUsers(email) {
+        try {
+            const data = await this.userModel.findOne({ email }).exec();
+            if (data) {
+                return { success: true, data };
+            }
+            else {
+                return { success: false };
+            }
+        }
+        catch {
+            return { success: false };
+        }
+    }
+    async deleteUser(email) {
+        try {
+            console.log(email);
+            return { success: true };
         }
         catch {
             return { success: false };

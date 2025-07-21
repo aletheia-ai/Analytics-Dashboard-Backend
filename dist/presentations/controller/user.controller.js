@@ -14,6 +14,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserController = void 0;
 const common_1 = require("@nestjs/common");
+const auth_guard_1 = require("../../utils/guards/auth.guard.");
 const user_1 = require("../dto/user");
 const user_service_1 = require("../service/user.service");
 let UserController = class UserController {
@@ -33,7 +34,7 @@ let UserController = class UserController {
     }
     async getUser({ email }) {
         try {
-            const result = await this.userService.getUser(email);
+            const result = await this.userService.getAllUsers(email);
             if (result.success) {
                 return result.data;
             }
@@ -61,6 +62,7 @@ __decorate([
 __decorate([
     (0, common_1.Get)('get-user/:email'),
     (0, common_1.HttpCode)(200),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
     __param(0, (0, common_1.Param)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [user_1.GetUserDto]),

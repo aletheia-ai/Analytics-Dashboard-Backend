@@ -8,7 +8,9 @@ import {
   Get,
   NotFoundException,
   HttpException,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '@utils/guards/auth.guard.';
 import { CreateUserDto, GetUserDto } from '@presentations/dto/user';
 import { UserService } from '@presentations/service/user.service';
 import { User } from '@src/utils/types';
@@ -29,9 +31,10 @@ export class UserController {
 
   @Get('get-user/:email')
   @HttpCode(200)
+  @UseGuards(AuthGuard)
   async getUser(@Param() { email }: GetUserDto): Promise<User> {
     try {
-      const result = await this.userService.getUser(email);
+      const result = await this.userService.getAllUsers(email);
       if (result.success) {
         return result.data;
       } else {

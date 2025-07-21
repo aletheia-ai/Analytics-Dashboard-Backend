@@ -19,4 +19,13 @@ export declare class UserService {
     } | {
         success: false;
     }>;
+    getAllUsers(email: string): Promise<{
+        success: true;
+        data: User;
+    } | {
+        success: false;
+    }>;
+    deleteUser(email: string): Promise<{
+        success: boolean;
+    }>;
 }

@@ -1,0 +1,1 @@
+{"version":3,"file":"rate-limiter.js","sourceRoot":"","sources":["../../../src/utils/constants/rate-limiter.ts"],"names":[],"mappings":";;;AAAa,QAAA,WAAW,GAAG;IACzB,QAAQ,EAAE,EAAE,GAAG,EAAE,GAAG,IAAI;IACxB,GAAG,EAAE,IAAI;IACT,OAAO,EAAE,mDAAmD;IAC5D,eAAe,EAAE,IAAI;IACrB,aAAa,EAAE,KAAK;CACrB,CAAC"}

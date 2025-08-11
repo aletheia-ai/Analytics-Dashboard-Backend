@@ -1,3 +1,5 @@
+import { UserService } from '@presentations/service/user.service';
 export declare class UserController {
-    findAll(): string;
+    private userService;
+    constructor(userService: UserService);
 }

@@ -1,3 +1,5 @@
+import 'dotenv/config';
+
 import Helmet from 'helmet';
 import * as bodyParser from 'body-parser';
 import rateLimit from 'express-rate-limit';
@@ -9,9 +11,15 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { rateLimiter } from '@utils/constants/rate-limiter';
 import { AppModule } from '@presentations/module/app.module';
 import { exceptionFactory } from '@utils/methods/exception-factory';
+import * as fs from 'fs';
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const httpsOptions = {
+    key: fs.readFileSync('./server.key'),
+    cert: fs.readFileSync('./server.cert'),
+  };
+  const app = await NestFactory.create(AppModule, { httpsOptions });
   const config = new DocumentBuilder()
     .setTitle('Brick&Mortars.ai')
     .setDescription('Endpoints')
@@ -35,7 +43,12 @@ async function bootstrap() {
   );
   app.use(rateLimit(rateLimiter));
   app.use(Helmet());
-  app.enableCors();
+  app.enableCors({
+    origin: 'https://localhost:5173', // your frontend origin
+    credentials: true,
+  });
+  app.use(cookieParser());
+
   app.enableShutdownHooks();
   await app.listen(process.env.PORT ?? 3000);
 }

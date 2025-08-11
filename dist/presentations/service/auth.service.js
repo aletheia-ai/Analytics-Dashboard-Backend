@@ -9,38 +9,32 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AuthGuard = void 0;
+exports.AuthService = void 0;
 const common_1 = require("@nestjs/common");
+const user_service_1 = require("./user.service");
 const jwt_1 = require("@nestjs/jwt");
-let AuthGuard = class AuthGuard {
+let AuthService = class AuthService {
+    usersService;
     jwtService;
-    constructor(jwtService) {
+    constructor(usersService, jwtService) {
+        this.usersService = usersService;
         this.jwtService = jwtService;
     }
-    async canActivate(context) {
-        const request = context.switchToHttp().getRequest();
-        const token = this.extractTokenFromCookie(request);
-        if (!token) {
-            throw new common_1.UnauthorizedException('No token provided');
+    async signIn(username, pass) {
+        const user = await this.usersService.findOne(username);
+        if (user?.password !== pass) {
+            throw new common_1.UnauthorizedException();
         }
-        try {
-            const payload = await this.jwtService.verifyAsync(token, {
-                secret: process.env.JWT_SECRET,
-            });
-            request['user'] = payload;
-        }
-        catch (err) {
-            throw new common_1.UnauthorizedException('Invalid or expired token');
-        }
-        return true;
-    }
-    extractTokenFromCookie(request) {
-        return request.cookies?.['access_token'];
+        const payload = { sub: user.email, email: user.email };
+        return {
+            access_token: await this.jwtService.signAsync(payload),
+        };
     }
 };
-exports.AuthGuard = AuthGuard;
-exports.AuthGuard = AuthGuard = __decorate([
+exports.AuthService = AuthService;
+exports.AuthService = AuthService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [jwt_1.JwtService])
-], AuthGuard);
-//# sourceMappingURL=auth.guard..js.map
+    __metadata("design:paramtypes", [user_service_1.UserService,
+        jwt_1.JwtService])
+], AuthService);
+//# sourceMappingURL=auth.service.js.map

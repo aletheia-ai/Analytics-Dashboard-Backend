@@ -6,7 +6,7 @@ import { AppController } from '../controller/app.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 
 import { UserModule } from './user.module';
-
+import { AuthModule } from './auth.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -17,7 +17,8 @@ import { UserModule } from './user.module';
       }),
       inject: [ConfigService],
     }),
-    UserModule,
+    AuthModule,
+    // UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],

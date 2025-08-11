@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+require("dotenv/config");
 const helmet_1 = require("helmet");
 const bodyParser = require("body-parser");
 const express_rate_limit_1 = require("express-rate-limit");
@@ -9,8 +10,14 @@ const swagger_1 = require("@nestjs/swagger");
 const rate_limiter_1 = require("./utils/constants/rate-limiter");
 const app_module_1 = require("./presentations/module/app.module");
 const exception_factory_1 = require("./utils/methods/exception-factory");
+const fs = require("fs");
+const cookieParser = require("cookie-parser");
 async function bootstrap() {
-    const app = await core_1.NestFactory.create(app_module_1.AppModule);
+    const httpsOptions = {
+        key: fs.readFileSync('./server.key'),
+        cert: fs.readFileSync('./server.cert'),
+    };
+    const app = await core_1.NestFactory.create(app_module_1.AppModule, { httpsOptions });
     const config = new swagger_1.DocumentBuilder()
         .setTitle('Brick&Mortars.ai')
         .setDescription('Endpoints')
@@ -31,7 +38,11 @@ async function bootstrap() {
     }));
     app.use((0, express_rate_limit_1.default)(rate_limiter_1.rateLimiter));
     app.use((0, helmet_1.default)());
-    app.enableCors();
+    app.enableCors({
+        origin: 'https://localhost:5173',
+        credentials: true,
+    });
+    app.use(cookieParser());
     app.enableShutdownHooks();
     await app.listen(process.env.PORT ?? 3000);
 }

@@ -16,8 +16,8 @@ import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const httpsOptions = {
-    key: fs.readFileSync('./server.key'),
-    cert: fs.readFileSync('./server.cert'),
+    key: fs.readFileSync('./localhost-key.pem'),
+    cert: fs.readFileSync('./localhost.pem'),
   };
   const app = await NestFactory.create(AppModule, { httpsOptions });
   const config = new DocumentBuilder()
@@ -44,7 +44,7 @@ async function bootstrap() {
   app.use(rateLimit(rateLimiter));
   app.use(Helmet());
   app.enableCors({
-    origin: 'https://localhost:5173', // your frontend origin
+    origin: 'https://localhost:5173',
     credentials: true,
   });
   app.use(cookieParser());

@@ -13,6 +13,7 @@ exports.AuthService = void 0;
 const common_1 = require("@nestjs/common");
 const user_service_1 = require("./user.service");
 const jwt_1 = require("@nestjs/jwt");
+const types_1 = require("../../utils/types");
 let AuthService = class AuthService {
     usersService;
     jwtService;
@@ -21,14 +22,23 @@ let AuthService = class AuthService {
         this.jwtService = jwtService;
     }
     async signIn(username, pass) {
-        const user = await this.usersService.findOne(username);
-        if (user?.password !== pass) {
-            throw new common_1.UnauthorizedException();
+        try {
+            const user = await this.usersService.findOne(username);
+            if (user) {
+                if (user.password !== pass) {
+                    return { success: false, error: types_1.SignInExceptions.INVALID_PASSWORD };
+                }
+                const payload = { sub: user.email, email: user.email };
+                return {
+                    success: true,
+                    access_token: await this.jwtService.signAsync(payload),
+                };
+            }
+            return { success: false, error: types_1.SignInExceptions.NO_USER };
         }
-        const payload = { sub: user.email, email: user.email };
-        return {
-            access_token: await this.jwtService.signAsync(payload),
-        };
+        catch (err) {
+            throw new common_1.UnauthorizedException(types_1.SignInExceptions.NO_USER);
+        }
     }
 };
 exports.AuthService = AuthService;

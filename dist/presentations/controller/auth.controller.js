@@ -17,23 +17,44 @@ const common_1 = require("@nestjs/common");
 const auth_guard_1 = require("../../utils/guards/auth.guard.");
 const auth_service_1 = require("../service/auth.service");
 const auth_1 = require("../dto/auth");
+const cookie_options_1 = require("../../utils/constants/cookie-options");
 let AuthController = class AuthController {
     authService;
     constructor(authService) {
         this.authService = authService;
     }
     async signIn(signInDto, res) {
-        const result = await this.authService.signIn(signInDto.email, signInDto.password);
-        res.cookie('access_token', result.access_token, {
-            httpOnly: true,
-            sameSite: 'strict',
-            secure: true,
-            maxAge: 60 * 60 * 1000,
-        });
-        res.send({ message: 'Login Successful' });
+        try {
+            const result = await this.authService.signIn(signInDto.email, signInDto.password);
+            if (result.success) {
+                const { access_token } = result;
+                res.cookie('access_token', access_token, cookie_options_1.cookiesOptions);
+                res.send({ message: 'Login Successful' });
+            }
+            else {
+                const { error } = result;
+                throw new common_1.UnauthorizedException(error);
+            }
+        }
+        catch (err) {
+            if (err instanceof common_1.HttpException) {
+                throw err;
+            }
+            throw new common_1.InternalServerErrorException();
+        }
     }
     getProfile(req) {
         return req.user;
+    }
+    logout(res) {
+        try {
+            const { maxAge, ...result } = cookie_options_1.cookiesOptions;
+            res.clearCookie('access_token', { ...result, path: '/' });
+            res.status(200).json({ message: 'Logout Successfull' });
+        }
+        catch (err) {
+            throw new common_1.InternalServerErrorException();
+        }
     }
 };
 exports.AuthController = AuthController;
@@ -49,11 +70,20 @@ __decorate([
 __decorate([
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
     (0, common_1.Get)('profile'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     __param(0, (0, common_1.Request)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "getProfile", null);
+__decorate([
+    (0, common_1.Post)('logout'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    __param(0, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], AuthController.prototype, "logout", null);
 exports.AuthController = AuthController = __decorate([
     (0, common_1.Controller)('auth'),
     __metadata("design:paramtypes", [auth_service_1.AuthService])

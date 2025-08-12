@@ -14,8 +14,8 @@ const fs = require("fs");
 const cookieParser = require("cookie-parser");
 async function bootstrap() {
     const httpsOptions = {
-        key: fs.readFileSync('./server.key'),
-        cert: fs.readFileSync('./server.cert'),
+        key: fs.readFileSync('./localhost-key.pem'),
+        cert: fs.readFileSync('./localhost.pem'),
     };
     const app = await core_1.NestFactory.create(app_module_1.AppModule, { httpsOptions });
     const config = new swagger_1.DocumentBuilder()

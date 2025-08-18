@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 
 import { BusinessType, ServiceType, UserSpaceType, type User } from '@utils/types';
 import * as dotenv from 'dotenv';
@@ -28,15 +28,18 @@ export class UserService {
   }
   async addUser(user: User): Promise<{ success: boolean }> {
     const result = this.users.find((item) => item.email === user.email);
-
-    if (result) {
-      return { success: false };
-    } else {
-      const { password } = user;
-      const saltRounds = Number(process.env.SALT_ROUNDS) || 10;
-      const hashedPassword = await bcrypt.hash(password, saltRounds);
-      this.users.push({ ...user, password: hashedPassword });
-      return { success: true };
+    try {
+      if (result) {
+        return { success: false };
+      } else {
+        const { password } = user;
+        const saltRounds = Number(process.env.SALT_ROUNDS) || 10;
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+        this.users.push({ ...user, password: hashedPassword });
+        return { success: true };
+      }
+    } catch {
+      throw new InternalServerErrorException('Something Went Wrong');
     }
   }
 }

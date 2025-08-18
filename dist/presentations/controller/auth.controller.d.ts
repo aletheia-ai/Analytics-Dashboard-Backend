@@ -7,7 +7,6 @@ export declare class AuthController {
     signIn(signInDto: SignInDto, res: Response): Promise<void>;
     signUp(signupDto: SignUpDto): Promise<{
         message: string;
-        data: import("../../utils/types").User[];
     }>;
     getProfile(req: any): any;
     logout(res: Response): void;

@@ -49,10 +49,9 @@ export class AuthController {
     try {
       const result = await this.authService.signUp(signupDto);
       if (result.success) {
-        return { message: 'Register Successfull', data: result.data };
-      } else {
-        throw new ConflictException('User Already Exists');
+        return { message: 'Register Successfull' };
       }
+      throw new ConflictException('User Already Exists');
     } catch (err) {
       if (err instanceof HttpException) {
         throw err;

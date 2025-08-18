@@ -33,15 +33,20 @@ let UserService = class UserService {
     }
     async addUser(user) {
         const result = this.users.find((item) => item.email === user.email);
-        if (result) {
-            return { success: false };
+        try {
+            if (result) {
+                return { success: false };
+            }
+            else {
+                const { password } = user;
+                const saltRounds = Number(process.env.SALT_ROUNDS) || 10;
+                const hashedPassword = await bcrypt.hash(password, saltRounds);
+                this.users.push({ ...user, password: hashedPassword });
+                return { success: true };
+            }
         }
-        else {
-            const { password } = user;
-            const saltRounds = Number(process.env.SALT_ROUNDS) || 10;
-            const hashedPassword = await bcrypt.hash(password, saltRounds);
-            this.users.push({ ...user, password: hashedPassword });
-            return { success: true };
+        catch {
+            throw new common_1.InternalServerErrorException('Something Went Wrong');
         }
     }
 };

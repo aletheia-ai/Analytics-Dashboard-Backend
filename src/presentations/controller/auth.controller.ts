@@ -43,7 +43,7 @@ export class AuthController {
       throw new InternalServerErrorException();
     }
   }
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.CREATED)
   @Post('signup')
   async signUp(@Body() signupDto: SignUpDto) {
     try {

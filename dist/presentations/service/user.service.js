@@ -9,11 +9,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserService = void 0;
 const common_1 = require("@nestjs/common");
 const types_1 = require("../../utils/types");
+const dotenv = require("dotenv");
+const bcrypt = require("bcryptjs");
+dotenv.config();
 let UserService = class UserService {
     users = [
         {
             email: 'john@gmail.com',
-            password: '123456789',
+            password: '$2b$10$zVQrnKY0.3/EINis07c88epv4wqbSowlJO3ow/ciiiZsqxjQg1iwG',
             name: 'John Doe',
             companyName: 'Aletheia',
             bussinessType: types_1.BusinessType.RETAIL,
@@ -34,7 +37,10 @@ let UserService = class UserService {
             return { success: false };
         }
         else {
-            this.users.push(user);
+            const { password } = user;
+            const saltRounds = Number(process.env.SALT_ROUNDS) || 10;
+            const hashedPassword = await bcrypt.hash(password, saltRounds);
+            this.users.push({ ...user, password: hashedPassword });
             return { success: true };
         }
     }

@@ -14,6 +14,7 @@ const common_1 = require("@nestjs/common");
 const user_service_1 = require("./user.service");
 const jwt_1 = require("@nestjs/jwt");
 const types_1 = require("../../utils/types");
+const bcrypt = require("bcryptjs");
 let AuthService = class AuthService {
     usersService;
     jwtService;
@@ -31,7 +32,7 @@ let AuthService = class AuthService {
                 return { success: false };
             }
         }
-        catch {
+        catch (err) {
             return { success: false };
         }
     }
@@ -39,7 +40,8 @@ let AuthService = class AuthService {
         try {
             const user = await this.usersService.findOne(username);
             if (user) {
-                if (user.password !== pass) {
+                const isPasswordValid = await bcrypt.compare(pass, user.password);
+                if (!isPasswordValid) {
                     return { success: false, error: types_1.SignInExceptions.INVALID_PASSWORD };
                 }
                 const payload = { sub: user.email, email: user.email };

@@ -43,6 +43,23 @@ let AuthController = class AuthController {
             throw new common_1.InternalServerErrorException();
         }
     }
+    async signUp(signupDto) {
+        try {
+            const result = await this.authService.signUp(signupDto);
+            if (result.success) {
+                return { message: 'Register Successfull', data: result.data };
+            }
+            else {
+                throw new common_1.ConflictException('User Already Exists');
+            }
+        }
+        catch (err) {
+            if (err instanceof common_1.HttpException) {
+                throw err;
+            }
+            throw new common_1.InternalServerErrorException();
+        }
+    }
     getProfile(req) {
         return req.user;
     }
@@ -67,6 +84,14 @@ __decorate([
     __metadata("design:paramtypes", [auth_1.SignInDto, Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "signIn", null);
+__decorate([
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    (0, common_1.Post)('signup'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [auth_1.SignUpDto]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "signUp", null);
 __decorate([
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
     (0, common_1.Get)('profile'),

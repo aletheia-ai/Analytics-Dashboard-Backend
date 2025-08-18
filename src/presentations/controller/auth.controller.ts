@@ -10,11 +10,12 @@ import {
   Get,
   HttpException,
   UnauthorizedException,
+  ConflictException,
   InternalServerErrorException,
 } from '@nestjs/common';
 import { AuthGuard } from '@src/utils/guards/auth.guard.';
 import { AuthService } from '../service/auth.service';
-import { SignInDto } from '../dto/auth';
+import { SignInDto, SignUpDto } from '../dto/auth';
 import { Response } from 'express';
 import { cookiesOptions } from '@utils/constants/cookie-options';
 
@@ -34,6 +35,23 @@ export class AuthController {
       } else {
         const { error } = result;
         throw new UnauthorizedException(error);
+      }
+    } catch (err) {
+      if (err instanceof HttpException) {
+        throw err;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+  @HttpCode(HttpStatus.OK)
+  @Post('signup')
+  async signUp(@Body() signupDto: SignUpDto) {
+    try {
+      const result = await this.authService.signUp(signupDto);
+      if (result.success) {
+        return { message: 'Register Successfull', data: result.data };
+      } else {
+        throw new ConflictException('User Already Exists');
       }
     } catch (err) {
       if (err instanceof HttpException) {

@@ -21,6 +21,20 @@ let AuthService = class AuthService {
         this.usersService = usersService;
         this.jwtService = jwtService;
     }
+    async signUp(user) {
+        try {
+            const { success } = await this.usersService.addUser(user);
+            if (success) {
+                return { success: true, data: this.usersService.getAllUsers() };
+            }
+            else {
+                return { success: false };
+            }
+        }
+        catch {
+            return { success: false };
+        }
+    }
     async signIn(username, pass) {
         try {
             const user = await this.usersService.findOne(username);

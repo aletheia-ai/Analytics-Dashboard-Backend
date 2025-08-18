@@ -1,4 +1,3 @@
-export declare class SignInDto {
-    email: string;
-    password: string;
-}
+import { SignInDto } from './signin-dto';
+import { SignUpDto } from './signup-dto';
+export { SignInDto, SignUpDto };

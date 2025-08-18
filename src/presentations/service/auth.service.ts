@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserService } from './user.service';
 import { JwtService } from '@nestjs/jwt';
-import { SignInExceptions } from '@src/utils/types';
+import { SignInExceptions, BusinessType, ServiceType, UserSpaceType, User } from '@utils/types';
 
 @Injectable()
 export class AuthService {
@@ -9,6 +9,19 @@ export class AuthService {
     private usersService: UserService,
     private jwtService: JwtService
   ) {}
+
+  async signUp(user: User): Promise<{ success: true; data: User[] } | { success: false }> {
+    try {
+      const { success } = await this.usersService.addUser(user);
+      if (success) {
+        return { success: true, data: this.usersService.getAllUsers() };
+      } else {
+        return { success: false };
+      }
+    } catch {
+      return { success: false };
+    }
+  }
 
   async signIn(
     username: string,

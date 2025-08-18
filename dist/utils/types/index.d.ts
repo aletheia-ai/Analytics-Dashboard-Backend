@@ -1,13 +1,18 @@
+import { BusinessType } from './business-type';
+import { ServiceType } from './service-type';
+import { UserSpaceType } from './space-type';
 export declare enum SignInExceptions {
     NO_USER = "No User Registered With this Email",
     INVALID_PASSWORD = "Password Is Incorrect"
 }
 export type User = {
-    firstName: string;
-    lastName: string;
-    age: number;
-    address: string;
     email: string;
     password: string;
-    phone: string;
+    name: string;
+    companyName: string;
+    bussinessType: BusinessType;
+    serviceType: ServiceType;
+    userSpaceType: UserSpaceType;
+    branchCount: number;
 };
+export { BusinessType, ServiceType, UserSpaceType };

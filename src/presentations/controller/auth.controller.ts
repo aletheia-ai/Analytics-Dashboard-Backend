@@ -18,6 +18,7 @@ import { AuthService } from '../service/auth.service';
 import { SignInDto, SignUpDto } from '../dto/auth';
 import { Response } from 'express';
 import { cookiesOptions } from '@utils/constants/cookie-options';
+import { UserRoleType } from '@src/utils/types';
 
 @Controller('auth')
 export class AuthController {
@@ -47,7 +48,7 @@ export class AuthController {
   @Post('signup')
   async signUp(@Body() signupDto: SignUpDto) {
     try {
-      const result = await this.authService.signUp(signupDto);
+      const result = await this.authService.signUp({ ...signupDto, userType: UserRoleType.ADMIN });
       if (result.success) {
         return { message: 'Register Successfull' };
       }

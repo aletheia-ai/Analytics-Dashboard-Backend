@@ -1,9 +1,15 @@
 import { BusinessType } from './business-type';
 import { ServiceType } from './service-type';
 import { UserSpaceType } from './space-type';
+import { PersonStatsType } from './person-stats-type';
 export enum SignInExceptions {
   NO_USER = 'No User Registered With this Email',
   INVALID_PASSWORD = 'Password Is Incorrect',
+}
+
+export enum UserRoleType {
+  ADMIN = 'Admin',
+  USER = 'User',
 }
 
 export type User = {
@@ -15,6 +21,7 @@ export type User = {
   serviceType: ServiceType;
   userSpaceType: UserSpaceType;
   branchCount: number;
+  userType: UserRoleType;
 };
 
-export { BusinessType, ServiceType, UserSpaceType };
+export { BusinessType, ServiceType, UserSpaceType, PersonStatsType };

@@ -18,6 +18,7 @@ const auth_guard_1 = require("../../utils/guards/auth.guard.");
 const auth_service_1 = require("../service/auth.service");
 const auth_1 = require("../dto/auth");
 const cookie_options_1 = require("../../utils/constants/cookie-options");
+const types_1 = require("../../utils/types");
 let AuthController = class AuthController {
     authService;
     constructor(authService) {
@@ -45,7 +46,7 @@ let AuthController = class AuthController {
     }
     async signUp(signupDto) {
         try {
-            const result = await this.authService.signUp(signupDto);
+            const result = await this.authService.signUp({ ...signupDto, userType: types_1.UserRoleType.ADMIN });
             if (result.success) {
                 return { message: 'Register Successfull' };
             }

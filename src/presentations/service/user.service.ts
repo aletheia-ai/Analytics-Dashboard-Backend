@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 
-import { BusinessType, ServiceType, UserSpaceType, type User } from '@utils/types';
+import { BusinessType, ServiceType, UserRoleType, UserSpaceType, type User } from '@utils/types';
 import * as dotenv from 'dotenv';
 import * as bcrypt from 'bcryptjs';
 
@@ -18,6 +18,7 @@ export class UserService {
       serviceType: ServiceType.COUNTING,
       userSpaceType: UserSpaceType.SINGLE_PURPOSE,
       branchCount: 2,
+      userType: UserRoleType.ADMIN,
     },
   ];
   getAllUsers(): User[] {

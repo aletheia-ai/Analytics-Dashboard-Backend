@@ -23,6 +23,7 @@ let UserService = class UserService {
             serviceType: types_1.ServiceType.COUNTING,
             userSpaceType: types_1.UserSpaceType.SINGLE_PURPOSE,
             branchCount: 2,
+            userType: types_1.UserRoleType.ADMIN,
         },
     ];
     getAllUsers() {

@@ -3,6 +3,20 @@ export enum Gender {
   FEMALE = 'Female',
 }
 
+export enum QueueLocations {
+  ALL_LOCATIONS = 'All Locations',
+  CITY_CENTERS = 'City Centers',
+}
+export interface OperationalKpiType {
+  counter: number;
+  driveThrough: number;
+  seating: number;
+}
+
+export type QueueLocationType = {
+  [keys in QueueLocations]: OperationalKpiType;
+};
+
 export interface PersonStatsType {
   footFall: number;
   exit: number;
@@ -10,4 +24,5 @@ export interface PersonStatsType {
   maleCount: number;
   femaleCount: number;
   occupancy: number;
+  queueStats: QueueLocationType;
 }

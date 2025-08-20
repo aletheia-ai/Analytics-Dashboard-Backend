@@ -9,6 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PersonCountingService = void 0;
 const common_1 = require("@nestjs/common");
 const dotenv = require("dotenv");
+const person_stats_type_1 = require("../../utils/types/person-stats-type");
 dotenv.config();
 let PersonCountingService = class PersonCountingService {
     personStats = {
@@ -18,6 +19,10 @@ let PersonCountingService = class PersonCountingService {
         age: [8, 33, 10, 67, 45, 51],
         occupancy: 6,
         footFall: 6,
+        queueStats: {
+            [person_stats_type_1.QueueLocations.ALL_LOCATIONS]: { counter: 50, driveThrough: 20, seating: 19 },
+            [person_stats_type_1.QueueLocations.CITY_CENTERS]: { counter: 20, driveThrough: 30, seating: 80 },
+        },
     };
     async getStats() {
         try {

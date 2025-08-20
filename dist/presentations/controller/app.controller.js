@@ -17,19 +17,25 @@ let AppController = class AppController {
     constructor(appService) {
         this.appService = appService;
     }
-    getHello() {
-        return this.appService.getHello();
+    checkServer() {
+        try {
+            return { message: 'Server Runing' };
+        }
+        catch {
+            throw new common_1.InternalServerErrorException('Something went wrong');
+        }
     }
 };
 exports.AppController = AppController;
 __decorate([
-    (0, common_1.Get)(),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    (0, common_1.Get)('test'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
-    __metadata("design:returntype", String)
-], AppController.prototype, "getHello", null);
+    __metadata("design:returntype", void 0)
+], AppController.prototype, "checkServer", null);
 exports.AppController = AppController = __decorate([
-    (0, common_1.Controller)(),
+    (0, common_1.Controller)('app'),
     __metadata("design:paramtypes", [app_service_1.AppService])
 ], AppController);
 //# sourceMappingURL=app.controller.js.map

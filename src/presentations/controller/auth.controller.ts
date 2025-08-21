@@ -23,7 +23,6 @@ import { UserRoleType } from '@src/utils/types';
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
-
   @HttpCode(HttpStatus.OK)
   @Post('login')
   async signIn(@Body() signInDto: SignInDto, @Res() res: Response) {
@@ -74,7 +73,6 @@ export class AuthController {
     try {
       const { maxAge, ...result } = cookiesOptions;
       res.clearCookie('access_token', { ...result, path: '/' });
-
       res.status(200).json({ message: 'Logout Successfull' });
     } catch (err) {
       throw new InternalServerErrorException();

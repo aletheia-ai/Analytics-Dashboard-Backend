@@ -5,14 +5,26 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserService = void 0;
 const common_1 = require("@nestjs/common");
+const mongoose_1 = require("@nestjs/mongoose");
+const mongoose_2 = require("mongoose");
 const types_1 = require("../../utils/types");
 const dotenv = require("dotenv");
 const bcrypt = require("bcryptjs");
 dotenv.config();
 let UserService = class UserService {
+    userModel;
+    constructor(userModel) {
+        this.userModel = userModel;
+    }
     users = [
         {
             email: 'john@gmail.com',
@@ -29,22 +41,26 @@ let UserService = class UserService {
     getAllUsers() {
         return this.users;
     }
-    async findOne(email) {
-        return this.users.find((user) => user.email === email);
+    async findOne(username) {
+        try {
+            const data = await this.userModel.findOne({ email: username });
+            if (data) {
+                return data;
+            }
+            return undefined;
+        }
+        catch {
+            return undefined;
+        }
     }
     async addUser(user) {
-        const result = this.users.find((item) => item.email === user.email);
         try {
-            if (result) {
-                return { success: false };
-            }
-            else {
-                const { password } = user;
-                const saltRounds = Number(process.env.SALT_ROUNDS) || 10;
-                const hashedPassword = await bcrypt.hash(password, saltRounds);
-                this.users.push({ ...user, password: hashedPassword });
-                return { success: true };
-            }
+            const { password, ...rest } = user;
+            const saltRounds = Number(process.env.SALT_ROUNDS) || 10;
+            const hashedPassword = await bcrypt.hash(password, saltRounds);
+            const users = new this.userModel({ ...rest, password: hashedPassword });
+            await users.save();
+            return { success: true };
         }
         catch {
             throw new common_1.InternalServerErrorException('Something Went Wrong');
@@ -53,6 +69,8 @@ let UserService = class UserService {
 };
 exports.UserService = UserService;
 exports.UserService = UserService = __decorate([
-    (0, common_1.Injectable)()
+    (0, common_1.Injectable)(),
+    __param(0, (0, mongoose_1.InjectModel)('User')),
+    __metadata("design:paramtypes", [mongoose_2.Model])
 ], UserService);
 //# sourceMappingURL=user.service.js.map

@@ -11,7 +11,7 @@ export declare const PersonCountingSchema: Schema<any, import("mongoose").Model<
     Exit?: number | null | undefined;
     gender?: string | null | undefined;
     occupancy?: number | null | undefined;
-}>, {}> & import("mongoose").FlatRecord<{
+}>, {}, import("mongoose").ResolveSchemaOptions<import("mongoose").DefaultSchemaOptions>> & import("mongoose").FlatRecord<{
     age?: number | null | undefined;
     footFall?: number | null | undefined;
     Exit?: number | null | undefined;

@@ -16,7 +16,6 @@ exports.UserService = void 0;
 const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
-const types_1 = require("../../utils/types");
 const dotenv = require("dotenv");
 const bcrypt = require("bcryptjs");
 dotenv.config();
@@ -25,19 +24,7 @@ let UserService = class UserService {
     constructor(userModel) {
         this.userModel = userModel;
     }
-    users = [
-        {
-            email: 'john@gmail.com',
-            password: '$2b$10$zVQrnKY0.3/EINis07c88epv4wqbSowlJO3ow/ciiiZsqxjQg1iwG',
-            name: 'John Doe',
-            companyName: 'Aletheia',
-            bussinessType: types_1.BusinessType.RETAIL,
-            serviceType: types_1.ServiceType.COUNTING,
-            userSpaceType: types_1.UserSpaceType.SINGLE_PURPOSE,
-            branchCount: 2,
-            userType: types_1.UserRoleType.ADMIN,
-        },
-    ];
+    users = [];
     getAllUsers() {
         return this.users;
     }
@@ -59,8 +46,13 @@ let UserService = class UserService {
             const saltRounds = Number(process.env.SALT_ROUNDS) || 10;
             const hashedPassword = await bcrypt.hash(password, saltRounds);
             const users = new this.userModel({ ...rest, password: hashedPassword });
-            await users.save();
-            return { success: true };
+            const data = await users.save();
+            if (data) {
+                return { success: true, data: data._id };
+            }
+            else {
+                return { success: false };
+            }
         }
         catch {
             throw new common_1.InternalServerErrorException('Something Went Wrong');

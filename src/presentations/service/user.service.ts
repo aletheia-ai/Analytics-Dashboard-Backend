@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 
 import { BusinessType, ServiceType, UserRoleType, UserSpaceType, type User } from '@utils/types';
 import * as dotenv from 'dotenv';
@@ -11,19 +11,7 @@ dotenv.config();
 @Injectable()
 export class UserService {
   constructor(@InjectModel('User') private userModel: Model<User>) {}
-  private readonly users: User[] = [
-    {
-      email: 'john@gmail.com',
-      password: '$2b$10$zVQrnKY0.3/EINis07c88epv4wqbSowlJO3ow/ciiiZsqxjQg1iwG',
-      name: 'John Doe',
-      companyName: 'Aletheia',
-      bussinessType: BusinessType.RETAIL,
-      serviceType: ServiceType.COUNTING,
-      userSpaceType: UserSpaceType.SINGLE_PURPOSE,
-      branchCount: 2,
-      userType: UserRoleType.ADMIN,
-    },
-  ];
+  private readonly users: User[] = [];
   getAllUsers(): User[] {
     return this.users;
   }
@@ -38,17 +26,19 @@ export class UserService {
       return undefined;
     }
   }
-  async addUser(user: User): Promise<{ success: boolean }> {
+  async addUser(user: User): Promise<{ success: true; data: Types.ObjectId } | { success: false }> {
     try {
       const { password, ...rest } = user;
       const saltRounds = Number(process.env.SALT_ROUNDS) || 10;
       const hashedPassword = await bcrypt.hash(password, saltRounds);
 
       const users = new this.userModel({ ...rest, password: hashedPassword });
-      await users.save();
-
-      return { success: true };
-      // }
+      const data = await users.save();
+      if (data) {
+        return { success: true, data: data._id };
+      } else {
+        return { success: false };
+      }
     } catch {
       throw new InternalServerErrorException('Something Went Wrong');
     }

@@ -12,12 +12,18 @@ const mongoose_1 = require("@nestjs/mongoose");
 const store_schema_1 = require("../../infrastructure/modal/store-schema");
 const store_service_1 = require("../service/store.service");
 const store_controller_1 = require("../controller/store.controller");
+const company_module_1 = require("./company.module");
+const region_module_1 = require("./region.module");
 let StoreModule = class StoreModule {
 };
 exports.StoreModule = StoreModule;
 exports.StoreModule = StoreModule = __decorate([
     (0, common_1.Module)({
-        imports: [mongoose_1.MongooseModule.forFeature([{ name: 'Store', schema: store_schema_1.StoreSchema }])],
+        imports: [
+            mongoose_1.MongooseModule.forFeature([{ name: 'Store', schema: store_schema_1.StoreSchema }]),
+            company_module_1.CompanyModule,
+            region_module_1.RegionModule,
+        ],
         providers: [store_service_1.StoreService],
         controllers: [store_controller_1.StoreController],
     })

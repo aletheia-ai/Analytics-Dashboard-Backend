@@ -7,7 +7,7 @@ export declare class AuthService {
     constructor(usersService: UserService, jwtService: JwtService);
     signUp(user: User): Promise<{
         success: true;
-        data: User[];
+        access_token: string;
     } | {
         success: false;
     }>;

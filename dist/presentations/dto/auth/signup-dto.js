@@ -10,17 +10,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SignUpDto = void 0;
-const types_1 = require("../../../utils/types");
 const class_validator_1 = require("class-validator");
 class SignUpDto {
     email;
     password;
-    name;
-    companyName;
-    bussinessType;
-    serviceType;
-    userSpaceType;
-    branchCount;
+    firstName;
+    lastName;
 }
 exports.SignUpDto = SignUpDto;
 __decorate([
@@ -37,30 +32,10 @@ __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
-], SignUpDto.prototype, "name", void 0);
+], SignUpDto.prototype, "firstName", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
-], SignUpDto.prototype, "companyName", void 0);
-__decorate([
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", String)
-], SignUpDto.prototype, "bussinessType", void 0);
-__decorate([
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", String)
-], SignUpDto.prototype, "serviceType", void 0);
-__decorate([
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", String)
-], SignUpDto.prototype, "userSpaceType", void 0);
-__decorate([
-    (0, class_validator_1.IsNumber)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", Number)
-], SignUpDto.prototype, "branchCount", void 0);
+], SignUpDto.prototype, "lastName", void 0);
 //# sourceMappingURL=signup-dto.js.map

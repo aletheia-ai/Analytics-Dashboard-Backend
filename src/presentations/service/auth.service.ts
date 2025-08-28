@@ -11,11 +11,20 @@ export class AuthService {
     private jwtService: JwtService
   ) {}
 
-  async signUp(user: User): Promise<{ success: true; data: User[] } | { success: false }> {
+  async signUp(user: User): Promise<{ success: true; access_token: string } | { success: false }> {
     try {
-      const { success } = await this.usersService.addUser(user);
-      if (success) {
-        return { success: true, data: this.usersService.getAllUsers() };
+      const result = await this.usersService.addUser(user);
+      if (result.success) {
+        const payload = {
+          sub: user.email,
+          email: user.email,
+          isAuthorized: false,
+          id: result.data,
+        };
+        return {
+          success: true,
+          access_token: await this.jwtService.signAsync(payload),
+        };
       } else {
         return { success: false };
       }
@@ -38,10 +47,10 @@ export class AuthService {
           return { success: false, error: SignInExceptions.INVALID_PASSWORD };
         }
 
-        const payload = { sub: user.email, email: user.email };
+        const payload = { sub: user.email, email: user.email, isAuthorized: user.isAuthorized };
         return {
           success: true,
-          access_token: await this.jwtService.signAsync(payload),
+          access_token: await this.jwtService.signAsync({ ...payload, id: (user as any)._id }),
         };
       }
       return { success: false, error: SignInExceptions.NO_USER };

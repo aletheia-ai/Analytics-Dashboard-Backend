@@ -35,4 +35,19 @@ export class RegionService implements OnModuleInit {
       { regionId: 10, name: 'sa-east-1' },
     ];
   }
+
+  async getAllRegions(): Promise<
+    { success: false; error: number } | { success: true; data: Region[] }
+  > {
+    try {
+      const regions = await this.regionModel.find().exec();
+      if (!regions || regions.length === 0) {
+        return { success: false, error: 404 };
+      } else {
+        return { success: true, data: regions };
+      }
+    } catch {
+      return { success: false, error: 500 };
+    }
+  }
 }

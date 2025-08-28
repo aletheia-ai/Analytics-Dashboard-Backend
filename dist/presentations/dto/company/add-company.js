@@ -10,26 +10,39 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AddCompanyDto = void 0;
+const types_1 = require("../../../utils/types");
 const class_validator_1 = require("class-validator");
 class AddCompanyDto {
-    ownerId;
-    companyId;
     name;
+    userSpaceType;
+    serviceType;
+    businessType;
+    user;
 }
 exports.AddCompanyDto = AddCompanyDto;
-__decorate([
-    (0, class_validator_1.IsNumber)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", Number)
-], AddCompanyDto.prototype, "ownerId", void 0);
-__decorate([
-    (0, class_validator_1.IsNumber)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", Number)
-], AddCompanyDto.prototype, "companyId", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], AddCompanyDto.prototype, "name", void 0);
+__decorate([
+    (0, class_validator_1.IsEnum)(types_1.UserSpaceType),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], AddCompanyDto.prototype, "userSpaceType", void 0);
+__decorate([
+    (0, class_validator_1.IsEnum)(types_1.ServiceType),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], AddCompanyDto.prototype, "serviceType", void 0);
+__decorate([
+    (0, class_validator_1.IsEnum)(types_1.BusinessType),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], AddCompanyDto.prototype, "businessType", void 0);
+__decorate([
+    (0, class_validator_1.IsMongoId)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], AddCompanyDto.prototype, "user", void 0);
 //# sourceMappingURL=add-company.js.map

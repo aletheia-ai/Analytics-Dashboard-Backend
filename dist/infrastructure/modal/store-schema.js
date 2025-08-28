@@ -1,12 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Store = exports.StoreSchema = void 0;
+exports.StoreModal = exports.StoreSchema = void 0;
 const mongoose_1 = require("mongoose");
 exports.StoreSchema = new mongoose_1.Schema({
-    regionId: { type: Number, required: true },
+    region: { type: mongoose_1.Types.ObjectId, ref: 'Region', required: true },
     name: { type: String, required: true },
-    storeId: { type: Number, required: true, unique: true },
-    companyId: { type: Number, required: true },
+    company: {
+        type: mongoose_1.Types.ObjectId,
+        ref: 'Company',
+        required: true,
+    },
 });
-exports.Store = (0, mongoose_1.model)('Store', exports.StoreSchema);
+exports.StoreModal = (0, mongoose_1.model)('Store', exports.StoreSchema);
 //# sourceMappingURL=store-schema.js.map

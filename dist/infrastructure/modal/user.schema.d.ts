@@ -9,3 +9,8 @@ export declare const UserSchema: Schema<User, import("mongoose").Model<User, any
 } & {
     __v: number;
 }>;
+export declare const UserModel: import("mongoose").Model<User, {}, {}, {}, import("mongoose").Document<unknown, {}, User, {}, {}> & User & {
+    _id: import("mongoose").Types.ObjectId;
+} & {
+    __v: number;
+}, any>;

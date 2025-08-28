@@ -1,6 +1,10 @@
+import { Company } from './company-type';
+import { Region } from './region-type';
+
 export interface Store {
-  regionId: number;
+  region: Region | string;
   name: string;
-  storeId: number;
-  companyId: number;
+  company: Company | string;
+  phone: string;
+  city: string;
 }

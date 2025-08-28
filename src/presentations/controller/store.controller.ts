@@ -2,16 +2,20 @@ import {
   Body,
   ConflictException,
   Controller,
+  ForbiddenException,
   HttpCode,
   HttpException,
   HttpStatus,
   InternalServerErrorException,
   NotFoundException,
   Post,
+  Request,
+  UseGuards,
 } from '@nestjs/common';
 
 import { StoreService } from '../service/store.service';
 import { AddStoreDto } from '../dto/store';
+import { AuthGuard } from '@src/utils/guards/auth.guard.';
 
 @Controller('store')
 export class StoreController {
@@ -19,18 +23,18 @@ export class StoreController {
 
   @HttpCode(HttpStatus.CREATED)
   @Post('add')
-  async addNewStore(@Body() addStoreDto: AddStoreDto) {
+  @UseGuards(AuthGuard)
+  async addNewStore(@Body() addStoreDto: AddStoreDto, @Request() req) {
     try {
-      const result = await this.storeService.addNewStore(addStoreDto);
+      const result = await this.storeService.addNewStore(addStoreDto, req.user.id);
       if (result.success) {
         return { message: 'Store Created' };
       } else {
         const { error } = result;
-        console.log(error);
-        if (error === 11000) {
-          throw new ConflictException('Store with this ID already exists');
+
+        if (error === 403) {
+          throw new ForbiddenException('Cannot create this store');
         } else if (error === 404) {
-          console.log('hello world');
           throw new NotFoundException('Company Not Registered');
         } else {
           throw new InternalServerErrorException('Something went wrong');

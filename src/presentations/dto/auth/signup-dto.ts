@@ -1,5 +1,5 @@
 import { BusinessType, ServiceType, UserSpaceType } from '@utils/types';
-import { IsString, IsNotEmpty, IsEmail, IsNumber } from 'class-validator';
+import { IsString, IsNotEmpty, IsEmail, IsNumber, IsBoolean } from 'class-validator';
 
 export class SignUpDto {
   @IsEmail()
@@ -12,25 +12,9 @@ export class SignUpDto {
 
   @IsString()
   @IsNotEmpty()
-  name: string;
+  firstName: string;
 
   @IsString()
   @IsNotEmpty()
-  companyName: string;
-
-  @IsString()
-  @IsNotEmpty()
-  bussinessType: BusinessType;
-
-  @IsString()
-  @IsNotEmpty()
-  serviceType: ServiceType;
-
-  @IsString()
-  @IsNotEmpty()
-  userSpaceType: UserSpaceType;
-
-  @IsNumber()
-  @IsNotEmpty()
-  branchCount: number;
+  lastName: string;
 }

@@ -7,4 +7,11 @@ export declare class RegionService implements OnModuleInit {
     constructor(regionModel: Model<Region>);
     onModuleInit(): Promise<void>;
     private getAwsRegions;
+    getAllRegions(): Promise<{
+        success: false;
+        error: number;
+    } | {
+        success: true;
+        data: Region[];
+    }>;
 }

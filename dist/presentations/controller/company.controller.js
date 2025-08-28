@@ -16,21 +16,26 @@ exports.CompanyController = void 0;
 const common_1 = require("@nestjs/common");
 const company_service_1 = require("../service/company.service");
 const company_1 = require("../dto/company");
+const cookie_options_1 = require("../../utils/constants/cookie-options");
 let CompanyController = class CompanyController {
     companyService;
     constructor(companyService) {
         this.companyService = companyService;
     }
-    async addNewCompany(addCompanyDto) {
+    async addNewCompany(addCompanyDto, res) {
         try {
             const result = await this.companyService.addNewCompany(addCompanyDto);
             if (result.success) {
-                return { message: 'Company Created' };
+                res.cookie('access_token', result.access_token, cookie_options_1.cookiesOptions);
+                res.status(201).json({ message: 'Business Created' });
             }
             else {
                 const { error } = result;
                 if (error === 11000) {
-                    throw new common_1.ConflictException('Company with this ID already exists');
+                    throw new common_1.ConflictException('One Company has already been register against this user');
+                }
+                else if (error === 404) {
+                    throw new common_1.NotFoundException('User Does not exist');
                 }
                 else {
                     throw new common_1.InternalServerErrorException('Something went wrong');
@@ -50,8 +55,9 @@ __decorate([
     (0, common_1.HttpCode)(common_1.HttpStatus.CREATED),
     (0, common_1.Post)('add'),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [company_1.AddCompanyDto]),
+    __metadata("design:paramtypes", [company_1.AddCompanyDto, Object]),
     __metadata("design:returntype", Promise)
 ], CompanyController.prototype, "addNewCompany", null);
 exports.CompanyController = CompanyController = __decorate([

@@ -1,19 +1,23 @@
-import { IsString, IsNotEmpty, IsNumber } from 'class-validator';
+import { IsString, IsNotEmpty, IsMongoId } from 'class-validator';
 
 export class AddStoreDto {
-  @IsNumber()
-  @IsNotEmpty()
-  storeId: number;
-
-  @IsNumber()
-  @IsNotEmpty()
-  regionId: number;
-
   @IsString()
   @IsNotEmpty()
   name: string;
 
-  @IsNumber()
+  @IsMongoId()
   @IsNotEmpty()
-  companyId: number;
+  company: string;
+
+  @IsMongoId()
+  @IsNotEmpty()
+  region: string;
+
+  @IsString()
+  @IsNotEmpty()
+  phone: string;
+
+  @IsString()
+  @IsNotEmpty()
+  city: string;
 }

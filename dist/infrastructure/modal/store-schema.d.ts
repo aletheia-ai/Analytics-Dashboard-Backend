@@ -1,60 +1,24 @@
-import { Schema } from 'mongoose';
-export declare const StoreSchema: Schema<any, import("mongoose").Model<any, any, any, any, any, any>, {}, {}, {}, {}, import("mongoose").DefaultSchemaOptions, {
-    regionId: number;
-    name: string;
-    storeId: number;
-    companyId: number;
-}, import("mongoose").Document<unknown, {}, import("mongoose").FlatRecord<{
-    regionId: number;
-    name: string;
-    storeId: number;
-    companyId: number;
-}>, {}, import("mongoose").ResolveSchemaOptions<import("mongoose").DefaultSchemaOptions>> & import("mongoose").FlatRecord<{
-    regionId: number;
-    name: string;
-    storeId: number;
-    companyId: number;
-}> & {
-    _id: import("mongoose").Types.ObjectId;
+import { Schema, Types } from 'mongoose';
+import type { Store } from '@src/utils/types/store-type';
+export declare const StoreSchema: Schema<Store, import("mongoose").Model<Store, any, any, any, import("mongoose").Document<unknown, any, Store, any, {}> & Store & {
+    _id: Types.ObjectId;
+} & {
+    __v: number;
+}, any>, {}, {}, {}, {}, import("mongoose").DefaultSchemaOptions, Store, import("mongoose").Document<unknown, {}, import("mongoose").FlatRecord<Store>, {}, import("mongoose").ResolveSchemaOptions<import("mongoose").DefaultSchemaOptions>> & import("mongoose").FlatRecord<Store> & {
+    _id: Types.ObjectId;
 } & {
     __v: number;
 }>;
-export declare const Store: import("mongoose").Model<{
-    regionId: number;
-    name: string;
-    storeId: number;
-    companyId: number;
-}, {}, {}, {}, import("mongoose").Document<unknown, {}, {
-    regionId: number;
-    name: string;
-    storeId: number;
-    companyId: number;
-}, {}, import("mongoose").DefaultSchemaOptions> & {
-    regionId: number;
-    name: string;
-    storeId: number;
-    companyId: number;
-} & {
-    _id: import("mongoose").Types.ObjectId;
+export declare const StoreModal: import("mongoose").Model<Store, {}, {}, {}, import("mongoose").Document<unknown, {}, Store, {}, import("mongoose").DefaultSchemaOptions> & Store & {
+    _id: Types.ObjectId;
 } & {
     __v: number;
-}, Schema<any, import("mongoose").Model<any, any, any, any, any, any>, {}, {}, {}, {}, import("mongoose").DefaultSchemaOptions, {
-    regionId: number;
-    name: string;
-    storeId: number;
-    companyId: number;
-}, import("mongoose").Document<unknown, {}, import("mongoose").FlatRecord<{
-    regionId: number;
-    name: string;
-    storeId: number;
-    companyId: number;
-}>, {}, import("mongoose").ResolveSchemaOptions<import("mongoose").DefaultSchemaOptions>> & import("mongoose").FlatRecord<{
-    regionId: number;
-    name: string;
-    storeId: number;
-    companyId: number;
-}> & {
-    _id: import("mongoose").Types.ObjectId;
+}, Schema<Store, import("mongoose").Model<Store, any, any, any, import("mongoose").Document<unknown, any, Store, any, {}> & Store & {
+    _id: Types.ObjectId;
+} & {
+    __v: number;
+}, any>, {}, {}, {}, {}, import("mongoose").DefaultSchemaOptions, Store, import("mongoose").Document<unknown, {}, import("mongoose").FlatRecord<Store>, {}, import("mongoose").ResolveSchemaOptions<import("mongoose").DefaultSchemaOptions>> & import("mongoose").FlatRecord<Store> & {
+    _id: Types.ObjectId;
 } & {
     __v: number;
 }>>;

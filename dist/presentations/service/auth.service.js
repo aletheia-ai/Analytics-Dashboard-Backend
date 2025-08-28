@@ -24,9 +24,18 @@ let AuthService = class AuthService {
     }
     async signUp(user) {
         try {
-            const { success } = await this.usersService.addUser(user);
-            if (success) {
-                return { success: true, data: this.usersService.getAllUsers() };
+            const result = await this.usersService.addUser(user);
+            if (result.success) {
+                const payload = {
+                    sub: user.email,
+                    email: user.email,
+                    isAuthorized: false,
+                    id: result.data,
+                };
+                return {
+                    success: true,
+                    access_token: await this.jwtService.signAsync(payload),
+                };
             }
             else {
                 return { success: false };
@@ -44,10 +53,10 @@ let AuthService = class AuthService {
                 if (!isPasswordValid) {
                     return { success: false, error: types_1.SignInExceptions.INVALID_PASSWORD };
                 }
-                const payload = { sub: user.email, email: user.email };
+                const payload = { sub: user.email, email: user.email, isAuthorized: user.isAuthorized };
                 return {
                     success: true,
-                    access_token: await this.jwtService.signAsync(payload),
+                    access_token: await this.jwtService.signAsync({ ...payload, id: user._id }),
                 };
             }
             return { success: false, error: types_1.SignInExceptions.NO_USER };

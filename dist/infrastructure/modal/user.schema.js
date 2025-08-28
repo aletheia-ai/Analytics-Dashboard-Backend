@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserSchema = void 0;
+exports.UserModel = exports.UserSchema = void 0;
 const mongoose_1 = require("mongoose");
 const types_1 = require("../../utils/types");
 exports.UserSchema = new mongoose_1.Schema({
@@ -14,37 +14,18 @@ exports.UserSchema = new mongoose_1.Schema({
         type: String,
         required: true,
     },
-    name: {
+    firstName: { type: String, required: true },
+    lastName: {
         type: String,
         required: true,
     },
-    companyName: {
-        type: String,
-        required: true,
-    },
-    bussinessType: {
-        type: String,
-        required: true,
-        enum: Object.values(types_1.BusinessType),
-    },
-    serviceType: {
-        type: String,
-        required: true,
-        enum: Object.values(types_1.ServiceType),
-    },
-    userSpaceType: {
-        type: String,
-        required: true,
-        enum: Object.values(types_1.UserSpaceType),
-    },
-    branchCount: {
-        type: Number,
-        required: true,
-    },
+    isAuthorized: { type: Boolean, required: true },
+    isVerified: { type: Boolean, required: true },
     userType: {
         type: String,
         required: true,
         enum: Object.values(types_1.UserRoleType),
     },
 });
+exports.UserModel = (0, mongoose_1.model)('User', exports.UserSchema, 'users');
 //# sourceMappingURL=user.schema.js.map

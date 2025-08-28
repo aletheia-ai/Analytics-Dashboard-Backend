@@ -1,4 +1,4 @@
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { type User } from '@utils/types';
 export declare class UserService {
     private userModel;
@@ -7,6 +7,9 @@ export declare class UserService {
     getAllUsers(): User[];
     findOne(username: string): Promise<User | undefined>;
     addUser(user: User): Promise<{
-        success: boolean;
+        success: true;
+        data: Types.ObjectId;
+    } | {
+        success: false;
     }>;
 }

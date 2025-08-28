@@ -1,5 +1,8 @@
+import { BusinessType, ServiceType, UserSpaceType } from '@src/utils/types';
 export declare class AddCompanyDto {
-    ownerId: number;
-    companyId: number;
     name: string;
+    userSpaceType: UserSpaceType;
+    serviceType: ServiceType;
+    businessType: BusinessType;
+    user: string;
 }

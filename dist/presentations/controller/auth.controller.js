@@ -44,11 +44,18 @@ let AuthController = class AuthController {
             throw new common_1.InternalServerErrorException();
         }
     }
-    async signUp(signupDto) {
+    async signUp(signupDto, res) {
         try {
-            const result = await this.authService.signUp({ ...signupDto, userType: types_1.UserRoleType.ADMIN });
+            const result = await this.authService.signUp({
+                ...signupDto,
+                isVerified: true,
+                isAuthorized: false,
+                userType: types_1.UserRoleType.ADMIN,
+            });
             if (result.success) {
-                return { message: 'Register Successfull' };
+                const { access_token } = result;
+                res.cookie('access_token', access_token, cookie_options_1.cookiesOptions);
+                res.send({ message: 'Register Successful' });
             }
             throw new common_1.ConflictException('User Already Exists');
         }
@@ -60,6 +67,7 @@ let AuthController = class AuthController {
         }
     }
     getProfile(req) {
+        console.log(req.user);
         return req.user;
     }
     logout(res) {
@@ -87,8 +95,9 @@ __decorate([
     (0, common_1.HttpCode)(common_1.HttpStatus.CREATED),
     (0, common_1.Post)('signup'),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [auth_1.SignUpDto]),
+    __metadata("design:paramtypes", [auth_1.SignUpDto, Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "signUp", null);
 __decorate([

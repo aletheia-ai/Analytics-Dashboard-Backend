@@ -1,51 +1,16 @@
-import { Schema } from 'mongoose';
-export declare const CompanySchema: Schema<any, import("mongoose").Model<any, any, any, any, any, any>, {}, {}, {}, {}, import("mongoose").DefaultSchemaOptions, {
-    ownerId: number;
-    name: string;
-    companyId: number;
-}, import("mongoose").Document<unknown, {}, import("mongoose").FlatRecord<{
-    ownerId: number;
-    name: string;
-    companyId: number;
-}>, {}, import("mongoose").ResolveSchemaOptions<import("mongoose").DefaultSchemaOptions>> & import("mongoose").FlatRecord<{
-    ownerId: number;
-    name: string;
-    companyId: number;
-}> & {
-    _id: import("mongoose").Types.ObjectId;
+import { Schema, Types } from 'mongoose';
+import type { Company } from '@src/utils/types/company-type';
+export declare const CompanySchema: Schema<Company, import("mongoose").Model<Company, any, any, any, import("mongoose").Document<unknown, any, Company, any, {}> & Company & {
+    _id: Types.ObjectId;
+} & {
+    __v: number;
+}, any>, {}, {}, {}, {}, import("mongoose").DefaultSchemaOptions, Company, import("mongoose").Document<unknown, {}, import("mongoose").FlatRecord<Company>, {}, import("mongoose").ResolveSchemaOptions<import("mongoose").DefaultSchemaOptions>> & import("mongoose").FlatRecord<Company> & {
+    _id: Types.ObjectId;
 } & {
     __v: number;
 }>;
-export declare const Company: import("mongoose").Model<{
-    ownerId: number;
-    name: string;
-    companyId: number;
-}, {}, {}, {}, import("mongoose").Document<unknown, {}, {
-    ownerId: number;
-    name: string;
-    companyId: number;
-}, {}, import("mongoose").DefaultSchemaOptions> & {
-    ownerId: number;
-    name: string;
-    companyId: number;
-} & {
-    _id: import("mongoose").Types.ObjectId;
+export declare const CompanyModal: import("mongoose").Model<Company, {}, {}, {}, import("mongoose").Document<unknown, {}, Company, {}, {}> & Company & {
+    _id: Types.ObjectId;
 } & {
     __v: number;
-}, Schema<any, import("mongoose").Model<any, any, any, any, any, any>, {}, {}, {}, {}, import("mongoose").DefaultSchemaOptions, {
-    ownerId: number;
-    name: string;
-    companyId: number;
-}, import("mongoose").Document<unknown, {}, import("mongoose").FlatRecord<{
-    ownerId: number;
-    name: string;
-    companyId: number;
-}>, {}, import("mongoose").ResolveSchemaOptions<import("mongoose").DefaultSchemaOptions>> & import("mongoose").FlatRecord<{
-    ownerId: number;
-    name: string;
-    companyId: number;
-}> & {
-    _id: import("mongoose").Types.ObjectId;
-} & {
-    __v: number;
-}>>;
+}, any>;

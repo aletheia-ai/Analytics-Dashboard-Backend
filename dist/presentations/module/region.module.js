@@ -11,6 +11,7 @@ const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const regions_schema_1 = require("../../infrastructure/modal/regions-schema");
 const region_service_1 = require("../service/region.service");
+const region_controller_1 = require("../controller/region.controller");
 let RegionModule = class RegionModule {
 };
 exports.RegionModule = RegionModule;
@@ -18,6 +19,8 @@ exports.RegionModule = RegionModule = __decorate([
     (0, common_1.Module)({
         imports: [mongoose_1.MongooseModule.forFeature([{ name: 'Region', schema: regions_schema_1.RegionSchema }])],
         providers: [region_service_1.RegionService],
+        exports: [mongoose_1.MongooseModule],
+        controllers: [region_controller_1.RegionController],
     })
 ], RegionModule);
 //# sourceMappingURL=region.module.js.map

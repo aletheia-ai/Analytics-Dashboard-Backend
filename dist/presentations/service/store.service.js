@@ -18,23 +18,39 @@ const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
 let StoreService = class StoreService {
     store;
-    constructor(store) {
+    company;
+    region;
+    constructor(store, company, region) {
         this.store = store;
+        this.company = company;
+        this.region = region;
     }
-    async addNewStore(storeData) {
+    async addNewStore(storeData, id) {
         try {
-            const company = await this.store.db
-                .collection('companies')
-                .findOne({ companyId: storeData.companyId });
-            if (!company) {
+            const { company, region } = storeData;
+            const userId = id;
+            const companyData = await this.company.findById(company).exec();
+            if (companyData) {
+                if (companyData.user.toString() === userId.toString()) {
+                    const regionData = await this.region.findById(region).exec();
+                    if (regionData) {
+                        const store = new this.store({ ...storeData });
+                        await store.save();
+                        return { success: true };
+                    }
+                    else {
+                        return { success: false, error: 404 };
+                    }
+                }
+                return { success: false, error: 403 };
+            }
+            else {
                 return { success: false, error: 404 };
             }
-            const store = new this.store(storeData);
-            await store.save();
-            return { success: true };
         }
         catch (error) {
-            return { success: false, error: error.code };
+            console.log(error);
+            return { success: false, error: error.code || 500 };
         }
     }
 };
@@ -42,6 +58,10 @@ exports.StoreService = StoreService;
 exports.StoreService = StoreService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)('Store')),
-    __metadata("design:paramtypes", [mongoose_2.Model])
+    __param(1, (0, mongoose_1.InjectModel)('Company')),
+    __param(2, (0, mongoose_1.InjectModel)('Region')),
+    __metadata("design:paramtypes", [mongoose_2.Model,
+        mongoose_2.Model,
+        mongoose_2.Model])
 ], StoreService);
 //# sourceMappingURL=store.service.js.map

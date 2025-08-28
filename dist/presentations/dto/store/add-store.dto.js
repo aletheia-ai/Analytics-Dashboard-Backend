@@ -12,30 +12,36 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AddStoreDto = void 0;
 const class_validator_1 = require("class-validator");
 class AddStoreDto {
-    storeId;
-    regionId;
     name;
-    companyId;
+    company;
+    region;
+    phone;
+    city;
 }
 exports.AddStoreDto = AddStoreDto;
-__decorate([
-    (0, class_validator_1.IsNumber)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", Number)
-], AddStoreDto.prototype, "storeId", void 0);
-__decorate([
-    (0, class_validator_1.IsNumber)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", Number)
-], AddStoreDto.prototype, "regionId", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], AddStoreDto.prototype, "name", void 0);
 __decorate([
-    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsMongoId)(),
     (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", Number)
-], AddStoreDto.prototype, "companyId", void 0);
+    __metadata("design:type", String)
+], AddStoreDto.prototype, "company", void 0);
+__decorate([
+    (0, class_validator_1.IsMongoId)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], AddStoreDto.prototype, "region", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], AddStoreDto.prototype, "phone", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], AddStoreDto.prototype, "city", void 0);
 //# sourceMappingURL=add-store.dto.js.map

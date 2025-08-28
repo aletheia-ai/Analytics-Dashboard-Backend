@@ -45,11 +45,18 @@ export class AuthController {
   }
   @HttpCode(HttpStatus.CREATED)
   @Post('signup')
-  async signUp(@Body() signupDto: SignUpDto) {
+  async signUp(@Body() signupDto: SignUpDto, @Res() res: Response) {
     try {
-      const result = await this.authService.signUp({ ...signupDto, userType: UserRoleType.ADMIN });
+      const result = await this.authService.signUp({
+        ...signupDto,
+        isVerified: true,
+        isAuthorized: false,
+        userType: UserRoleType.ADMIN,
+      });
       if (result.success) {
-        return { message: 'Register Successfull' };
+        const { access_token } = result;
+        res.cookie('access_token', access_token, cookiesOptions);
+        res.send({ message: 'Register Successful' });
       }
       throw new ConflictException('User Already Exists');
     } catch (err) {
@@ -64,6 +71,7 @@ export class AuthController {
   @Get('profile')
   @HttpCode(HttpStatus.OK)
   getProfile(@Request() req) {
+    console.log(req.user);
     return req.user;
   }
 

@@ -16,18 +16,52 @@ exports.CompanyService = void 0;
 const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
+const jwt_1 = require("@nestjs/jwt");
 let CompanyService = class CompanyService {
     company;
-    constructor(company) {
+    user;
+    jwtService;
+    constructor(company, user, jwtService) {
         this.company = company;
+        this.user = user;
+        this.jwtService = jwtService;
     }
     async addNewCompany(companyData) {
         try {
+            const userExists = await this.user.exists({ _id: companyData.user });
+            if (!userExists) {
+                return { success: false, error: 404 };
+            }
             const company = new this.company(companyData);
-            await company.save();
-            return { success: true };
+            const newCompany = await company.save();
+            if (newCompany) {
+                const updatedUser = await this.user.findByIdAndUpdate(companyData.user, {
+                    $set: { isAuthorized: true },
+                });
+                if (updatedUser) {
+                    const payload = {
+                        sub: updatedUser.email,
+                        email: updatedUser.email,
+                        isAuthorized: true,
+                    };
+                    return {
+                        success: true,
+                        access_token: await this.jwtService.signAsync({
+                            ...payload,
+                            id: this.user._id,
+                        }),
+                    };
+                }
+                else {
+                    return { success: false, error: 500 };
+                }
+            }
+            else {
+                return { success: false, error: 500 };
+            }
         }
         catch (error) {
+            console.log(error);
             return { success: false, error: error.code };
         }
     }
@@ -36,6 +70,9 @@ exports.CompanyService = CompanyService;
 exports.CompanyService = CompanyService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)('Company')),
-    __metadata("design:paramtypes", [mongoose_2.Model])
+    __param(1, (0, mongoose_1.InjectModel)('User')),
+    __metadata("design:paramtypes", [mongoose_2.Model,
+        mongoose_2.Model,
+        jwt_1.JwtService])
 ], CompanyService);
 //# sourceMappingURL=company.service.js.map

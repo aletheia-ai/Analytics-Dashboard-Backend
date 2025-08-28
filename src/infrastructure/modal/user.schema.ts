@@ -1,5 +1,5 @@
-import { Schema } from 'mongoose';
-import { BusinessType, ServiceType, UserSpaceType, UserRoleType, User } from '@src/utils/types';
+import { Schema, model } from 'mongoose';
+import { UserRoleType, User } from '@src/utils/types';
 
 export const UserSchema = new Schema<User>({
   email: {
@@ -12,36 +12,18 @@ export const UserSchema = new Schema<User>({
     type: String,
     required: true,
   },
-  name: {
+  firstName: { type: String, required: true },
+  lastName: {
     type: String,
     required: true,
   },
-  companyName: {
-    type: String,
-    required: true,
-  },
-  bussinessType: {
-    type: String,
-    required: true,
-    enum: Object.values(BusinessType),
-  },
-  serviceType: {
-    type: String,
-    required: true,
-    enum: Object.values(ServiceType),
-  },
-  userSpaceType: {
-    type: String,
-    required: true,
-    enum: Object.values(UserSpaceType),
-  },
-  branchCount: {
-    type: Number,
-    required: true,
-  },
+  isAuthorized: { type: Boolean, required: true },
+  isVerified: { type: Boolean, required: true },
   userType: {
     type: String,
     required: true,
     enum: Object.values(UserRoleType),
   },
 });
+
+export const UserModel = model<User>('User', UserSchema, 'users');

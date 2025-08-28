@@ -13,12 +13,10 @@ export declare enum UserRoleType {
 export type User = {
     email: string;
     password: string;
-    name: string;
-    companyName: string;
-    bussinessType: BusinessType;
-    serviceType: ServiceType;
-    userSpaceType: UserSpaceType;
-    branchCount: number;
+    firstName: string;
+    lastName: string;
+    isVerified: boolean;
+    isAuthorized: boolean;
     userType: UserRoleType;
 };
 export { BusinessType, ServiceType, UserSpaceType, PersonStatsType };

@@ -48,6 +48,20 @@ let RegionService = RegionService_1 = class RegionService {
             { regionId: 10, name: 'sa-east-1' },
         ];
     }
+    async getAllRegions() {
+        try {
+            const regions = await this.regionModel.find().exec();
+            if (!regions || regions.length === 0) {
+                return { success: false, error: 404 };
+            }
+            else {
+                return { success: true, data: regions };
+            }
+        }
+        catch {
+            return { success: false, error: 500 };
+        }
+    }
 };
 exports.RegionService = RegionService;
 exports.RegionService = RegionService = RegionService_1 = __decorate([

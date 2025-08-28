@@ -1,11 +1,14 @@
 // store.schema.ts
-import { Schema, model } from 'mongoose';
-
-export const StoreSchema = new Schema({
-  regionId: { type: Number, required: true },
+import { Schema, model, Types } from 'mongoose';
+import type { Store } from '@src/utils/types/store-type';
+export const StoreSchema = new Schema<Store>({
+  region: { type: Types.ObjectId, ref: 'Region', required: true },
   name: { type: String, required: true },
-  storeId: { type: Number, required: true, unique: true },
-  companyId: { type: Number, required: true },
+  company: {
+    type: Types.ObjectId,
+    ref: 'Company',
+    required: true,
+  },
 });
 
-export const Store = model('Store', StoreSchema);
+export const StoreModal = model('Store', StoreSchema);

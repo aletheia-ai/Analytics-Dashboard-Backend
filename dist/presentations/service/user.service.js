@@ -28,6 +28,40 @@ let UserService = class UserService {
     getAllUsers() {
         return this.users;
     }
+    async authorizeUser(userId) {
+        try {
+            const userExists = await this.userModel.exists({ _id: userId });
+            if (!userExists) {
+                return { success: false, error: 404 };
+            }
+            if (userExists) {
+                const updatedUser = await this.userModel.findByIdAndUpdate(userId, {
+                    $set: { isAuthorized: true },
+                });
+                if (updatedUser) {
+                    const payload = {
+                        sub: updatedUser.email,
+                        email: updatedUser.email,
+                        isAuthorized: true,
+                        hasRegisteredBusiness: true,
+                    };
+                    return {
+                        success: true,
+                        payload,
+                    };
+                }
+                else {
+                    return { success: false, error: 500 };
+                }
+            }
+            else {
+                return { success: false, error: 500 };
+            }
+        }
+        catch (err) {
+            return { success: false, error: err.code || 500 };
+        }
+    }
     async findOne(username) {
         try {
             const data = await this.userModel.findOne({ email: username });

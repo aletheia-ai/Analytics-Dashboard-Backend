@@ -30,11 +30,38 @@ let StoreController = class StoreController {
             }
             else {
                 const { error } = result;
+                console.log(error);
                 if (error === 403) {
                     throw new common_1.ForbiddenException('Cannot create this store');
                 }
                 else if (error === 404) {
                     throw new common_1.NotFoundException('Company Not Registered');
+                }
+                else {
+                    throw new common_1.InternalServerErrorException('Something went wrong');
+                }
+            }
+        }
+        catch (err) {
+            if (err instanceof common_1.HttpException) {
+                throw err;
+            }
+            throw new common_1.InternalServerErrorException('Something went wrong');
+        }
+    }
+    async getAllStores(getStoresDto) {
+        try {
+            const result = await this.storeService.getAllStores(getStoresDto.company);
+            if (result.success) {
+                return { message: result.data };
+            }
+            else {
+                const { error, errorFrom } = result;
+                if (error === 403) {
+                    throw new common_1.ForbiddenException('Cannot Fetch stores');
+                }
+                else if (error === 404) {
+                    throw new common_1.NotFoundException(`${errorFrom === 'Company' ? 'Company' : 'Store(s)'} 'Not Registered`);
                 }
                 else {
                     throw new common_1.InternalServerErrorException('Something went wrong');
@@ -60,6 +87,15 @@ __decorate([
     __metadata("design:paramtypes", [store_1.AddStoreDto, Object]),
     __metadata("design:returntype", Promise)
 ], StoreController.prototype, "addNewStore", null);
+__decorate([
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    (0, common_1.Get)('all/:company'),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    __param(0, (0, common_1.Param)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [store_1.GetStoresDto]),
+    __metadata("design:returntype", Promise)
+], StoreController.prototype, "getAllStores", null);
 exports.StoreController = StoreController = __decorate([
     (0, common_1.Controller)('store'),
     __metadata("design:paramtypes", [store_service_1.StoreService])

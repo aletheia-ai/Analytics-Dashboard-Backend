@@ -4,7 +4,7 @@ exports.StoreModal = exports.StoreSchema = void 0;
 const mongoose_1 = require("mongoose");
 exports.StoreSchema = new mongoose_1.Schema({
     region: { type: mongoose_1.Types.ObjectId, ref: 'Region', required: true },
-    name: { type: String, required: true },
+    name: { type: String, required: true, unique: true, index: true },
     company: {
         type: mongoose_1.Types.ObjectId,
         ref: 'Company',

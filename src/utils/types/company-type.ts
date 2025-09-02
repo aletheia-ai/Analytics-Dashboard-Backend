@@ -9,4 +9,5 @@ export interface Company {
   userSpaceType: UserSpaceType;
   businessType: BusinessType;
   user: User | string;
+  _id: string;
 }

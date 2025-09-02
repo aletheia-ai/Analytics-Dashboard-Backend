@@ -21,6 +21,7 @@ exports.UserSchema = new mongoose_1.Schema({
     },
     isAuthorized: { type: Boolean, required: true },
     isVerified: { type: Boolean, required: true },
+    hasRegisteredBusiness: { type: Boolean, required: true },
     userType: {
         type: String,
         required: true,

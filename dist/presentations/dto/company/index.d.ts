@@ -1,2 +1,3 @@
 import { AddCompanyDto } from './add-company';
-export { AddCompanyDto };
+import { GetCompanyByUserDto } from './get-company-by-owner';
+export { AddCompanyDto, GetCompanyByUserDto };

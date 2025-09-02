@@ -19,6 +19,7 @@ export const UserSchema = new Schema<User>({
   },
   isAuthorized: { type: Boolean, required: true },
   isVerified: { type: Boolean, required: true },
+  hasRegisteredBusiness: { type: Boolean, required: true },
   userType: {
     type: String,
     required: true,

@@ -13,4 +13,12 @@ export declare class StoreService {
         success: false;
         error: Number;
     }>;
+    getAllStores(companyId: string): Promise<{
+        success: false;
+        error: number;
+        errorFrom: 'Company' | 'Store';
+    } | {
+        success: true;
+        data: Store[];
+    }>;
 }

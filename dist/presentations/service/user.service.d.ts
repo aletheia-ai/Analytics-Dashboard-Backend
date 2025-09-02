@@ -5,6 +5,18 @@ export declare class UserService {
     constructor(userModel: Model<User>);
     private readonly users;
     getAllUsers(): User[];
+    authorizeUser(userId: string): Promise<{
+        success: true;
+        payload: {
+            sub: string;
+            email: string;
+            isAuthorized: boolean;
+            hasRegisteredBusiness: boolean;
+        };
+    } | {
+        success: false;
+        error: number;
+    }>;
     findOne(username: string): Promise<User | undefined>;
     addUser(user: User): Promise<{
         success: true;

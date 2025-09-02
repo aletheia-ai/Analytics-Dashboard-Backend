@@ -7,7 +7,14 @@ export declare class CompanyService {
     private user;
     private jwtService;
     constructor(company: Model<Company>, user: Model<User>, jwtService: JwtService);
-    addNewCompany(companyData: Company): Promise<{
+    getCompanyByOwner(userId: string): Promise<{
+        success: true;
+        company: Company;
+    } | {
+        success: false;
+        error: number;
+    }>;
+    addNewCompany(companyData: Omit<Company, '_id'>): Promise<{
         success: true;
         access_token: string;
     } | {

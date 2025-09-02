@@ -37,8 +37,30 @@ export class StoreService {
         return { success: false, error: 404 };
       }
     } catch (error) {
-      console.log(error);
       return { success: false, error: error.code || 500 };
+    }
+  }
+
+  async getAllStores(
+    companyId: string
+  ): Promise<
+    | { success: false; error: number; errorFrom: 'Company' | 'Store' }
+    | { success: true; data: Store[] }
+  > {
+    try {
+      const companyData = await this.company.findById(companyId);
+      if (!companyData) {
+        return { success: false, error: 404, errorFrom: 'Company' };
+      } else {
+        const storeData = await this.store.find({ company: companyId });
+        if (!storeData) {
+          return { success: false, error: 404, errorFrom: 'Store' };
+        } else {
+          return { success: true, data: storeData };
+        }
+      }
+    } catch (error) {
+      return { success: false, error: error.code || 500, errorFrom: 'Store' };
     }
   }
 }

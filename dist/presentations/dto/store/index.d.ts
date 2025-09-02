@@ -1,2 +1,3 @@
 import { AddStoreDto } from './add-store.dto';
-export { AddStoreDto };
+import { GetStoresDto } from './get-all-stores-dto';
+export { AddStoreDto, GetStoresDto };

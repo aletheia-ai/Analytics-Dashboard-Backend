@@ -17,10 +17,34 @@ const common_1 = require("@nestjs/common");
 const company_service_1 = require("../service/company.service");
 const company_1 = require("../dto/company");
 const cookie_options_1 = require("../../utils/constants/cookie-options");
+const auth_guard_1 = require("../../utils/guards/auth.guard.");
 let CompanyController = class CompanyController {
     companyService;
     constructor(companyService) {
         this.companyService = companyService;
+    }
+    async getCompanyData(getCompanyDto) {
+        try {
+            const result = await this.companyService.getCompanyByOwner(getCompanyDto.user);
+            if (result.success) {
+                return { message: result.company };
+            }
+            else {
+                const { error } = result;
+                if (error === 404) {
+                    throw new common_1.NotFoundException('User Does not exist');
+                }
+                else {
+                    throw new common_1.InternalServerErrorException('Something Went Wrong');
+                }
+            }
+        }
+        catch (err) {
+            if (err instanceof common_1.HttpException) {
+                throw err;
+            }
+            throw new common_1.InternalServerErrorException('Something went wrong');
+        }
     }
     async addNewCompany(addCompanyDto, res) {
         try {
@@ -52,6 +76,16 @@ let CompanyController = class CompanyController {
 };
 exports.CompanyController = CompanyController;
 __decorate([
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    (0, common_1.Get)('company-by-user/:user'),
+    __param(0, (0, common_1.Param)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [company_1.GetCompanyByUserDto]),
+    __metadata("design:returntype", Promise)
+], CompanyController.prototype, "getCompanyData", null);
+__decorate([
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
     (0, common_1.HttpCode)(common_1.HttpStatus.CREATED),
     (0, common_1.Post)('add'),
     __param(0, (0, common_1.Body)()),

@@ -12,8 +12,23 @@ export class CompanyService {
     private jwtService: JwtService
   ) {}
 
+  async getCompanyByOwner(
+    userId: string
+  ): Promise<{ success: true; company: Company } | { success: false; error: number }> {
+    try {
+      const company = await this.company.findOne({ user: userId });
+      if (company) {
+        return { success: true, company: company };
+      } else {
+        return { success: false, error: 404 };
+      }
+    } catch (err) {
+      return { success: false, error: err.code || 500 };
+    }
+  }
+
   async addNewCompany(
-    companyData: Company
+    companyData: Omit<Company, '_id'>
   ): Promise<{ success: true; access_token: string } | { success: false; error: Number }> {
     try {
       const userExists = await this.user.exists({ _id: companyData.user });
@@ -26,23 +41,23 @@ export class CompanyService {
       const newCompany = await company.save();
       if (newCompany) {
         const updatedUser = await this.user.findByIdAndUpdate(companyData.user, {
-          $set: { isAuthorized: true },
+          $set: { hasRegisteredBusiness: true },
         });
         if (updatedUser) {
           const payload = {
             sub: updatedUser.email,
             email: updatedUser.email,
-            isAuthorized: true,
+            isAuthorized: false,
+            hasRegisteredBusiness: true,
+            id: updatedUser._id,
           };
 
           return {
             success: true,
             access_token: await this.jwtService.signAsync({
               ...payload,
-              id: (this.user as any)._id,
             }),
           };
-          // return { success: true };
         } else {
           return { success: false, error: 500 };
         }
@@ -50,7 +65,6 @@ export class CompanyService {
         return { success: false, error: 500 };
       }
     } catch (error) {
-      console.log(error);
       return { success: false, error: error.code };
     }
   }

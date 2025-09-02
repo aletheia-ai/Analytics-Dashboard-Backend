@@ -15,7 +15,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@src/utils/guards/auth.guard.';
 import { AuthService } from '../service/auth.service';
-import { SignInDto, SignUpDto } from '../dto/auth';
+import { AuthorizeUserDto, SignInDto, SignUpDto } from '../dto/auth';
 import { Response } from 'express';
 import { cookiesOptions } from '@utils/constants/cookie-options';
 import { UserRoleType } from '@src/utils/types';
@@ -23,6 +23,29 @@ import { UserRoleType } from '@src/utils/types';
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
+
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @Post('authorize')
+  async authorizeUser(@Body() authorizeUserDto: AuthorizeUserDto, @Res() res: Response) {
+    try {
+      const result = await this.authService.authorizeUser(authorizeUserDto.userId);
+      if (result.success) {
+        const { access_token } = result;
+        res.cookie('access_token', access_token, cookiesOptions);
+        res.send({ message: 'Authorization Successful' });
+      } else {
+        const { error } = result;
+        throw new InternalServerErrorException(error);
+      }
+    } catch (err) {
+      if (err instanceof HttpException) {
+        throw err;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
   @HttpCode(HttpStatus.OK)
   @Post('login')
   async signIn(@Body() signInDto: SignInDto, @Res() res: Response) {
@@ -52,6 +75,7 @@ export class AuthController {
         isVerified: true,
         isAuthorized: false,
         userType: UserRoleType.ADMIN,
+        hasRegisteredBusiness: false,
       });
       if (result.success) {
         const { access_token } = result;

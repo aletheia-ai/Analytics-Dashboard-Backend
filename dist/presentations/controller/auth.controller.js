@@ -24,6 +24,26 @@ let AuthController = class AuthController {
     constructor(authService) {
         this.authService = authService;
     }
+    async authorizeUser(authorizeUserDto, res) {
+        try {
+            const result = await this.authService.authorizeUser(authorizeUserDto.userId);
+            if (result.success) {
+                const { access_token } = result;
+                res.cookie('access_token', access_token, cookie_options_1.cookiesOptions);
+                res.send({ message: 'Authorization Successful' });
+            }
+            else {
+                const { error } = result;
+                throw new common_1.InternalServerErrorException(error);
+            }
+        }
+        catch (err) {
+            if (err instanceof common_1.HttpException) {
+                throw err;
+            }
+            throw new common_1.InternalServerErrorException();
+        }
+    }
     async signIn(signInDto, res) {
         try {
             const result = await this.authService.signIn(signInDto.email, signInDto.password);
@@ -51,6 +71,7 @@ let AuthController = class AuthController {
                 isVerified: true,
                 isAuthorized: false,
                 userType: types_1.UserRoleType.ADMIN,
+                hasRegisteredBusiness: false,
             });
             if (result.success) {
                 const { access_token } = result;
@@ -82,6 +103,16 @@ let AuthController = class AuthController {
     }
 };
 exports.AuthController = AuthController;
+__decorate([
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    (0, common_1.Post)('authorize'),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [auth_1.AuthorizeUserDto, Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "authorizeUser", null);
 __decorate([
     (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     (0, common_1.Post)('login'),

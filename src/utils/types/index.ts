@@ -19,6 +19,7 @@ export type User = {
   lastName: string;
   isVerified: boolean;
   isAuthorized: boolean;
+  hasRegisteredBusiness: boolean;
   userType: UserRoleType;
 };
 

@@ -1,3 +1,4 @@
 import { SignInDto } from './signin-dto';
 import { SignUpDto } from './signup-dto';
-export { SignInDto, SignUpDto };
+import { AuthorizeUserDto } from './authorize-user-dto';
+export { SignInDto, SignUpDto, AuthorizeUserDto };

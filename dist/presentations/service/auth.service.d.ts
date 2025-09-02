@@ -5,9 +5,16 @@ export declare class AuthService {
     private usersService;
     private jwtService;
     constructor(usersService: UserService, jwtService: JwtService);
+    authorizeUser(userId: string): Promise<{
+        success: true;
+        access_token: string;
+    } | {
+        success: false;
+        error: number;
+    }>;
     signUp(user: User): Promise<{
         success: true;
-        data: User[];
+        access_token: string;
     } | {
         success: false;
     }>;

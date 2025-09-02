@@ -22,11 +22,35 @@ let AuthService = class AuthService {
         this.usersService = usersService;
         this.jwtService = jwtService;
     }
+    async authorizeUser(userId) {
+        try {
+            const result = await this.usersService.authorizeUser(userId);
+            if (result.success) {
+                return { success: true, access_token: await this.jwtService.signAsync(result.payload) };
+            }
+            else {
+                return { success: false, error: result.error };
+            }
+        }
+        catch (err) {
+            return { success: false, error: err.code || 500 };
+        }
+    }
     async signUp(user) {
         try {
-            const { success } = await this.usersService.addUser(user);
-            if (success) {
-                return { success: true, data: this.usersService.getAllUsers() };
+            const result = await this.usersService.addUser(user);
+            if (result.success) {
+                const payload = {
+                    sub: user.email,
+                    email: user.email,
+                    isAuthorized: false,
+                    hasRegisteredBusiness: false,
+                    id: result.data,
+                };
+                return {
+                    success: true,
+                    access_token: await this.jwtService.signAsync(payload),
+                };
             }
             else {
                 return { success: false };
@@ -44,10 +68,15 @@ let AuthService = class AuthService {
                 if (!isPasswordValid) {
                     return { success: false, error: types_1.SignInExceptions.INVALID_PASSWORD };
                 }
-                const payload = { sub: user.email, email: user.email };
+                const payload = {
+                    sub: user.email,
+                    email: user.email,
+                    isAuthorized: user.isAuthorized,
+                    hasRegisteredBusiness: user.hasRegisteredBusiness,
+                };
                 return {
                     success: true,
-                    access_token: await this.jwtService.signAsync(payload),
+                    access_token: await this.jwtService.signAsync({ ...payload, id: user._id }),
                 };
             }
             return { success: false, error: types_1.SignInExceptions.NO_USER };

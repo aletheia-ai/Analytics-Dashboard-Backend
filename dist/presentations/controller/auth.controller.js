@@ -18,10 +18,31 @@ const auth_guard_1 = require("../../utils/guards/auth.guard.");
 const auth_service_1 = require("../service/auth.service");
 const auth_1 = require("../dto/auth");
 const cookie_options_1 = require("../../utils/constants/cookie-options");
+const types_1 = require("../../utils/types");
 let AuthController = class AuthController {
     authService;
     constructor(authService) {
         this.authService = authService;
+    }
+    async authorizeUser(authorizeUserDto, res) {
+        try {
+            const result = await this.authService.authorizeUser(authorizeUserDto.userId);
+            if (result.success) {
+                const { access_token } = result;
+                res.cookie('access_token', access_token, cookie_options_1.cookiesOptions);
+                res.send({ message: 'Authorization Successful' });
+            }
+            else {
+                const { error } = result;
+                throw new common_1.InternalServerErrorException(error);
+            }
+        }
+        catch (err) {
+            if (err instanceof common_1.HttpException) {
+                throw err;
+            }
+            throw new common_1.InternalServerErrorException();
+        }
     }
     async signIn(signInDto, res) {
         try {
@@ -43,11 +64,19 @@ let AuthController = class AuthController {
             throw new common_1.InternalServerErrorException();
         }
     }
-    async signUp(signupDto) {
+    async signUp(signupDto, res) {
         try {
-            const result = await this.authService.signUp(signupDto);
+            const result = await this.authService.signUp({
+                ...signupDto,
+                isVerified: true,
+                isAuthorized: false,
+                userType: types_1.UserRoleType.ADMIN,
+                hasRegisteredBusiness: false,
+            });
             if (result.success) {
-                return { message: 'Register Successfull' };
+                const { access_token } = result;
+                res.cookie('access_token', access_token, cookie_options_1.cookiesOptions);
+                res.send({ message: 'Register Successful' });
             }
             throw new common_1.ConflictException('User Already Exists');
         }
@@ -59,6 +88,7 @@ let AuthController = class AuthController {
         }
     }
     getProfile(req) {
+        console.log(req.user);
         return req.user;
     }
     logout(res) {
@@ -74,6 +104,16 @@ let AuthController = class AuthController {
 };
 exports.AuthController = AuthController;
 __decorate([
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    (0, common_1.Post)('authorize'),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [auth_1.AuthorizeUserDto, Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "authorizeUser", null);
+__decorate([
     (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     (0, common_1.Post)('login'),
     __param(0, (0, common_1.Body)()),
@@ -86,8 +126,9 @@ __decorate([
     (0, common_1.HttpCode)(common_1.HttpStatus.CREATED),
     (0, common_1.Post)('signup'),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [auth_1.SignUpDto]),
+    __metadata("design:paramtypes", [auth_1.SignUpDto, Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "signUp", null);
 __decorate([

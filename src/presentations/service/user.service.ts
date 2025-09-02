@@ -1,6 +1,8 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model, Types } from 'mongoose';
 
-import { BusinessType, ServiceType, UserSpaceType, type User } from '@utils/types';
+import { BusinessType, ServiceType, UserRoleType, UserSpaceType, type User } from '@utils/types';
 import * as dotenv from 'dotenv';
 import * as bcrypt from 'bcryptjs';
 
@@ -8,35 +10,79 @@ dotenv.config();
 
 @Injectable()
 export class UserService {
-  private readonly users: User[] = [
-    {
-      email: 'john@gmail.com',
-      password: '$2b$10$zVQrnKY0.3/EINis07c88epv4wqbSowlJO3ow/ciiiZsqxjQg1iwG',
-      name: 'John Doe',
-      companyName: 'Aletheia',
-      bussinessType: BusinessType.RETAIL,
-      serviceType: ServiceType.COUNTING,
-      userSpaceType: UserSpaceType.SINGLE_PURPOSE,
-      branchCount: 2,
-    },
-  ];
+  constructor(@InjectModel('User') private userModel: Model<User>) {}
+  private readonly users: User[] = [];
   getAllUsers(): User[] {
     return this.users;
   }
-  async findOne(email: string): Promise<User | undefined> {
-    return this.users.find((user) => user.email === email);
-  }
-  async addUser(user: User): Promise<{ success: boolean }> {
-    const result = this.users.find((item) => item.email === user.email);
+
+  async authorizeUser(userId: string): Promise<
+    | {
+        success: true;
+        payload: {
+          sub: string;
+          email: string;
+          isAuthorized: boolean;
+          hasRegisteredBusiness: boolean;
+        };
+      }
+    | { success: false; error: number }
+  > {
     try {
-      if (result) {
-        return { success: false };
+      const userExists = await this.userModel.exists({ _id: userId });
+      if (!userExists) {
+        return { success: false, error: 404 };
+      }
+
+      if (userExists) {
+        const updatedUser = await this.userModel.findByIdAndUpdate(userId, {
+          $set: { isAuthorized: true },
+        });
+        if (updatedUser) {
+          const payload = {
+            sub: updatedUser.email,
+            email: updatedUser.email,
+            isAuthorized: true,
+            hasRegisteredBusiness: true,
+          };
+
+          return {
+            success: true,
+            payload,
+          };
+        } else {
+          return { success: false, error: 500 };
+        }
       } else {
-        const { password } = user;
-        const saltRounds = Number(process.env.SALT_ROUNDS) || 10;
-        const hashedPassword = await bcrypt.hash(password, saltRounds);
-        this.users.push({ ...user, password: hashedPassword });
-        return { success: true };
+        return { success: false, error: 500 };
+      }
+    } catch (err) {
+      return { success: false, error: err.code || 500 };
+    }
+  }
+  async findOne(username: string): Promise<User | undefined> {
+    try {
+      const data = await this.userModel.findOne({ email: username });
+      if (data) {
+        return data;
+      }
+      return undefined;
+    } catch {
+      return undefined;
+    }
+  }
+  async addUser(user: User): Promise<{ success: true; data: Types.ObjectId } | { success: false }> {
+    try {
+      const { password, ...rest } = user;
+      const saltRounds = Number(process.env.SALT_ROUNDS) || 10;
+      const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+      const users = new this.userModel({ ...rest, password: hashedPassword });
+      const data = await users.save();
+      if (data) {
+        return { success: true, data: data._id };
+      } else {
+        return { success: false };
       }
     } catch {
       throw new InternalServerErrorException('Something Went Wrong');

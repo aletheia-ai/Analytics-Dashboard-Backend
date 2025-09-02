@@ -1,0 +1,1 @@
+{"version":3,"file":"person-counting.schema.js","sourceRoot":"","sources":["../../../src/infrastructure/modal/person-counting.schema.ts"],"names":[],"mappings":";;;AAAA,uCAAkC;AAErB,QAAA,oBAAoB,GAAG,IAAI,iBAAM,CAAC;IAC7C,QAAQ,EAAE,MAAM;IAChB,IAAI,EAAE,MAAM;IACZ,GAAG,EAAE,MAAM;IACX,MAAM,EAAE,MAAM;IACd,SAAS,EAAE,MAAM;CAClB,CAAC,CAAC"}

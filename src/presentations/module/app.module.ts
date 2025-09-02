@@ -7,6 +7,10 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 import { UserModule } from './user.module';
 import { AuthModule } from './auth.module';
+import { RegionModule } from './region.module';
+import { PersonCountingModule } from './person-counting.module';
+import { StoreModule } from './store.module';
+import { CompanyModule } from './company.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -18,7 +22,11 @@ import { AuthModule } from './auth.module';
       inject: [ConfigService],
     }),
     AuthModule,
-    // UserModule,
+    UserModule,
+    PersonCountingModule,
+    RegionModule,
+    StoreModule,
+    CompanyModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -4,11 +4,6 @@ exports.CompanyModal = exports.CompanySchema = void 0;
 const mongoose_1 = require("mongoose");
 const types_1 = require("../../utils/types");
 exports.CompanySchema = new mongoose_1.Schema({
-    userSpaceType: {
-        type: String,
-        required: true,
-        enum: Object.values(types_1.UserSpaceType),
-    },
     serviceType: {
         type: String,
         required: true,
@@ -25,6 +20,34 @@ exports.CompanySchema = new mongoose_1.Schema({
         ref: 'User',
         required: true,
         unique: true,
+    },
+    registrationNumber: {
+        type: String,
+        required: true,
+    },
+    email: {
+        type: String,
+        requred: true,
+    },
+    country: {
+        type: String,
+        requred: true,
+    },
+    state: {
+        type: String,
+        requred: true,
+    },
+    city: {
+        type: String,
+        requred: true,
+    },
+    address: {
+        type: String,
+        requred: true,
+    },
+    phone: {
+        type: String,
+        requred: true,
     },
 });
 exports.CompanyModal = (0, mongoose_1.model)('Company', exports.CompanySchema, 'companies');

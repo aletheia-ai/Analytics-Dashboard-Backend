@@ -36,6 +36,20 @@ let AuthService = class AuthService {
             return { success: false, error: err.code || 500 };
         }
     }
+    async verifyUser(userId) {
+        try {
+            const result = await this.usersService.verifyUser(userId);
+            if (result.success) {
+                return { success: true, access_token: await this.jwtService.signAsync(result.payload) };
+            }
+            else {
+                return { success: false, error: result.error };
+            }
+        }
+        catch (err) {
+            return { success: false, error: err.code || 500 };
+        }
+    }
     async signUp(user) {
         try {
             const result = await this.usersService.addUser(user);
@@ -46,6 +60,7 @@ let AuthService = class AuthService {
                     isAuthorized: false,
                     hasRegisteredBusiness: false,
                     id: result.data,
+                    isVerified: false,
                 };
                 return {
                     success: true,
@@ -73,6 +88,7 @@ let AuthService = class AuthService {
                     email: user.email,
                     isAuthorized: user.isAuthorized,
                     hasRegisteredBusiness: user.hasRegisteredBusiness,
+                    isVerified: user.isVerified,
                 };
                 return {
                     success: true,

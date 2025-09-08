@@ -2,7 +2,7 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 
-import { BusinessType, ServiceType, UserRoleType, UserSpaceType, type User } from '@utils/types';
+import { type User } from '@utils/types';
 import * as dotenv from 'dotenv';
 import * as bcrypt from 'bcryptjs';
 
@@ -24,6 +24,7 @@ export class UserService {
           email: string;
           isAuthorized: boolean;
           hasRegisteredBusiness: boolean;
+          isVerified: boolean;
         };
       }
     | { success: false; error: number }
@@ -44,8 +45,56 @@ export class UserService {
             email: updatedUser.email,
             isAuthorized: true,
             hasRegisteredBusiness: true,
+            id: updatedUser._id,
+            isVerified: false,
           };
+          return {
+            success: true,
+            payload,
+          };
+        } else {
+          return { success: false, error: 500 };
+        }
+      } else {
+        return { success: false, error: 500 };
+      }
+    } catch (err) {
+      return { success: false, error: err.code || 500 };
+    }
+  }
 
+  async verifyUser(userId: string): Promise<
+    | {
+        success: true;
+        payload: {
+          sub: string;
+          email: string;
+          isAuthorized: boolean;
+          hasRegisteredBusiness: boolean;
+          isVerified: boolean;
+        };
+      }
+    | { success: false; error: number }
+  > {
+    try {
+      const userExists = await this.userModel.exists({ _id: userId });
+      if (!userExists) {
+        return { success: false, error: 404 };
+      }
+
+      if (userExists) {
+        const updatedUser = await this.userModel.findByIdAndUpdate(userId, {
+          $set: { isVerified: true },
+        });
+        if (updatedUser) {
+          const payload = {
+            sub: updatedUser.email,
+            email: updatedUser.email,
+            isAuthorized: true,
+            hasRegisteredBusiness: true,
+            id: updatedUser._id,
+            isVerified: true,
+          };
           return {
             success: true,
             payload,

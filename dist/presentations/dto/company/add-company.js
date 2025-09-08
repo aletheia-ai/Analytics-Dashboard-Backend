@@ -14,10 +14,16 @@ const types_1 = require("../../../utils/types");
 const class_validator_1 = require("class-validator");
 class AddCompanyDto {
     name;
-    userSpaceType;
     serviceType;
     businessType;
     user;
+    registrationNumber;
+    email;
+    country;
+    state;
+    city;
+    address;
+    phone;
 }
 exports.AddCompanyDto = AddCompanyDto;
 __decorate([
@@ -25,11 +31,6 @@ __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], AddCompanyDto.prototype, "name", void 0);
-__decorate([
-    (0, class_validator_1.IsEnum)(types_1.UserSpaceType),
-    (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", String)
-], AddCompanyDto.prototype, "userSpaceType", void 0);
 __decorate([
     (0, class_validator_1.IsEnum)(types_1.ServiceType),
     (0, class_validator_1.IsNotEmpty)(),
@@ -45,4 +46,39 @@ __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], AddCompanyDto.prototype, "user", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], AddCompanyDto.prototype, "registrationNumber", void 0);
+__decorate([
+    (0, class_validator_1.IsEmail)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], AddCompanyDto.prototype, "email", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], AddCompanyDto.prototype, "country", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], AddCompanyDto.prototype, "state", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], AddCompanyDto.prototype, "city", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], AddCompanyDto.prototype, "address", void 0);
+__decorate([
+    (0, class_validator_1.IsPhoneNumber)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], AddCompanyDto.prototype, "phone", void 0);
 //# sourceMappingURL=add-company.js.map

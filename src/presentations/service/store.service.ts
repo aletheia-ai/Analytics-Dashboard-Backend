@@ -25,9 +25,14 @@ export class StoreService {
         if (companyData.user.toString() === userId.toString()) {
           const regionData = await this.region.findById(region).exec();
           if (regionData) {
-            const store = new this.store({ ...storeData });
-            await store.save();
-            return { success: true };
+            const existingStore = await this.store.findOne({ name: storeData.name });
+            if (!existingStore) {
+              const store = new this.store({ ...storeData });
+              await store.save();
+              return { success: true };
+            } else {
+              return { success: false, error: 409 };
+            }
           } else {
             return { success: false, error: 404 };
           }

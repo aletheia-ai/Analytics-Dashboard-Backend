@@ -6,4 +6,7 @@ export interface Store {
     company: Company | string;
     phone: string;
     city: string;
+    country: string;
+    address: string;
+    state: string;
 }

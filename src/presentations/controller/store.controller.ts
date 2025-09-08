@@ -12,6 +12,7 @@ import {
   Request,
   UseGuards,
   Param,
+  ConflictException,
 } from '@nestjs/common';
 
 import { StoreService } from '../service/store.service';
@@ -32,12 +33,12 @@ export class StoreController {
         return { message: 'Store Created' };
       } else {
         const { error } = result;
-        console.log(error);
-
         if (error === 403) {
           throw new ForbiddenException('Cannot create this store');
         } else if (error === 404) {
           throw new NotFoundException('Company Not Registered');
+        } else if (error === 409) {
+          throw new ConflictException('Store With this Name Already Exists');
         } else {
           throw new InternalServerErrorException('Something went wrong');
         }

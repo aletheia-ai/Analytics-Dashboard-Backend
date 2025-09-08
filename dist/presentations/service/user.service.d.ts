@@ -12,6 +12,20 @@ export declare class UserService {
             email: string;
             isAuthorized: boolean;
             hasRegisteredBusiness: boolean;
+            isVerified: boolean;
+        };
+    } | {
+        success: false;
+        error: number;
+    }>;
+    verifyUser(userId: string): Promise<{
+        success: true;
+        payload: {
+            sub: string;
+            email: string;
+            isAuthorized: boolean;
+            hasRegisteredBusiness: boolean;
+            isVerified: boolean;
         };
     } | {
         success: false;

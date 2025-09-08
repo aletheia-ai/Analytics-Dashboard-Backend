@@ -3,5 +3,8 @@ export declare class AddStoreDto {
     company: string;
     region: string;
     phone: string;
+    country: string;
+    state: string;
+    address: string;
     city: string;
 }

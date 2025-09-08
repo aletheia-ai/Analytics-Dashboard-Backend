@@ -16,6 +16,9 @@ class AddStoreDto {
     company;
     region;
     phone;
+    country;
+    state;
+    address;
     city;
 }
 exports.AddStoreDto = AddStoreDto;
@@ -35,10 +38,25 @@ __decorate([
     __metadata("design:type", String)
 ], AddStoreDto.prototype, "region", void 0);
 __decorate([
-    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsPhoneNumber)(),
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], AddStoreDto.prototype, "phone", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], AddStoreDto.prototype, "country", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], AddStoreDto.prototype, "state", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], AddStoreDto.prototype, "address", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),

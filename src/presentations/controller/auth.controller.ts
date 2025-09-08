@@ -46,6 +46,28 @@ export class AuthController {
     }
   }
 
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @Post('verify')
+  async verifyUser(@Body() authorizeUserDto: AuthorizeUserDto, @Res() res: Response) {
+    try {
+      const result = await this.authService.verifyUser(authorizeUserDto.userId);
+      if (result.success) {
+        const { access_token } = result;
+        res.cookie('access_token', access_token, cookiesOptions);
+        res.send({ message: 'Verification Successful' });
+      } else {
+        const { error } = result;
+        throw new InternalServerErrorException(error);
+      }
+    } catch (err) {
+      if (err instanceof HttpException) {
+        throw err;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
   @HttpCode(HttpStatus.OK)
   @Post('login')
   async signIn(@Body() signInDto: SignInDto, @Res() res: Response) {
@@ -72,7 +94,7 @@ export class AuthController {
     try {
       const result = await this.authService.signUp({
         ...signupDto,
-        isVerified: true,
+        isVerified: false,
         isAuthorized: false,
         userType: UserRoleType.ADMIN,
         hasRegisteredBusiness: false,
@@ -95,7 +117,6 @@ export class AuthController {
   @Get('profile')
   @HttpCode(HttpStatus.OK)
   getProfile(@Request() req) {
-    console.log(req.user);
     return req.user;
   }
 

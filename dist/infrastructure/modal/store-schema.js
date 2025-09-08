@@ -10,6 +10,14 @@ exports.StoreSchema = new mongoose_1.Schema({
         ref: 'Company',
         required: true,
     },
+    city: { type: String, required: true },
+    country: {
+        type: String,
+        required: true,
+    },
+    state: { type: String, required: true },
+    address: { type: String, required: true },
+    phone: { type: String, required: true },
 });
 exports.StoreModal = (0, mongoose_1.model)('Store', exports.StoreSchema);
 //# sourceMappingURL=store-schema.js.map

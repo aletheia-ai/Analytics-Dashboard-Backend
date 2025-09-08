@@ -30,12 +30,14 @@ let StoreController = class StoreController {
             }
             else {
                 const { error } = result;
-                console.log(error);
                 if (error === 403) {
                     throw new common_1.ForbiddenException('Cannot create this store');
                 }
                 else if (error === 404) {
                     throw new common_1.NotFoundException('Company Not Registered');
+                }
+                else if (error === 409) {
+                    throw new common_1.ConflictException('Store With this Name Already Exists');
                 }
                 else {
                     throw new common_1.InternalServerErrorException('Something went wrong');

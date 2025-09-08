@@ -12,6 +12,13 @@ export declare class AuthService {
         success: false;
         error: number;
     }>;
+    verifyUser(userId: string): Promise<{
+        success: true;
+        access_token: string;
+    } | {
+        success: false;
+        error: number;
+    }>;
     signUp(user: User): Promise<{
         success: true;
         access_token: string;

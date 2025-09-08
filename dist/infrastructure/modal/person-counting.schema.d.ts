@@ -1,24 +1,51 @@
-import { Schema } from 'mongoose';
+import { Schema, Types } from 'mongoose';
 export declare const PersonCountingSchema: Schema<any, import("mongoose").Model<any, any, any, any, any, any>, {}, {}, {}, {}, import("mongoose").DefaultSchemaOptions, {
-    age?: number | null | undefined;
-    footFall?: number | null | undefined;
-    Exit?: number | null | undefined;
-    gender?: string | null | undefined;
-    occupancy?: number | null | undefined;
+    store: {
+        prototype?: Types.ObjectId | null | undefined;
+        cacheHexString?: unknown;
+        generate?: {} | null | undefined;
+        createFromTime?: {} | null | undefined;
+        createFromHexString?: {} | null | undefined;
+        createFromBase64?: {} | null | undefined;
+        isValid?: {} | null | undefined;
+    };
+    enterCount: number;
+    exitCount: number;
+    maskCount: number;
+    unMaskCount: number;
+    maleCount: number;
 }, import("mongoose").Document<unknown, {}, import("mongoose").FlatRecord<{
-    age?: number | null | undefined;
-    footFall?: number | null | undefined;
-    Exit?: number | null | undefined;
-    gender?: string | null | undefined;
-    occupancy?: number | null | undefined;
+    store: {
+        prototype?: Types.ObjectId | null | undefined;
+        cacheHexString?: unknown;
+        generate?: {} | null | undefined;
+        createFromTime?: {} | null | undefined;
+        createFromHexString?: {} | null | undefined;
+        createFromBase64?: {} | null | undefined;
+        isValid?: {} | null | undefined;
+    };
+    enterCount: number;
+    exitCount: number;
+    maskCount: number;
+    unMaskCount: number;
+    maleCount: number;
 }>, {}, import("mongoose").ResolveSchemaOptions<import("mongoose").DefaultSchemaOptions>> & import("mongoose").FlatRecord<{
-    age?: number | null | undefined;
-    footFall?: number | null | undefined;
-    Exit?: number | null | undefined;
-    gender?: string | null | undefined;
-    occupancy?: number | null | undefined;
+    store: {
+        prototype?: Types.ObjectId | null | undefined;
+        cacheHexString?: unknown;
+        generate?: {} | null | undefined;
+        createFromTime?: {} | null | undefined;
+        createFromHexString?: {} | null | undefined;
+        createFromBase64?: {} | null | undefined;
+        isValid?: {} | null | undefined;
+    };
+    enterCount: number;
+    exitCount: number;
+    maskCount: number;
+    unMaskCount: number;
+    maleCount: number;
 }> & {
-    _id: import("mongoose").Types.ObjectId;
+    _id: Types.ObjectId;
 } & {
     __v: number;
 }>;

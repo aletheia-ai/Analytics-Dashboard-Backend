@@ -1,13 +1,8 @@
 import { Schema, model, Types } from 'mongoose';
 import type { Company } from '@src/utils/types/company-type';
 import { BusinessType, ServiceType, UserSpaceType } from '@src/utils/types';
-import { UserModel } from './user.schema';
+
 export const CompanySchema = new Schema<Company>({
-  userSpaceType: {
-    type: String,
-    required: true,
-    enum: Object.values(UserSpaceType),
-  },
   serviceType: {
     type: String,
     required: true,
@@ -25,5 +20,35 @@ export const CompanySchema = new Schema<Company>({
     required: true,
     unique: true,
   },
+  registrationNumber: {
+    type: String,
+    required: true,
+  },
+  email: {
+    type: String,
+    requred: true,
+  },
+  country: {
+    type: String,
+    requred: true,
+  },
+  state: {
+    type: String,
+    requred: true,
+  },
+  city: {
+    type: String,
+    requred: true,
+  },
+  address: {
+    type: String,
+    requred: true,
+  },
+
+  phone: {
+    type: String,
+    requred: true,
+  },
 });
+
 export const CompanyModal = model<Company>('Company', CompanySchema, 'companies');

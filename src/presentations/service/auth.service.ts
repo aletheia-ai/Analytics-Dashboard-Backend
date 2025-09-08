@@ -26,6 +26,21 @@ export class AuthService {
     }
   }
 
+  async verifyUser(
+    userId: string
+  ): Promise<{ success: true; access_token: string } | { success: false; error: number }> {
+    try {
+      const result = await this.usersService.verifyUser(userId);
+      if (result.success) {
+        return { success: true, access_token: await this.jwtService.signAsync(result.payload) };
+      } else {
+        return { success: false, error: result.error };
+      }
+    } catch (err) {
+      return { success: false, error: err.code || 500 };
+    }
+  }
+
   async signUp(user: User): Promise<{ success: true; access_token: string } | { success: false }> {
     try {
       const result = await this.usersService.addUser(user);
@@ -36,6 +51,7 @@ export class AuthService {
           isAuthorized: false,
           hasRegisteredBusiness: false,
           id: result.data,
+          isVerified: false,
         };
         return {
           success: true,
@@ -68,6 +84,7 @@ export class AuthService {
           email: user.email,
           isAuthorized: user.isAuthorized,
           hasRegisteredBusiness: user.hasRegisteredBusiness,
+          isVerified: user.isVerified,
         };
         return {
           success: true,

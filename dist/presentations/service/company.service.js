@@ -59,6 +59,7 @@ let CompanyService = class CompanyService {
                         isAuthorized: false,
                         hasRegisteredBusiness: true,
                         id: updatedUser._id,
+                        isVerified: false,
                     };
                     return {
                         success: true,

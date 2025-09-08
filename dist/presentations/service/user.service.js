@@ -44,6 +44,44 @@ let UserService = class UserService {
                         email: updatedUser.email,
                         isAuthorized: true,
                         hasRegisteredBusiness: true,
+                        id: updatedUser._id,
+                        isVerified: false,
+                    };
+                    return {
+                        success: true,
+                        payload,
+                    };
+                }
+                else {
+                    return { success: false, error: 500 };
+                }
+            }
+            else {
+                return { success: false, error: 500 };
+            }
+        }
+        catch (err) {
+            return { success: false, error: err.code || 500 };
+        }
+    }
+    async verifyUser(userId) {
+        try {
+            const userExists = await this.userModel.exists({ _id: userId });
+            if (!userExists) {
+                return { success: false, error: 404 };
+            }
+            if (userExists) {
+                const updatedUser = await this.userModel.findByIdAndUpdate(userId, {
+                    $set: { isVerified: true },
+                });
+                if (updatedUser) {
+                    const payload = {
+                        sub: updatedUser.email,
+                        email: updatedUser.email,
+                        isAuthorized: true,
+                        hasRegisteredBusiness: true,
+                        id: updatedUser._id,
+                        isVerified: true,
                     };
                     return {
                         success: true,

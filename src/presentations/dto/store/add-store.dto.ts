@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsMongoId } from 'class-validator';
+import { IsString, IsNotEmpty, IsMongoId, IsPhoneNumber } from 'class-validator';
 
 export class AddStoreDto {
   @IsString()
@@ -13,9 +13,21 @@ export class AddStoreDto {
   @IsNotEmpty()
   region: string;
 
-  @IsString()
+  @IsPhoneNumber()
   @IsNotEmpty()
   phone: string;
+
+  @IsString()
+  @IsNotEmpty()
+  country: string;
+
+  @IsString()
+  @IsNotEmpty()
+  state: string;
+
+  @IsString()
+  @IsNotEmpty()
+  address: string;
 
   @IsString()
   @IsNotEmpty()

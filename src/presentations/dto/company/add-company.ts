@@ -1,14 +1,18 @@
 import { BusinessType, ServiceType, UserSpaceType } from '@src/utils/types';
-import { IsNotEmpty, IsNumber, IsEnum, IsMongoId, IsString } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsEnum,
+  IsMongoId,
+  IsString,
+  IsEmail,
+  IsPhoneNumber,
+} from 'class-validator';
 
 export class AddCompanyDto {
   @IsString()
   @IsNotEmpty()
   name: string;
-
-  @IsEnum(UserSpaceType)
-  @IsNotEmpty()
-  userSpaceType: UserSpaceType;
 
   @IsEnum(ServiceType)
   @IsNotEmpty()
@@ -21,4 +25,32 @@ export class AddCompanyDto {
   @IsMongoId()
   @IsNotEmpty()
   user: string;
+
+  @IsString()
+  @IsNotEmpty()
+  registrationNumber: string;
+
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
+
+  @IsString()
+  @IsNotEmpty()
+  country: string;
+
+  @IsString()
+  @IsNotEmpty()
+  state: string;
+
+  @IsString()
+  @IsNotEmpty()
+  city: string;
+
+  @IsString()
+  @IsNotEmpty()
+  address: string;
+
+  @IsPhoneNumber()
+  @IsNotEmpty()
+  phone: string;
 }

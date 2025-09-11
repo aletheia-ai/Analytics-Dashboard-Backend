@@ -46,6 +46,31 @@ let CompanyController = class CompanyController {
             throw new common_1.InternalServerErrorException('Something went wrong');
         }
     }
+    async editCompanyData(editCompanyDto) {
+        console.log('hello world');
+        try {
+            const { id, ...rest } = editCompanyDto;
+            const result = await this.companyService.editCompany(id, rest);
+            if (result.success) {
+                return { message: result.data };
+            }
+            else {
+                const { error } = result;
+                if (error === 404) {
+                    throw new common_1.NotFoundException('Business not exist');
+                }
+                else {
+                    throw new common_1.InternalServerErrorException('Something Went Wrong');
+                }
+            }
+        }
+        catch (err) {
+            if (err instanceof common_1.HttpException) {
+                throw err;
+            }
+            throw new common_1.InternalServerErrorException('Something went wrong');
+        }
+    }
     async addNewCompany(addCompanyDto, res) {
         try {
             const result = await this.companyService.addNewCompany(addCompanyDto);
@@ -84,6 +109,15 @@ __decorate([
     __metadata("design:paramtypes", [company_1.GetCompanyByUserDto]),
     __metadata("design:returntype", Promise)
 ], CompanyController.prototype, "getCompanyData", null);
+__decorate([
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    (0, common_1.Post)('edit-company'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [company_1.EditCompanyDto]),
+    __metadata("design:returntype", Promise)
+], CompanyController.prototype, "editCompanyData", null);
 __decorate([
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
     (0, common_1.HttpCode)(common_1.HttpStatus.CREATED),

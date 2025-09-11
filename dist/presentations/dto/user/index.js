@@ -9,8 +9,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GetUserDto = exports.CreateUserDto = void 0;
+exports.GetUserByIdDto = exports.GetUserDto = exports.CreateUserDto = void 0;
 const class_validator_1 = require("class-validator");
+const get_user_dto_1 = require("./get-user-dto");
+Object.defineProperty(exports, "GetUserByIdDto", { enumerable: true, get: function () { return get_user_dto_1.GetUserByIdDto; } });
 class CreateUserDto {
     firstName;
     lastName;

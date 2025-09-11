@@ -12,6 +12,8 @@ const auth_service_1 = require("../service/auth.service");
 const auth_controller_1 = require("../controller/auth.controller");
 const user_module_1 = require("../module/user.module");
 const jwt_1 = require("@nestjs/jwt");
+const store_module_1 = require("./store.module");
+const company_module_1 = require("./company.module");
 let AuthModule = class AuthModule {
 };
 exports.AuthModule = AuthModule;
@@ -19,6 +21,8 @@ exports.AuthModule = AuthModule = __decorate([
     (0, common_1.Module)({
         imports: [
             user_module_1.UserModule,
+            store_module_1.StoreModule,
+            company_module_1.CompanyModule,
             jwt_1.JwtModule.register({
                 global: true,
                 secret: process.env.JWT_SECRET,

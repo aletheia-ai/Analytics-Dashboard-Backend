@@ -13,10 +13,11 @@ import {
   UseGuards,
   Param,
   ConflictException,
+  Delete,
 } from '@nestjs/common';
 
 import { StoreService } from '../service/store.service';
-import { AddStoreDto, GetStoresDto } from '../dto/store';
+import { AddStoreDto, DeleteStoreDto, EditStoreDto, GetStoresDto } from '../dto/store';
 import { AuthGuard } from '@src/utils/guards/auth.guard.';
 
 @Controller('store')
@@ -32,13 +33,94 @@ export class StoreController {
       if (result.success) {
         return { message: 'Store Created' };
       } else {
-        const { error } = result;
+        const { error, errorType } = result;
         if (error === 403) {
           throw new ForbiddenException('Cannot create this store');
         } else if (error === 404) {
-          throw new NotFoundException('Company Not Registered');
+          if (errorType === 'store') {
+            throw new NotFoundException('Store Not Found');
+          }
+          if (errorType === 'company') {
+            throw new NotFoundException('Company Not Registered');
+          } else if (errorType === 'region') {
+            throw new NotFoundException('Region Not Valid');
+          }
         } else if (error === 409) {
           throw new ConflictException('Store With this Name Already Exists');
+        } else {
+          throw new InternalServerErrorException('Something went wrong');
+        }
+      }
+    } catch (err) {
+      if (err instanceof HttpException) {
+        throw err;
+      }
+      throw new InternalServerErrorException('Something went wrong');
+    }
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Delete('delete-store')
+  @UseGuards(AuthGuard)
+  async deleteExistingStore(@Body() deleteStoreDto: DeleteStoreDto, @Request() req) {
+    try {
+      const result = await this.storeService.deleteStore(
+        deleteStoreDto.companyId,
+        req.user.id,
+        deleteStoreDto.storeId
+      );
+      if (result.success) {
+        return { message: 'Store Deleted Successfully' };
+      } else {
+        const { error, errorType } = result;
+        if (error === 403) {
+          throw new ForbiddenException('Cannot delete this store');
+        } else if (error === 404) {
+          if (errorType === 'store') {
+            throw new NotFoundException('Store Not Found');
+          }
+          if (errorType === 'company') {
+            throw new NotFoundException('Store is not related to specific company');
+          } else if (errorType === 'region') {
+            throw new NotFoundException('Region Not Valid');
+          }
+        } else if (error === 409) {
+          throw new ConflictException('Store With this Name Already Exists');
+        } else {
+          throw new InternalServerErrorException('Something went wrong');
+        }
+      }
+    } catch (err) {
+      if (err instanceof HttpException) {
+        throw err;
+      }
+      throw new InternalServerErrorException('Something went wrong');
+    }
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('edit')
+  @UseGuards(AuthGuard)
+  async editExistingStore(@Body() EditStoreDto: EditStoreDto, @Request() req) {
+    try {
+      const { id, ...rest } = EditStoreDto;
+      const result = await this.storeService.editExistingStore(rest, req.user.id, id);
+      if (result.success) {
+        return { message: 'Store Updated Successfully' };
+      } else {
+        const { error, errorType } = result;
+
+        if (error === 403) {
+          throw new ForbiddenException('Cannot edit this store');
+        } else if (error === 404) {
+          if (errorType === 'store') {
+            throw new NotFoundException('Store Not Found');
+          }
+          if (errorType === 'company') {
+            throw new NotFoundException('Company Not Registered');
+          } else if (errorType === 'region') {
+            throw new NotFoundException('Region Not Valid');
+          }
         } else {
           throw new InternalServerErrorException('Something went wrong');
         }

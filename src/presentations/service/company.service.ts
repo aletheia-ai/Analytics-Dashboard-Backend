@@ -12,6 +12,29 @@ export class CompanyService {
     private jwtService: JwtService
   ) {}
 
+  async editCompany(
+    id: string,
+    compnayData: Omit<Company, '_id'>
+  ): Promise<{ success: true; data: Company } | { success: false; error: number }> {
+    try {
+      const updatedCompany = await this.company.findByIdAndUpdate(
+        id,
+        { ...compnayData },
+        { new: true, upsert: false }
+      );
+      if (updatedCompany) {
+        return { success: true, data: { ...updatedCompany.toJSON(), _id: updatedCompany._id } };
+      } else {
+        return {
+          success: false,
+          error: 404,
+        };
+      }
+    } catch (err) {
+      return { success: false, error: err.code || 500 };
+    }
+  }
+
   async getCompanyByOwner(
     userId: string
   ): Promise<{ success: true; company: Company } | { success: false; error: number }> {

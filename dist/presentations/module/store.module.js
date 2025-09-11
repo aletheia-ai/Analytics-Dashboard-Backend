@@ -26,6 +26,7 @@ exports.StoreModule = StoreModule = __decorate([
         ],
         providers: [store_service_1.StoreService],
         controllers: [store_controller_1.StoreController],
+        exports: [mongoose_1.MongooseModule],
     })
 ], StoreModule);
 //# sourceMappingURL=store.module.js.map

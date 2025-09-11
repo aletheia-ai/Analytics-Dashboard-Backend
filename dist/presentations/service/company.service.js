@@ -26,6 +26,23 @@ let CompanyService = class CompanyService {
         this.user = user;
         this.jwtService = jwtService;
     }
+    async editCompany(id, compnayData) {
+        try {
+            const updatedCompany = await this.company.findByIdAndUpdate(id, { ...compnayData }, { new: true, upsert: false });
+            if (updatedCompany) {
+                return { success: true, data: { ...updatedCompany.toJSON(), _id: updatedCompany._id } };
+            }
+            else {
+                return {
+                    success: false,
+                    error: 404,
+                };
+            }
+        }
+        catch (err) {
+            return { success: false, error: err.code || 500 };
+        }
+    }
     async getCompanyByOwner(userId) {
         try {
             const company = await this.company.findOne({ user: userId });

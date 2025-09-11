@@ -39,7 +39,9 @@ async function bootstrap() {
     app.use((0, express_rate_limit_1.default)(rate_limiter_1.rateLimiter));
     app.use((0, helmet_1.default)());
     app.enableCors({
-        origin: 'https://localhost:5173',
+        origin: ['https://localhost:5173'],
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Authorization'],
         credentials: true,
     });
     app.use(cookieParser());

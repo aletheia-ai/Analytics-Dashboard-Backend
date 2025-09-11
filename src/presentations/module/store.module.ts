@@ -14,5 +14,6 @@ import { RegionModule } from './region.module';
   ],
   providers: [StoreService],
   controllers: [StoreController],
+  exports: [MongooseModule],
 })
 export class StoreModule {}

@@ -32,10 +32,20 @@ export declare class UserService {
         error: number;
     }>;
     findOne(username: string): Promise<User | undefined>;
+    findUserById(userId: string): Promise<{
+        success: true;
+        data: User;
+    } | {
+        success: false;
+        error: number;
+    }>;
     addUser(user: User): Promise<{
         success: true;
         data: Types.ObjectId;
     } | {
         success: false;
+    }>;
+    deleteUser(userId: string): Promise<{
+        success: boolean;
     }>;
 }

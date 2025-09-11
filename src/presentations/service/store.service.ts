@@ -13,10 +13,103 @@ export class StoreService {
     @InjectModel('Region') private region: Model<Region>
   ) {}
 
+  async deleteStore(
+    companyId: string,
+    userId: string,
+    storeId: string
+  ): Promise<
+    | { success: true }
+    | {
+        success: false;
+        error: Number;
+        errorType: 'conflict' | 'forbidden' | 'company' | 'other' | 'region' | 'store';
+      }
+  > {
+    try {
+      const companyData = await this.company.findById(companyId);
+      if (companyData) {
+        if (companyData.user.toString() === userId.toString()) {
+          const storeData = await this.store.findById(storeId);
+          if (storeData) {
+            const result = await this.store.deleteOne({ _id: new Types.ObjectId(storeId) });
+            if (result.acknowledged) {
+              return { success: true };
+            } else {
+              return { success: false, error: 400, errorType: 'other' };
+            }
+          } else {
+            return { success: false, error: 404, errorType: 'store' };
+          }
+        } else {
+          return { success: false, error: 403, errorType: 'forbidden' };
+        }
+      } else {
+        return { success: false, error: 404, errorType: 'company' };
+      }
+    } catch (err) {
+      return { success: false, error: err.code || 500, errorType: 'other' };
+    }
+  }
+  async editExistingStore(
+    storeData: Store,
+    id: string,
+    storeId: string
+  ): Promise<
+    | { success: true }
+    | {
+        success: false;
+        error: Number;
+        errorType: 'conflict' | 'forbidden' | 'company' | 'other' | 'region' | 'store';
+      }
+  > {
+    try {
+      const { company, region } = storeData;
+      const userId = id;
+      const companyData = await this.company.findById(company).exec();
+      if (companyData) {
+        if (companyData.user.toString() === userId.toString()) {
+          const regionData = await this.region.findById(region).exec();
+          if (regionData) {
+            const existingStore = await this.store.findOne({ _id: new Types.ObjectId(storeId) });
+            if (!existingStore) {
+              return { success: false, error: 404, errorType: 'store' };
+            } else {
+              const store = await this.store.findByIdAndUpdate(
+                storeId,
+                { $set: storeData },
+                { new: true }
+              );
+              if (store) {
+                return { success: true };
+              } else {
+                return { success: false, error: 500, errorType: 'other' };
+              }
+            }
+          } else {
+            return { success: false, error: 404, errorType: 'region' };
+          }
+        } else {
+          return { success: false, error: 403, errorType: 'forbidden' };
+        }
+      } else {
+        return { success: false, error: 404, errorType: 'company' };
+      }
+    } catch (err) {
+      return { success: false, error: err.code || 500, errorType: 'other' };
+    }
+  }
+
   async addNewStore(
     storeData: Store,
     id: string
-  ): Promise<{ success: true } | { success: false; error: Number }> {
+  ): Promise<
+    | { success: true }
+    | {
+        success: false;
+        error: Number;
+        errorType: 'conflict' | 'forbidden' | 'company' | 'other' | 'region' | 'store';
+      }
+  > {
     try {
       const { company, region } = storeData;
       const userId = id;
@@ -31,18 +124,19 @@ export class StoreService {
               await store.save();
               return { success: true };
             } else {
-              return { success: false, error: 409 };
+              console.log(existingStore);
+              return { success: false, error: 404, errorType: 'store' };
             }
           } else {
-            return { success: false, error: 404 };
+            return { success: false, error: 404, errorType: 'region' };
           }
         }
-        return { success: false, error: 403 };
+        return { success: false, error: 403, errorType: 'forbidden' };
       } else {
-        return { success: false, error: 404 };
+        return { success: false, error: 404, errorType: 'company' };
       }
     } catch (error) {
-      return { success: false, error: error.code || 500 };
+      return { success: false, error: error.code || 500, errorType: 'other' };
     }
   }
 
@@ -57,7 +151,7 @@ export class StoreService {
       if (!companyData) {
         return { success: false, error: 404, errorFrom: 'Company' };
       } else {
-        const storeData = await this.store.find({ company: companyId });
+        const storeData = await this.store.find({ company: new Types.ObjectId(companyId) });
         if (!storeData) {
           return { success: false, error: 404, errorFrom: 'Store' };
         } else {

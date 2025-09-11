@@ -7,11 +7,26 @@ export declare class StoreService {
     private company;
     private region;
     constructor(store: Model<Store>, company: Model<Company>, region: Model<Region>);
+    deleteStore(companyId: string, userId: string, storeId: string): Promise<{
+        success: true;
+    } | {
+        success: false;
+        error: Number;
+        errorType: 'conflict' | 'forbidden' | 'company' | 'other' | 'region' | 'store';
+    }>;
+    editExistingStore(storeData: Store, id: string, storeId: string): Promise<{
+        success: true;
+    } | {
+        success: false;
+        error: Number;
+        errorType: 'conflict' | 'forbidden' | 'company' | 'other' | 'region' | 'store';
+    }>;
     addNewStore(storeData: Store, id: string): Promise<{
         success: true;
     } | {
         success: false;
         error: Number;
+        errorType: 'conflict' | 'forbidden' | 'company' | 'other' | 'region' | 'store';
     }>;
     getAllStores(companyId: string): Promise<{
         success: false;

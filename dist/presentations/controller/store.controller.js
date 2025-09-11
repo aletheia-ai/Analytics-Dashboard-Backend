@@ -29,15 +29,95 @@ let StoreController = class StoreController {
                 return { message: 'Store Created' };
             }
             else {
-                const { error } = result;
+                const { error, errorType } = result;
                 if (error === 403) {
                     throw new common_1.ForbiddenException('Cannot create this store');
                 }
                 else if (error === 404) {
-                    throw new common_1.NotFoundException('Company Not Registered');
+                    if (errorType === 'store') {
+                        throw new common_1.NotFoundException('Store Not Found');
+                    }
+                    if (errorType === 'company') {
+                        throw new common_1.NotFoundException('Company Not Registered');
+                    }
+                    else if (errorType === 'region') {
+                        throw new common_1.NotFoundException('Region Not Valid');
+                    }
                 }
                 else if (error === 409) {
                     throw new common_1.ConflictException('Store With this Name Already Exists');
+                }
+                else {
+                    throw new common_1.InternalServerErrorException('Something went wrong');
+                }
+            }
+        }
+        catch (err) {
+            if (err instanceof common_1.HttpException) {
+                throw err;
+            }
+            throw new common_1.InternalServerErrorException('Something went wrong');
+        }
+    }
+    async deleteExistingStore(deleteStoreDto, req) {
+        try {
+            const result = await this.storeService.deleteStore(deleteStoreDto.companyId, req.user.id, deleteStoreDto.storeId);
+            if (result.success) {
+                return { message: 'Store Deleted Successfully' };
+            }
+            else {
+                const { error, errorType } = result;
+                if (error === 403) {
+                    throw new common_1.ForbiddenException('Cannot delete this store');
+                }
+                else if (error === 404) {
+                    if (errorType === 'store') {
+                        throw new common_1.NotFoundException('Store Not Found');
+                    }
+                    if (errorType === 'company') {
+                        throw new common_1.NotFoundException('Store is not related to specific company');
+                    }
+                    else if (errorType === 'region') {
+                        throw new common_1.NotFoundException('Region Not Valid');
+                    }
+                }
+                else if (error === 409) {
+                    throw new common_1.ConflictException('Store With this Name Already Exists');
+                }
+                else {
+                    throw new common_1.InternalServerErrorException('Something went wrong');
+                }
+            }
+        }
+        catch (err) {
+            if (err instanceof common_1.HttpException) {
+                throw err;
+            }
+            throw new common_1.InternalServerErrorException('Something went wrong');
+        }
+    }
+    async editExistingStore(EditStoreDto, req) {
+        try {
+            const { id, ...rest } = EditStoreDto;
+            const result = await this.storeService.editExistingStore(rest, req.user.id, id);
+            if (result.success) {
+                return { message: 'Store Updated Successfully' };
+            }
+            else {
+                const { error, errorType } = result;
+                if (error === 403) {
+                    throw new common_1.ForbiddenException('Cannot edit this store');
+                }
+                else if (error === 404) {
+                    if (errorType === 'store') {
+                        throw new common_1.NotFoundException('Store Not Found');
+                    }
+                    if (errorType === 'company') {
+                        throw new common_1.NotFoundException('Company Not Registered');
+                    }
+                    else if (errorType === 'region') {
+                        throw new common_1.NotFoundException('Region Not Valid');
+                    }
                 }
                 else {
                     throw new common_1.InternalServerErrorException('Something went wrong');
@@ -89,6 +169,26 @@ __decorate([
     __metadata("design:paramtypes", [store_1.AddStoreDto, Object]),
     __metadata("design:returntype", Promise)
 ], StoreController.prototype, "addNewStore", null);
+__decorate([
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    (0, common_1.Delete)('delete-store'),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [store_1.DeleteStoreDto, Object]),
+    __metadata("design:returntype", Promise)
+], StoreController.prototype, "deleteExistingStore", null);
+__decorate([
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    (0, common_1.Post)('edit'),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [store_1.EditStoreDto, Object]),
+    __metadata("design:returntype", Promise)
+], StoreController.prototype, "editExistingStore", null);
 __decorate([
     (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     (0, common_1.Get)('all/:company'),

@@ -112,6 +112,20 @@ let UserService = class UserService {
             return undefined;
         }
     }
+    async findUserById(userId) {
+        try {
+            const data = await this.userModel.findOne({ _id: userId }).exec();
+            if (data) {
+                return { success: true, data };
+            }
+            else {
+                return { success: false, error: 404 };
+            }
+        }
+        catch (err) {
+            return { success: false, error: err.code | 500 };
+        }
+    }
     async addUser(user) {
         try {
             const { password, ...rest } = user;
@@ -128,6 +142,26 @@ let UserService = class UserService {
         }
         catch {
             throw new common_1.InternalServerErrorException('Something Went Wrong');
+        }
+    }
+    async deleteUser(userId) {
+        try {
+            const userData = await this.userModel.findOne({ _id: new mongoose_2.Types.ObjectId(userId) });
+            if (userData) {
+                const deletedUser = await this.userModel.deleteOne({ _id: new mongoose_2.Types.ObjectId(userId) });
+                if (deletedUser.acknowledged) {
+                    return { success: true };
+                }
+                else {
+                    return { success: false };
+                }
+            }
+            else {
+                return { success: false };
+            }
+        }
+        catch (err) {
+            return { success: false };
         }
     }
 };

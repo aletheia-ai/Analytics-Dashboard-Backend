@@ -1,3 +1,4 @@
+import { GetUserByIdDto } from './get-user-dto';
 export declare class CreateUserDto {
     firstName: string;
     lastName: string;
@@ -10,3 +11,4 @@ export declare class CreateUserDto {
 export declare class GetUserDto {
     email: string;
 }
+export { GetUserByIdDto };

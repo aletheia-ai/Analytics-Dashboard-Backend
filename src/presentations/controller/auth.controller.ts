@@ -12,10 +12,12 @@ import {
   UnauthorizedException,
   ConflictException,
   InternalServerErrorException,
+  Delete,
+  Param,
 } from '@nestjs/common';
 import { AuthGuard } from '@src/utils/guards/auth.guard.';
 import { AuthService } from '../service/auth.service';
-import { AuthorizeUserDto, SignInDto, SignUpDto } from '../dto/auth';
+import { AuthorizeUserDto, DeleteAccountDto, SignInDto, SignUpDto } from '../dto/auth';
 import { Response } from 'express';
 import { cookiesOptions } from '@utils/constants/cookie-options';
 import { UserRoleType } from '@src/utils/types';
@@ -116,8 +118,45 @@ export class AuthController {
   @UseGuards(AuthGuard)
   @Get('profile')
   @HttpCode(HttpStatus.OK)
-  getProfile(@Request() req) {
-    return req.user;
+  async getProfile(@Request() req) {
+    try {
+      const result = await this.authService.getUserProfile(req.user.id);
+      return { message: req.user, company: result.success ? result.data : null };
+    } catch (err) {
+      throw new InternalServerErrorException();
+    }
+  }
+
+  @Delete('delete-account/:userId')
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.OK)
+  async deleteCompanyData(@Param() deleteAccountDto: DeleteAccountDto, @Res() res: Response) {
+    try {
+      const result = await this.authService.deleteAccount(deleteAccountDto.userId);
+      if (result.success) {
+        const { maxAge, ...result } = cookiesOptions;
+        res.clearCookie('access_token', { ...result, path: '/' });
+        res.status(200).json({ message: 'Account Deleted Successfully' });
+      } else {
+        const { error, errorType } = result;
+        if (error === 403) {
+          if (errorType === 'user') {
+            throw new ConflictException('Cannot delete this user');
+          } else if (errorType === 'company') {
+            throw new ConflictException('Cannot delete this business');
+          } else if (errorType === 'stores') {
+            throw new ConflictException('Cannot delete the stores');
+          }
+        } else {
+          throw new InternalServerErrorException('Something Went Wrong');
+        }
+      }
+    } catch (err) {
+      if (err instanceof HttpException) {
+        throw err;
+      }
+      throw new InternalServerErrorException();
+    }
   }
 
   @Post('logout')

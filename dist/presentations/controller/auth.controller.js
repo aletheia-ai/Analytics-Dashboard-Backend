@@ -107,8 +107,47 @@ let AuthController = class AuthController {
             throw new common_1.InternalServerErrorException();
         }
     }
-    getProfile(req) {
-        return req.user;
+    async getProfile(req) {
+        try {
+            const result = await this.authService.getUserProfile(req.user.id);
+            return { message: req.user, company: result.success ? result.data : null };
+        }
+        catch (err) {
+            throw new common_1.InternalServerErrorException();
+        }
+    }
+    async deleteCompanyData(deleteAccountDto, res) {
+        try {
+            const result = await this.authService.deleteAccount(deleteAccountDto.userId);
+            if (result.success) {
+                const { maxAge, ...result } = cookie_options_1.cookiesOptions;
+                res.clearCookie('access_token', { ...result, path: '/' });
+                res.status(200).json({ message: 'Account Deleted Successfully' });
+            }
+            else {
+                const { error, errorType } = result;
+                if (error === 403) {
+                    if (errorType === 'user') {
+                        throw new common_1.ConflictException('Cannot delete this user');
+                    }
+                    else if (errorType === 'company') {
+                        throw new common_1.ConflictException('Cannot delete this business');
+                    }
+                    else if (errorType === 'stores') {
+                        throw new common_1.ConflictException('Cannot delete the stores');
+                    }
+                }
+                else {
+                    throw new common_1.InternalServerErrorException('Something Went Wrong');
+                }
+            }
+        }
+        catch (err) {
+            if (err instanceof common_1.HttpException) {
+                throw err;
+            }
+            throw new common_1.InternalServerErrorException();
+        }
     }
     logout(res) {
         try {
@@ -167,8 +206,18 @@ __decorate([
     __param(0, (0, common_1.Request)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], AuthController.prototype, "getProfile", null);
+__decorate([
+    (0, common_1.Delete)('delete-account/:userId'),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    __param(0, (0, common_1.Param)()),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [auth_1.DeleteAccountDto, Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "deleteCompanyData", null);
 __decorate([
     (0, common_1.Post)('logout'),
     (0, common_1.HttpCode)(common_1.HttpStatus.OK),

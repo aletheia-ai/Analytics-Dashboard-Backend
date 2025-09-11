@@ -8,7 +8,7 @@ import {
   Matches,
   IsUUID,
 } from 'class-validator';
-
+import { GetUserByIdDto } from './get-user-dto';
 export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
@@ -49,3 +49,5 @@ export class GetUserDto {
   @IsString()
   email: string;
 }
+
+export { GetUserByIdDto };

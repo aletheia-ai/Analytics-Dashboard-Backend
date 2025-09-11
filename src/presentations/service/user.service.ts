@@ -120,6 +120,22 @@ export class UserService {
       return undefined;
     }
   }
+
+  async findUserById(
+    userId: string
+  ): Promise<{ success: true; data: User } | { success: false; error: number }> {
+    try {
+      const data = await this.userModel.findOne({ _id: userId }).exec();
+      if (data) {
+        return { success: true, data };
+      } else {
+        return { success: false, error: 404 };
+      }
+    } catch (err) {
+      return { success: false, error: err.code | 500 };
+    }
+  }
+
   async addUser(user: User): Promise<{ success: true; data: Types.ObjectId } | { success: false }> {
     try {
       const { password, ...rest } = user;
@@ -135,6 +151,24 @@ export class UserService {
       }
     } catch {
       throw new InternalServerErrorException('Something Went Wrong');
+    }
+  }
+
+  async deleteUser(userId: string): Promise<{ success: boolean }> {
+    try {
+      const userData = await this.userModel.findOne({ _id: new Types.ObjectId(userId) });
+      if (userData) {
+        const deletedUser = await this.userModel.deleteOne({ _id: new Types.ObjectId(userId) });
+        if (deletedUser.acknowledged) {
+          return { success: true };
+        } else {
+          return { success: false };
+        }
+      } else {
+        return { success: false };
+      }
+    } catch (err) {
+      return { success: false };
     }
   }
 }

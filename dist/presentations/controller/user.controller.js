@@ -22,6 +22,29 @@ let UserController = class UserController {
     constructor(userService) {
         this.userService = userService;
     }
+    async updateUser(editUserDto) {
+        try {
+            const result = await this.userService.editUser(editUserDto);
+            if (result.success) {
+                return { message: 'User Updated Successfully', data: result.data };
+            }
+            else {
+                const { error } = result;
+                if (error === 404) {
+                    throw new common_1.NotFoundException('User Not Found');
+                }
+                else {
+                    throw new common_1.InternalServerErrorException('Something Went wrong');
+                }
+            }
+        }
+        catch (err) {
+            if (err instanceof common_1.HttpException) {
+                throw err;
+            }
+            throw new common_1.InternalServerErrorException();
+        }
+    }
     async getUserById(getuserById) {
         try {
             const result = await this.userService.findUserById(getuserById.userId);
@@ -47,6 +70,15 @@ let UserController = class UserController {
     }
 };
 exports.UserController = UserController;
+__decorate([
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    (0, common_1.Patch)('edit-user'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [user_1.EditUserByIdDto]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "updateUser", null);
 __decorate([
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
     (0, common_1.HttpCode)(common_1.HttpStatus.OK),

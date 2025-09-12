@@ -149,6 +149,35 @@ let AuthController = class AuthController {
             throw new common_1.InternalServerErrorException();
         }
     }
+    async changeUserPassword(changePasswordDto) {
+        try {
+            const result = await this.authService.changeUserPassword(changePasswordDto);
+            if (result.success) {
+                return { message: 'Password Changed!' };
+            }
+            else {
+                const { error } = result;
+                if (error === 403) {
+                    throw new common_1.ForbiddenException('Current Password is invalid');
+                }
+                else if (error === 404) {
+                    throw new common_1.NotFoundException();
+                }
+                else if (error === 409) {
+                    throw new common_1.ConflictException('New Password cannot be the old password');
+                }
+                else {
+                    throw new common_1.InternalServerErrorException('Something Went wrong');
+                }
+            }
+        }
+        catch (err) {
+            if (err instanceof common_1.HttpException) {
+                throw err;
+            }
+            throw new common_1.InternalServerErrorException();
+        }
+    }
     logout(res) {
         try {
             const { maxAge, ...result } = cookie_options_1.cookiesOptions;
@@ -218,6 +247,15 @@ __decorate([
     __metadata("design:paramtypes", [auth_1.DeleteAccountDto, Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "deleteCompanyData", null);
+__decorate([
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    (0, common_1.Patch)('change-password'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [auth_1.ChangePasswordDto]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "changeUserPassword", null);
 __decorate([
     (0, common_1.Post)('logout'),
     (0, common_1.HttpCode)(common_1.HttpStatus.OK),

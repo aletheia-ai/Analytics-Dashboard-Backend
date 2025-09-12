@@ -48,4 +48,26 @@ export declare class UserService {
     deleteUser(userId: string): Promise<{
         success: boolean;
     }>;
+    editUser({ userId, firstName, lastName, }: {
+        userId: string;
+        firstName: string;
+        lastName: string;
+    }): Promise<{
+        success: true;
+        data: User;
+    } | {
+        success: false;
+        error: number;
+    }>;
+    changeUserPassword({ userId, password, newPassword, }: {
+        userId: string;
+        password: string;
+        newPassword: string;
+    }): Promise<{
+        success: true;
+        data: User;
+    } | {
+        success: false;
+        error: number;
+    }>;
 }

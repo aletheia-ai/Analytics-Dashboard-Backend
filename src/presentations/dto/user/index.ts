@@ -6,9 +6,9 @@ import {
   MinLength,
   MaxLength,
   Matches,
-  IsUUID,
 } from 'class-validator';
 import { GetUserByIdDto } from './get-user-dto';
+import { EditUserByIdDto } from './edit-user.dto';
 export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
@@ -50,4 +50,4 @@ export class GetUserDto {
   email: string;
 }
 
-export { GetUserByIdDto };
+export { GetUserByIdDto, EditUserByIdDto };

@@ -171,4 +171,70 @@ export class UserService {
       return { success: false };
     }
   }
+
+  async editUser({
+    userId,
+    firstName,
+    lastName,
+  }: {
+    userId: string;
+    firstName: string;
+    lastName: string;
+  }): Promise<{ success: true; data: User } | { success: false; error: number }> {
+    try {
+      const userData = await this.userModel.findByIdAndUpdate(
+        userId,
+        { firstName, lastName },
+        { new: true }
+      );
+      if (userData) {
+        return { success: true, data: userData };
+      } else {
+        return { success: false, error: 404 };
+      }
+    } catch (err) {
+      return { success: false, error: err.code || 500 };
+    }
+  }
+
+  async changeUserPassword({
+    userId,
+    password,
+    newPassword,
+  }: {
+    userId: string;
+    password: string;
+    newPassword: string;
+  }): Promise<{ success: true; data: User } | { success: false; error: number }> {
+    try {
+      if (newPassword !== password) {
+        const userData = await this.userModel.findOne({ _id: new Types.ObjectId(userId) });
+        if (userData) {
+          const isPasswordValid = await bcrypt.compare(password, userData.password);
+          if (isPasswordValid) {
+            const saltRounds = Number(process.env.SALT_ROUNDS) || 10;
+            const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+            const updatedUser = await this.userModel.findByIdAndUpdate(
+              userId,
+              { password: hashedPassword },
+              { new: true }
+            );
+            if (updatedUser) {
+              return { success: true, data: userData };
+            } else {
+              return { success: false, error: 404 };
+            }
+          } else {
+            return { success: false, error: 403 };
+          }
+        } else {
+          return { success: false, error: 404 };
+        }
+      } else {
+        return { success: false, error: 409 };
+      }
+    } catch (err) {
+      return { success: false, error: err.code || 500 };
+    }
+  }
 }

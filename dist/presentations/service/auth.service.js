@@ -152,6 +152,21 @@ let AuthService = class AuthService {
             return { success: false, error: err.code || 500, errorType: 'other' };
         }
     }
+    async changeUserPassword({ userId, password, newPassword, }) {
+        try {
+            const result = await this.usersService.changeUserPassword({ userId, newPassword, password });
+            if (result.success) {
+                return { success: true };
+            }
+            else {
+                const { error } = result;
+                return { success: false, error };
+            }
+        }
+        catch (err) {
+            return { success: false, error: err.code || 500 };
+        }
+    }
 };
 exports.AuthService = AuthService;
 exports.AuthService = AuthService = __decorate([

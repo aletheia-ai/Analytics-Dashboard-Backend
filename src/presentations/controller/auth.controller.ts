@@ -14,13 +14,23 @@ import {
   InternalServerErrorException,
   Delete,
   Param,
+  Patch,
+  ForbiddenException,
+  NotFoundException,
 } from '@nestjs/common';
 import { AuthGuard } from '@src/utils/guards/auth.guard.';
 import { AuthService } from '../service/auth.service';
-import { AuthorizeUserDto, DeleteAccountDto, SignInDto, SignUpDto } from '../dto/auth';
+import {
+  AuthorizeUserDto,
+  ChangePasswordDto,
+  DeleteAccountDto,
+  SignInDto,
+  SignUpDto,
+} from '../dto/auth';
 import { Response } from 'express';
 import { cookiesOptions } from '@utils/constants/cookie-options';
 import { UserRoleType } from '@src/utils/types';
+import { EditUserByIdDto } from '../dto/user';
 
 @Controller('auth')
 export class AuthController {
@@ -90,6 +100,7 @@ export class AuthController {
       throw new InternalServerErrorException();
     }
   }
+
   @HttpCode(HttpStatus.CREATED)
   @Post('signup')
   async signUp(@Body() signupDto: SignUpDto, @Res() res: Response) {
@@ -149,6 +160,34 @@ export class AuthController {
           }
         } else {
           throw new InternalServerErrorException('Something Went Wrong');
+        }
+      }
+    } catch (err) {
+      if (err instanceof HttpException) {
+        throw err;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @Patch('change-password')
+  @HttpCode(HttpStatus.OK)
+  async changeUserPassword(@Body() changePasswordDto: ChangePasswordDto) {
+    try {
+      const result = await this.authService.changeUserPassword(changePasswordDto);
+      if (result.success) {
+        return { message: 'Password Changed!' };
+      } else {
+        const { error } = result;
+        if (error === 403) {
+          throw new ForbiddenException('Current Password is invalid');
+        } else if (error === 404) {
+          throw new NotFoundException();
+        } else if (error === 409) {
+          throw new ConflictException('New Password cannot be the old password');
+        } else {
+          throw new InternalServerErrorException('Something Went wrong');
         }
       }
     } catch (err) {

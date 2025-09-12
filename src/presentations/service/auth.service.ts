@@ -150,4 +150,26 @@ export class AuthService {
       return { success: false, error: err.code || 500, errorType: 'other' };
     }
   }
+
+  async changeUserPassword({
+    userId,
+    password,
+    newPassword,
+  }: {
+    userId: string;
+    password: string;
+    newPassword: string;
+  }): Promise<{ success: true } | { success: false; error: number }> {
+    try {
+      const result = await this.usersService.changeUserPassword({ userId, newPassword, password });
+      if (result.success) {
+        return { success: true };
+      } else {
+        const { error } = result;
+        return { success: false, error };
+      }
+    } catch (err) {
+      return { success: false, error: err.code || 500 };
+    }
+  }
 }

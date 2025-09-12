@@ -51,4 +51,14 @@ export declare class AuthService {
         error: number;
         errorType: 'user' | 'company' | 'stores' | 'other';
     }>;
+    changeUserPassword({ userId, password, newPassword, }: {
+        userId: string;
+        password: string;
+        newPassword: string;
+    }): Promise<{
+        success: true;
+    } | {
+        success: false;
+        error: number;
+    }>;
 }

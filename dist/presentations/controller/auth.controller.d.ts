@@ -1,5 +1,5 @@
 import { AuthService } from '../service/auth.service';
-import { AuthorizeUserDto, DeleteAccountDto, SignInDto, SignUpDto } from '../dto/auth';
+import { AuthorizeUserDto, ChangePasswordDto, DeleteAccountDto, SignInDto, SignUpDto } from '../dto/auth';
 import { Response } from 'express';
 export declare class AuthController {
     private authService;
@@ -13,5 +13,8 @@ export declare class AuthController {
         company: import("../../utils/types/company-type").Company | null;
     }>;
     deleteCompanyData(deleteAccountDto: DeleteAccountDto, res: Response): Promise<void>;
+    changeUserPassword(changePasswordDto: ChangePasswordDto): Promise<{
+        message: string;
+    }>;
     logout(res: Response): void;
 }

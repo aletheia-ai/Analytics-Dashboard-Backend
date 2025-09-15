@@ -7,6 +7,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Store } from '@src/utils/types/store-type';
 import { Company } from '@src/utils/types/company-type';
+import { Region } from '@src/utils/types/region-type';
 
 @Injectable()
 export class AuthService {
@@ -14,16 +15,36 @@ export class AuthService {
     private usersService: UserService,
     private jwtService: JwtService,
     @InjectModel('Store') private store: Model<Store>,
-    @InjectModel('Company') private company: Model<Company>
+    @InjectModel('Company') private company: Model<Company>,
+    @InjectModel('Region') private region: Model<Region>
   ) {}
 
   async getUserProfile(
     id: string
-  ): Promise<{ success: true; data: Company } | { success: false; error: number }> {
+  ): Promise<
+    | {
+        success: true;
+        company: Company | null;
+        stores: Store[] | null;
+        regions: Region[];
+        user: User;
+      }
+    | { success: false; error: number }
+  > {
     try {
-      const company = await this.company.findOne({ user: new Types.ObjectId(id) });
-      if (company) {
-        return { success: true, data: company };
+      const userData = await this.usersService.findUserById(id);
+      if (userData.success) {
+        const { data } = userData;
+        const company = await this.company.findOne({ user: new Types.ObjectId(id) });
+        const regions = await this.region.find();
+        if (company) {
+          const stores = await this.store.find({ company: new Types.ObjectId(company._id) });
+          return { success: true, company: company, stores, regions, user: data };
+        } else if (!company) {
+          return { success: true, company: null, stores: null, regions, user: data };
+        } else {
+          return { success: false, error: 404 };
+        }
       } else {
         return { success: false, error: 404 };
       }

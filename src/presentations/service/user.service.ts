@@ -125,7 +125,7 @@ export class UserService {
     userId: string
   ): Promise<{ success: true; data: User } | { success: false; error: number }> {
     try {
-      const data = await this.userModel.findOne({ _id: userId }).exec();
+      const data = await this.userModel.findOne({ _id: new Types.ObjectId(userId) }).exec();
       if (data) {
         return { success: true, data };
       } else {

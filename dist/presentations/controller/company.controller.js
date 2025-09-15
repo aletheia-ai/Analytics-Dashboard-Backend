@@ -76,7 +76,7 @@ let CompanyController = class CompanyController {
             const result = await this.companyService.addNewCompany(addCompanyDto);
             if (result.success) {
                 res.cookie('access_token', result.access_token, cookie_options_1.cookiesOptions);
-                res.status(201).json({ message: 'Business Created' });
+                res.status(201).json({ message: 'Business Created', company: result.company });
             }
             else {
                 const { error } = result;

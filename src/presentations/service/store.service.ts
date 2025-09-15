@@ -18,7 +18,7 @@ export class StoreService {
     userId: string,
     storeId: string
   ): Promise<
-    | { success: true }
+    | { success: true; stores: Store[] }
     | {
         success: false;
         error: Number;
@@ -33,7 +33,11 @@ export class StoreService {
           if (storeData) {
             const result = await this.store.deleteOne({ _id: new Types.ObjectId(storeId) });
             if (result.acknowledged) {
-              return { success: true };
+              const remainingStores = await this.store.find({
+                company: new Types.ObjectId(companyId),
+              });
+
+              return { success: true, stores: remainingStores };
             } else {
               return { success: false, error: 400, errorType: 'other' };
             }
@@ -55,7 +59,7 @@ export class StoreService {
     id: string,
     storeId: string
   ): Promise<
-    | { success: true }
+    | { success: true; stores: Store[] }
     | {
         success: false;
         error: Number;
@@ -80,7 +84,10 @@ export class StoreService {
                 { new: true }
               );
               if (store) {
-                return { success: true };
+                const stores = await this.store.find({
+                  company: new Types.ObjectId(companyData._id),
+                });
+                return { success: true, stores };
               } else {
                 return { success: false, error: 500, errorType: 'other' };
               }
@@ -103,7 +110,7 @@ export class StoreService {
     storeData: Store,
     id: string
   ): Promise<
-    | { success: true }
+    | { success: true; stores: Store[] }
     | {
         success: false;
         error: Number;
@@ -122,9 +129,11 @@ export class StoreService {
             if (!existingStore) {
               const store = new this.store({ ...storeData });
               await store.save();
-              return { success: true };
+              const stores = await this.store.find({
+                company: new Types.ObjectId(companyData._id),
+              });
+              return { success: true, stores };
             } else {
-              console.log(existingStore);
               return { success: false, error: 404, errorType: 'store' };
             }
           } else {

@@ -83,6 +83,7 @@ let CompanyService = class CompanyService {
                         access_token: await this.jwtService.signAsync({
                             ...payload,
                         }),
+                        company: newCompany,
                     };
                 }
                 else {

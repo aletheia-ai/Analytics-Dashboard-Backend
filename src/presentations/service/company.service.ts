@@ -52,7 +52,9 @@ export class CompanyService {
 
   async addNewCompany(
     companyData: Omit<Company, '_id'>
-  ): Promise<{ success: true; access_token: string } | { success: false; error: Number }> {
+  ): Promise<
+    { success: true; access_token: string; company: Company } | { success: false; error: Number }
+  > {
     try {
       const userExists = await this.user.exists({ _id: companyData.user });
       if (!userExists) {
@@ -81,6 +83,7 @@ export class CompanyService {
             access_token: await this.jwtService.signAsync({
               ...payload,
             }),
+            company: newCompany,
           };
         } else {
           return { success: false, error: 500 };

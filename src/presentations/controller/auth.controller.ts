@@ -132,7 +132,18 @@ export class AuthController {
   async getProfile(@Request() req) {
     try {
       const result = await this.authService.getUserProfile(req.user.id);
-      return { message: req.user, company: result.success ? result.data : null };
+      if (result.success) {
+        const { stores, company, regions, user } = result;
+        return {
+          message: req.user,
+          company: company ? company : null,
+          stores: stores ? (stores.length > 0 ? stores : null) : null,
+          regions: regions ? (regions.length > 0 ? regions : null) : null,
+          user: user || null,
+        };
+      } else {
+        throw new NotFoundException('User Not Found');
+      }
     } catch (err) {
       throw new InternalServerErrorException();
     }

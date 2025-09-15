@@ -31,7 +31,8 @@ export class StoreController {
     try {
       const result = await this.storeService.addNewStore(addStoreDto, req.user.id);
       if (result.success) {
-        return { message: 'Store Created' };
+        const { stores } = result;
+        return { message: 'Store Created', stores };
       } else {
         const { error, errorType } = result;
         if (error === 403) {
@@ -70,7 +71,10 @@ export class StoreController {
         deleteStoreDto.storeId
       );
       if (result.success) {
-        return { message: 'Store Deleted Successfully' };
+        return {
+          message: 'Store Deleted Successfully',
+          stores: result.stores.length > 0 ? result.stores : null,
+        };
       } else {
         const { error, errorType } = result;
         if (error === 403) {
@@ -106,7 +110,8 @@ export class StoreController {
       const { id, ...rest } = EditStoreDto;
       const result = await this.storeService.editExistingStore(rest, req.user.id, id);
       if (result.success) {
-        return { message: 'Store Updated Successfully' };
+        const { stores } = result;
+        return { message: 'Store Updated Successfully', stores };
       } else {
         const { error, errorType } = result;
 

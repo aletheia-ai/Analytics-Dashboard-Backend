@@ -24,6 +24,7 @@ export declare class CompanyService {
     addNewCompany(companyData: Omit<Company, '_id'>): Promise<{
         success: true;
         access_token: string;
+        company: Company;
     } | {
         success: false;
         error: Number;

@@ -86,7 +86,7 @@ export class CompanyController {
       if (result.success) {
         res.cookie('access_token', result.access_token, cookiesOptions);
 
-        res.status(201).json({ message: 'Business Created' });
+        res.status(201).json({ message: 'Business Created', company: result.company });
       } else {
         const { error } = result;
         if (error === 11000) {

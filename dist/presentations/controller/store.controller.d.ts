@@ -6,6 +6,7 @@ export declare class StoreController {
     addNewStore(addStoreDto: AddStoreDto, req: any): Promise<{
         message: string;
         stores: import("../../utils/types/store-type").Store[];
+        store: import("../../utils/types/store-type").Store;
     } | undefined>;
     deleteExistingStore(deleteStoreDto: DeleteStoreDto, req: any): Promise<{
         message: string;

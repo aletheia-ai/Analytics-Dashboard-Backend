@@ -26,8 +26,8 @@ let StoreController = class StoreController {
         try {
             const result = await this.storeService.addNewStore(addStoreDto, req.user.id);
             if (result.success) {
-                const { stores } = result;
-                return { message: 'Store Created', stores };
+                const { stores, store } = result;
+                return { message: 'Store Created', stores, store };
             }
             else {
                 const { error, errorType } = result;

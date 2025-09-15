@@ -25,17 +25,31 @@ let AuthService = class AuthService {
     jwtService;
     store;
     company;
-    constructor(usersService, jwtService, store, company) {
+    region;
+    constructor(usersService, jwtService, store, company, region) {
         this.usersService = usersService;
         this.jwtService = jwtService;
         this.store = store;
         this.company = company;
+        this.region = region;
     }
     async getUserProfile(id) {
         try {
-            const company = await this.company.findOne({ user: new mongoose_2.Types.ObjectId(id) });
-            if (company) {
-                return { success: true, data: company };
+            const userData = await this.usersService.findUserById(id);
+            if (userData.success) {
+                const { data } = userData;
+                const company = await this.company.findOne({ user: new mongoose_2.Types.ObjectId(id) });
+                const regions = await this.region.find();
+                if (company) {
+                    const stores = await this.store.find({ company: new mongoose_2.Types.ObjectId(company._id) });
+                    return { success: true, company: company, stores, regions, user: data };
+                }
+                else if (!company) {
+                    return { success: true, company: null, stores: null, regions, user: data };
+                }
+                else {
+                    return { success: false, error: 404 };
+                }
             }
             else {
                 return { success: false, error: 404 };
@@ -173,8 +187,10 @@ exports.AuthService = AuthService = __decorate([
     (0, common_1.Injectable)(),
     __param(2, (0, mongoose_1.InjectModel)('Store')),
     __param(3, (0, mongoose_1.InjectModel)('Company')),
+    __param(4, (0, mongoose_1.InjectModel)('Region')),
     __metadata("design:paramtypes", [user_service_1.UserService,
         jwt_1.JwtService,
+        mongoose_2.Model,
         mongoose_2.Model,
         mongoose_2.Model])
 ], AuthService);

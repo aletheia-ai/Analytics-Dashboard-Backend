@@ -114,7 +114,7 @@ let UserService = class UserService {
     }
     async findUserById(userId) {
         try {
-            const data = await this.userModel.findOne({ _id: userId }).exec();
+            const data = await this.userModel.findOne({ _id: new mongoose_2.Types.ObjectId(userId) }).exec();
             if (data) {
                 return { success: true, data };
             }

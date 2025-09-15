@@ -25,7 +25,6 @@ export class UserController {
   @Patch('edit-user')
   async updateUser(@Body() editUserDto: EditUserByIdDto) {
     try {
-      // const result=
       const result = await this.userService.editUser(editUserDto);
       if (result.success) {
         return { message: 'User Updated Successfully', data: result.data };

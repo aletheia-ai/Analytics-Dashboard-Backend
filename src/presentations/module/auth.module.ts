@@ -5,12 +5,14 @@ import { UserModule } from '../module/user.module';
 import { JwtModule } from '@nestjs/jwt';
 import { StoreModule } from './store.module';
 import { CompanyModule } from './company.module';
+import { RegionModule } from './region.module';
 
 @Module({
   imports: [
     UserModule,
     StoreModule,
     CompanyModule,
+    RegionModule,
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET,

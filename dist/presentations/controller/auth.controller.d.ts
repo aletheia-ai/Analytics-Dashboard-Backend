@@ -11,6 +11,9 @@ export declare class AuthController {
     getProfile(req: any): Promise<{
         message: any;
         company: import("../../utils/types/company-type").Company | null;
+        stores: import("../../utils/types/store-type").Store[] | null;
+        regions: import("../../utils/types/region-type").Region[] | null;
+        user: import("@src/utils/types").User;
     }>;
     deleteCompanyData(deleteAccountDto: DeleteAccountDto, res: Response): Promise<void>;
     changeUserPassword(changePasswordDto: ChangePasswordDto): Promise<{

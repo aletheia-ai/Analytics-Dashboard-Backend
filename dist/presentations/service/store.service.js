@@ -34,7 +34,10 @@ let StoreService = class StoreService {
                     if (storeData) {
                         const result = await this.store.deleteOne({ _id: new mongoose_2.Types.ObjectId(storeId) });
                         if (result.acknowledged) {
-                            return { success: true };
+                            const remainingStores = await this.store.find({
+                                company: new mongoose_2.Types.ObjectId(companyId),
+                            });
+                            return { success: true, stores: remainingStores };
                         }
                         else {
                             return { success: false, error: 400, errorType: 'other' };
@@ -72,7 +75,10 @@ let StoreService = class StoreService {
                         else {
                             const store = await this.store.findByIdAndUpdate(storeId, { $set: storeData }, { new: true });
                             if (store) {
-                                return { success: true };
+                                const stores = await this.store.find({
+                                    company: new mongoose_2.Types.ObjectId(companyData._id),
+                                });
+                                return { success: true, stores };
                             }
                             else {
                                 return { success: false, error: 500, errorType: 'other' };
@@ -108,10 +114,12 @@ let StoreService = class StoreService {
                         if (!existingStore) {
                             const store = new this.store({ ...storeData });
                             await store.save();
-                            return { success: true };
+                            const stores = await this.store.find({
+                                company: new mongoose_2.Types.ObjectId(companyData._id),
+                            });
+                            return { success: true, stores };
                         }
                         else {
-                            console.log(existingStore);
                             return { success: false, error: 404, errorType: 'store' };
                         }
                     }

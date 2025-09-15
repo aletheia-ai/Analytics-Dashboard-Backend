@@ -9,6 +9,7 @@ export declare class StoreService {
     constructor(store: Model<Store>, company: Model<Company>, region: Model<Region>);
     deleteStore(companyId: string, userId: string, storeId: string): Promise<{
         success: true;
+        stores: Store[];
     } | {
         success: false;
         error: Number;
@@ -16,6 +17,7 @@ export declare class StoreService {
     }>;
     editExistingStore(storeData: Store, id: string, storeId: string): Promise<{
         success: true;
+        stores: Store[];
     } | {
         success: false;
         error: Number;
@@ -23,6 +25,7 @@ export declare class StoreService {
     }>;
     addNewStore(storeData: Store, id: string): Promise<{
         success: true;
+        stores: Store[];
     } | {
         success: false;
         error: Number;

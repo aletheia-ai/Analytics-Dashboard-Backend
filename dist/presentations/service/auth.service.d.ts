@@ -4,15 +4,20 @@ import { SignInExceptions, User } from '@utils/types';
 import { Model } from 'mongoose';
 import { Store } from '@src/utils/types/store-type';
 import { Company } from '@src/utils/types/company-type';
+import { Region } from '@src/utils/types/region-type';
 export declare class AuthService {
     private usersService;
     private jwtService;
     private store;
     private company;
-    constructor(usersService: UserService, jwtService: JwtService, store: Model<Store>, company: Model<Company>);
+    private region;
+    constructor(usersService: UserService, jwtService: JwtService, store: Model<Store>, company: Model<Company>, region: Model<Region>);
     getUserProfile(id: string): Promise<{
         success: true;
-        data: Company;
+        company: Company | null;
+        stores: Store[] | null;
+        regions: Region[];
+        user: User;
     } | {
         success: false;
         error: number;

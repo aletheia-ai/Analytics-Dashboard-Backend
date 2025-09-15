@@ -117,7 +117,7 @@ let StoreService = class StoreService {
                             const stores = await this.store.find({
                                 company: new mongoose_2.Types.ObjectId(companyData._id),
                             });
-                            return { success: true, stores };
+                            return { success: true, stores, store };
                         }
                         else {
                             return { success: false, error: 404, errorType: 'store' };

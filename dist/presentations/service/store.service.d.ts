@@ -26,6 +26,7 @@ export declare class StoreService {
     addNewStore(storeData: Store, id: string): Promise<{
         success: true;
         stores: Store[];
+        store: Store;
     } | {
         success: false;
         error: Number;

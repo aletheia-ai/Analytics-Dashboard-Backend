@@ -110,7 +110,7 @@ export class StoreService {
     storeData: Store,
     id: string
   ): Promise<
-    | { success: true; stores: Store[] }
+    | { success: true; stores: Store[]; store: Store }
     | {
         success: false;
         error: Number;
@@ -132,7 +132,7 @@ export class StoreService {
               const stores = await this.store.find({
                 company: new Types.ObjectId(companyData._id),
               });
-              return { success: true, stores };
+              return { success: true, stores, store };
             } else {
               return { success: false, error: 404, errorType: 'store' };
             }

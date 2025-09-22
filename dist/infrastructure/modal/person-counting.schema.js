@@ -11,10 +11,14 @@ exports.PersonCountingSchema = new mongoose_1.Schema({
     maleCount: { type: Number, required: true },
     feMaleCount: { type: Number, required: true },
     cameraId: { type: String, required: true },
+    passingBy: { type: Number, required: true },
     age_0_9_Count: { type: Number, required: true },
     age_10_18_Count: { type: Number, required: true },
     age_19_34_Count: { type: Number, required: true },
     age_35_60_Count: { type: Number, required: true },
     age_60plus_Count: { type: Number, required: true },
+    interestedCustomers: { type: Number, required: true },
+    buyingCustomers: { type: Number, required: true },
+    liveOccupancy: { type: Number, required: true },
 }, { timestamps: true });
 //# sourceMappingURL=person-counting.schema.js.map

@@ -41,6 +41,10 @@ let PersonCountingService = class PersonCountingService {
                     const incFields = {};
                     const setFields = {};
                     for (const [key, value] of Object.entries(rest)) {
+                        if (key === 'liveOccupancy') {
+                            setFields[`data.${key}`] = value ?? 0;
+                            continue;
+                        }
                         if (typeof value === 'number') {
                             incFields[`data.${key}`] = value ?? 0;
                         }
@@ -48,7 +52,7 @@ let PersonCountingService = class PersonCountingService {
                             setFields[`data.${key}`] = value;
                         }
                     }
-                    const aggregatedResult = await this.stats.updateOne({ store }, {
+                    const aggregatedResult = await this.stats.updateOne({ store, cameraId }, {
                         $inc: incFields,
                         $set: {
                             ...setFields,
@@ -61,15 +65,30 @@ let PersonCountingService = class PersonCountingService {
                         return { success: false, error: 400 };
                     }
                     else {
-                        const statsData = await this.stats.findOne({
-                            store: new mongoose_2.Types.ObjectId(store),
-                        });
-                        if (statsData) {
-                            this.appGateway.handlePepleStats(statsData.data, 'abc');
-                            return { success: true };
+                        const aggregatedAllResult = await this.stats.updateOne({ store, cameraId: 'all' }, {
+                            $inc: incFields,
+                            $set: {
+                                ...setFields,
+                                store,
+                                'data.store': store,
+                                'data.cameraId': cameraId,
+                            },
+                        }, { upsert: true });
+                        if (!aggregatedAllResult) {
+                            return { success: false, error: 404 };
                         }
                         else {
-                            return { success: false, error: 404 };
+                            const statsData = await this.stats.findOne({
+                                store: new mongoose_2.Types.ObjectId(store),
+                                cameraId: 'all',
+                            });
+                            if (statsData) {
+                                this.appGateway.handlePepleStats(statsData.data, 'abc');
+                                return { success: true };
+                            }
+                            else {
+                                return { success: false, error: 404 };
+                            }
                         }
                     }
                 }
@@ -87,7 +106,7 @@ let PersonCountingService = class PersonCountingService {
     }
     async getStats(store) {
         try {
-            const data = await this.stats.findOne({ store: new mongoose_2.Types.ObjectId(store) });
+            const data = await this.stats.findOne({ store: new mongoose_2.Types.ObjectId(store), cameraId: 'all' });
             if (data) {
                 return { success: true, data: data.data };
             }

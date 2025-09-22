@@ -12,4 +12,8 @@ export declare class AddEntryDto {
     age_19_34_Count: number;
     age_35_60_Count: number;
     age_60plus_Count: number;
+    passingBy: number;
+    interestedCustomers: number;
+    buyingCustomers: number;
+    liveOccupancy: number;
 }

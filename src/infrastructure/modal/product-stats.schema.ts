@@ -7,6 +7,7 @@ import { StatsType } from '@src/utils/types/stats-type';
 export const ProductStatsSchema = new Schema<StatsType>(
   {
     store: { type: Types.ObjectId, ref: 'Store', required: true },
+    cameraId: { type: String, required: true },
     data: { type: PersonCountingSchema, required: true },
   },
   { timestamps: true }

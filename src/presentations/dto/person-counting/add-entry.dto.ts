@@ -52,4 +52,20 @@ export class AddEntryDto {
   @IsNumber()
   @IsNotEmpty()
   age_60plus_Count: number;
+
+  @IsNumber()
+  @IsNotEmpty()
+  passingBy: number;
+
+  @IsNumber()
+  @IsNotEmpty()
+  interestedCustomers: number;
+
+  @IsNumber()
+  @IsNotEmpty()
+  buyingCustomers: number;
+
+  @IsNumber()
+  @IsNotEmpty()
+  liveOccupancy: number;
 }

@@ -11,6 +11,9 @@ import { RegionModule } from './region.module';
 import { PersonCountingModule } from './person-counting.module';
 import { StoreModule } from './store.module';
 import { CompanyModule } from './company.module';
+import { RedisModule } from '@src/utils/shared/redis/redis.module';
+import { AppGateway } from '@src/utils/shared/socket';
+import { StatsModule } from './stats.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -21,14 +24,17 @@ import { CompanyModule } from './company.module';
       }),
       inject: [ConfigService],
     }),
+    // AppGateway,
     AuthModule,
     UserModule,
+    RedisModule,
     PersonCountingModule,
     RegionModule,
     StoreModule,
     CompanyModule,
+    StatsModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, AppGateway],
 })
 export class AppModule {}

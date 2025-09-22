@@ -1,11 +1,25 @@
-import { PersonStatsType } from '@utils/types/person-stats-type';
+import { PeopleCountingType } from '@src/utils/types/people-counting-type';
+import { Model } from 'mongoose';
+import { Store } from '@src/utils/types/store-type';
+import { StatsType } from '@src/utils/types/stats-type';
+import { AppGateway } from '@src/utils/shared/socket';
 export declare class PersonCountingService {
-    private readonly personStats;
-    getStats(): Promise<{
+    private personCounting;
+    private store;
+    private stats;
+    private readonly appGateway;
+    constructor(personCounting: Model<PeopleCountingType>, store: Model<Store>, stats: Model<StatsType>, appGateway: AppGateway);
+    addEntry(data: PeopleCountingType): Promise<{
         success: true;
-        data: PersonStatsType;
     } | {
         success: false;
-        err: string;
+        error: number;
+    }>;
+    getStats(store: string): Promise<{
+        success: true;
+        data: PeopleCountingType;
+    } | {
+        success: false;
+        error: number;
     }>;
 }

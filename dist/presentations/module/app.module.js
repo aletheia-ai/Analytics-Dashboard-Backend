@@ -18,6 +18,9 @@ const region_module_1 = require("./region.module");
 const person_counting_module_1 = require("./person-counting.module");
 const store_module_1 = require("./store.module");
 const company_module_1 = require("./company.module");
+const redis_module_1 = require("../../utils/shared/redis/redis.module");
+const socket_1 = require("../../utils/shared/socket");
+const stats_module_1 = require("./stats.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -34,13 +37,15 @@ exports.AppModule = AppModule = __decorate([
             }),
             auth_module_1.AuthModule,
             user_module_1.UserModule,
+            redis_module_1.RedisModule,
             person_counting_module_1.PersonCountingModule,
             region_module_1.RegionModule,
             store_module_1.StoreModule,
             company_module_1.CompanyModule,
+            stats_module_1.StatsModule,
         ],
         controllers: [app_controller_1.AppController],
-        providers: [app_service_1.AppService],
+        providers: [app_service_1.AppService, socket_1.AppGateway],
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map

@@ -1,2 +1,3 @@
 import { AddEntryDto } from './add-entry.dto';
-export { AddEntryDto };
+import { GetStatsDto } from './get-stats.dto';
+export { AddEntryDto, GetStatsDto };

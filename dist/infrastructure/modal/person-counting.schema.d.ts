@@ -1,50 +1,10 @@
+import { PeopleCountingType } from '@src/utils/types/people-counting-type';
 import { Schema, Types } from 'mongoose';
-export declare const PersonCountingSchema: Schema<any, import("mongoose").Model<any, any, any, any, any, any>, {}, {}, {}, {}, import("mongoose").DefaultSchemaOptions, {
-    store: {
-        prototype?: Types.ObjectId | null | undefined;
-        cacheHexString?: unknown;
-        generate?: {} | null | undefined;
-        createFromTime?: {} | null | undefined;
-        createFromHexString?: {} | null | undefined;
-        createFromBase64?: {} | null | undefined;
-        isValid?: {} | null | undefined;
-    };
-    enterCount: number;
-    exitCount: number;
-    maskCount: number;
-    unMaskCount: number;
-    maleCount: number;
-}, import("mongoose").Document<unknown, {}, import("mongoose").FlatRecord<{
-    store: {
-        prototype?: Types.ObjectId | null | undefined;
-        cacheHexString?: unknown;
-        generate?: {} | null | undefined;
-        createFromTime?: {} | null | undefined;
-        createFromHexString?: {} | null | undefined;
-        createFromBase64?: {} | null | undefined;
-        isValid?: {} | null | undefined;
-    };
-    enterCount: number;
-    exitCount: number;
-    maskCount: number;
-    unMaskCount: number;
-    maleCount: number;
-}>, {}, import("mongoose").ResolveSchemaOptions<import("mongoose").DefaultSchemaOptions>> & import("mongoose").FlatRecord<{
-    store: {
-        prototype?: Types.ObjectId | null | undefined;
-        cacheHexString?: unknown;
-        generate?: {} | null | undefined;
-        createFromTime?: {} | null | undefined;
-        createFromHexString?: {} | null | undefined;
-        createFromBase64?: {} | null | undefined;
-        isValid?: {} | null | undefined;
-    };
-    enterCount: number;
-    exitCount: number;
-    maskCount: number;
-    unMaskCount: number;
-    maleCount: number;
-}> & {
+export declare const PersonCountingSchema: Schema<PeopleCountingType, import("mongoose").Model<PeopleCountingType, any, any, any, import("mongoose").Document<unknown, any, PeopleCountingType, any, {}> & PeopleCountingType & {
+    _id: Types.ObjectId;
+} & {
+    __v: number;
+}, any>, {}, {}, {}, {}, import("mongoose").DefaultSchemaOptions, PeopleCountingType, import("mongoose").Document<unknown, {}, import("mongoose").FlatRecord<PeopleCountingType>, {}, import("mongoose").ResolveSchemaOptions<import("mongoose").DefaultSchemaOptions>> & import("mongoose").FlatRecord<PeopleCountingType> & {
     _id: Types.ObjectId;
 } & {
     __v: number;

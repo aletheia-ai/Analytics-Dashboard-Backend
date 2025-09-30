@@ -21,8 +21,8 @@ export class PersonCountingController {
   constructor(private personCounting: PersonCountingService) {}
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
-  @Get('stats/:store')
-  async getStatistics(@Param() getStatsDto: GetStatsDto) {
+  @Post('stats')
+  async getStatistics(@Body() getStatsDto: GetStatsDto) {
     try {
       const result = await this.personCounting.getStats(getStatsDto.store);
       if (result.success) {
@@ -59,6 +59,66 @@ export class PersonCountingController {
         } else {
           throw new InternalServerErrorException('Something went wrong');
         }
+      }
+    } catch (err) {
+      if (err instanceof HttpException) {
+        throw err;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('day-wise-stats')
+  @UseGuards(AuthGuard)
+  async getStats(@Body() getStatsDto: GetStatsDto) {
+    try {
+      const result = await this.personCounting.getDayWiseStats(getStatsDto.store);
+
+      if (result.success) {
+        return { message: result.data };
+      } else {
+        throw new InternalServerErrorException('Something Went wrong');
+      }
+    } catch (err) {
+      if (err instanceof HttpException) {
+        throw err;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('hour-wise-stats')
+  @UseGuards(AuthGuard)
+  async getHourWiseStats(@Body() getStatsDto: GetStatsDto) {
+    try {
+      const result = await this.personCounting.getHourWiseStats(getStatsDto.store[0]);
+
+      if (result.success) {
+        return { message: result.data };
+      } else {
+        throw new InternalServerErrorException('Something Went wrong');
+      }
+    } catch (err) {
+      if (err instanceof HttpException) {
+        throw err;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('current-hour-stats')
+  @UseGuards(AuthGuard)
+  async getCurrentHourStats(@Body() getStatsDto: GetStatsDto) {
+    try {
+      const result = await this.personCounting.getCurrentHourStats(getStatsDto.store);
+
+      if (result.success) {
+        return { message: result.data };
+      } else {
+        throw new InternalServerErrorException('Something Went wrong');
       }
     } catch (err) {
       if (err instanceof HttpException) {

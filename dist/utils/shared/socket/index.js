@@ -29,7 +29,6 @@ let AppGateway = class AppGateway {
         this.server.to(room).emit('joinedRoom', { room });
     }
     handlePepleStats(payload, userId) {
-        console.log('hello world');
         this.server.emit('people-stats', payload);
     }
 };

@@ -18,17 +18,26 @@ const dotenv = require("dotenv");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
 const socket_1 = require("../../utils/shared/socket");
+const queue_service_1 = require("../../utils/queue/queue.service");
+const range_type_1 = require("../../utils/types/range-type");
+const aggregated_stats_1 = require("../../utils/methods/aggregated-stats");
 dotenv.config();
 let PersonCountingService = class PersonCountingService {
     personCounting;
     store;
     stats;
+    dayWiseStats;
+    hourWiseStats;
     appGateway;
-    constructor(personCounting, store, stats, appGateway) {
+    queue;
+    constructor(personCounting, store, stats, dayWiseStats, hourWiseStats, appGateway, queue) {
         this.personCounting = personCounting;
         this.store = store;
         this.stats = stats;
+        this.dayWiseStats = dayWiseStats;
+        this.hourWiseStats = hourWiseStats;
         this.appGateway = appGateway;
+        this.queue = queue;
     }
     async addEntry(data) {
         try {
@@ -52,7 +61,7 @@ let PersonCountingService = class PersonCountingService {
                             setFields[`data.${key}`] = value;
                         }
                     }
-                    const aggregatedResult = await this.stats.updateOne({ store, cameraId }, {
+                    const aggregatedResult = await this.stats.updateOne({ store, cameraId, range: range_type_1.RangeType.ALL_TIME }, {
                         $inc: incFields,
                         $set: {
                             ...setFields,
@@ -65,7 +74,7 @@ let PersonCountingService = class PersonCountingService {
                         return { success: false, error: 400 };
                     }
                     else {
-                        const aggregatedAllResult = await this.stats.updateOne({ store, cameraId: 'all' }, {
+                        const aggregatedAllResult = await this.stats.updateOne({ store, cameraId: 'all', range: range_type_1.RangeType.ALL_TIME }, {
                             $inc: incFields,
                             $set: {
                                 ...setFields,
@@ -84,6 +93,29 @@ let PersonCountingService = class PersonCountingService {
                             });
                             if (statsData) {
                                 this.appGateway.handlePepleStats(statsData.data, 'abc');
+                                const dayName = entryData.createdAt.toLocaleDateString('en-US', {
+                                    weekday: 'long',
+                                });
+                                const now = new Date();
+                                const currentHour = now.getUTCHours();
+                                await this.dayWiseStats.updateOne({ store, day: dayName }, {
+                                    $inc: incFields,
+                                    $set: {
+                                        ...setFields,
+                                        store,
+                                        'data.store': store,
+                                        'data.cameraId': cameraId,
+                                    },
+                                }, { upsert: true });
+                                await this.hourWiseStats.updateOne({ store, hour: currentHour }, {
+                                    $inc: incFields,
+                                    $set: {
+                                        ...setFields,
+                                        store,
+                                        'data.store': store,
+                                        'data.cameraId': cameraId,
+                                    },
+                                }, { upsert: true });
                                 return { success: true };
                             }
                             else {
@@ -101,17 +133,86 @@ let PersonCountingService = class PersonCountingService {
             }
         }
         catch (err) {
+            console.log('err', err.message);
             return { success: false, error: err.code || 500 };
         }
     }
     async getStats(store) {
         try {
-            const data = await this.stats.findOne({ store: new mongoose_2.Types.ObjectId(store), cameraId: 'all' });
+            const objectIds = store.map((id) => new mongoose_2.Types.ObjectId(id));
+            const data = await this.stats
+                .find({
+                store: { $in: objectIds },
+                cameraId: 'all',
+                range: 'all',
+            })
+                .lean();
             if (data) {
-                return { success: true, data: data.data };
+                const result = data.map((item) => item.data);
+                const finalResult = (0, aggregated_stats_1.sumObjects)(result);
+                return { success: true, data: finalResult };
             }
             else {
                 return { success: false, error: 404 };
+            }
+        }
+        catch (err) {
+            return { success: false, error: err.code || 500 };
+        }
+    }
+    async getDayWiseStats(store) {
+        try {
+            const stats = await this.dayWiseStats.find({ store: store[0] });
+            return { success: true, data: stats };
+        }
+        catch (err) {
+            return { success: false, error: err.code || 500 };
+        }
+    }
+    async getHourWiseStats(store) {
+        try {
+            const stats = await this.hourWiseStats.find({ store });
+            return { success: true, data: stats };
+        }
+        catch (err) {
+            return { success: false, error: err.code || 500 };
+        }
+    }
+    async getCurrentHourStats(store) {
+        try {
+            const now = new Date();
+            const currentHour = now.getUTCHours();
+            const objectIds = store.map((id) => new mongoose_2.Types.ObjectId(id));
+            const stats = await this.hourWiseStats
+                .find({ store: { $in: objectIds }, hour: currentHour })
+                .lean();
+            if (stats && stats.length > 0) {
+                const result = stats.map((item) => item.data);
+                const { age_0_9_Count, age_10_18_Count, age_19_34_Count, age_35_60_Count, age_60plus_Count, enterCount, } = (0, aggregated_stats_1.sumObjects)(result);
+                return {
+                    success: true,
+                    data: {
+                        age_0_9_Count,
+                        age_10_18_Count,
+                        age_19_34_Count,
+                        age_35_60_Count,
+                        age_60plus_Count,
+                        enterCount,
+                    },
+                };
+            }
+            else {
+                return {
+                    success: true,
+                    data: {
+                        age_0_9_Count: 0,
+                        age_10_18_Count: 0,
+                        age_19_34_Count: 0,
+                        age_35_60_Count: 0,
+                        age_60plus_Count: 0,
+                        enterCount: 0,
+                    },
+                };
             }
         }
         catch (err) {
@@ -125,9 +226,14 @@ exports.PersonCountingService = PersonCountingService = __decorate([
     __param(0, (0, mongoose_1.InjectModel)('Person Counting')),
     __param(1, (0, mongoose_1.InjectModel)('Store')),
     __param(2, (0, mongoose_1.InjectModel)('Product Stats')),
+    __param(3, (0, mongoose_1.InjectModel)('Day Wise Stats')),
+    __param(4, (0, mongoose_1.InjectModel)('Hour Wise Stats')),
     __metadata("design:paramtypes", [mongoose_2.Model,
         mongoose_2.Model,
         mongoose_2.Model,
-        socket_1.AppGateway])
+        mongoose_2.Model,
+        mongoose_2.Model,
+        socket_1.AppGateway,
+        queue_service_1.QueueService])
 ], PersonCountingService);
 //# sourceMappingURL=person-counting.service.js.map

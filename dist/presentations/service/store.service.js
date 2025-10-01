@@ -16,14 +16,36 @@ exports.StoreService = void 0;
 const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
+const days_of_week_1 = require("../../utils/constants/days-of-week");
+const defaultData = {
+    enterCount: 0,
+    exitCount: 0,
+    maskCount: 0,
+    unMaskCount: 0,
+    maleCount: 0,
+    feMaleCount: 0,
+    passingBy: 0,
+    age_0_9_Count: 0,
+    age_10_18_Count: 0,
+    age_19_34_Count: 0,
+    age_35_60_Count: 0,
+    age_60plus_Count: 0,
+    interestedCustomers: 0,
+    buyingCustomers: 0,
+    liveOccupancy: 0,
+};
 let StoreService = class StoreService {
     store;
     company;
     region;
-    constructor(store, company, region) {
+    dayWiseStats;
+    hourWiseStats;
+    constructor(store, company, region, dayWiseStats, hourWiseStats) {
         this.store = store;
         this.company = company;
         this.region = region;
+        this.dayWiseStats = dayWiseStats;
+        this.hourWiseStats = hourWiseStats;
     }
     async deleteStore(companyId, userId, storeId) {
         try {
@@ -117,6 +139,24 @@ let StoreService = class StoreService {
                             const stores = await this.store.find({
                                 company: new mongoose_2.Types.ObjectId(companyData._id),
                             });
+                            if (store) {
+                                const dayWiseStatsDocs = days_of_week_1.daysOfWeek.map((day) => ({
+                                    store: store._id,
+                                    day: day.name,
+                                    data: { ...defaultData, store: store._id, cameraId: 'xyz' },
+                                }));
+                                await this.dayWiseStats.insertMany(dayWiseStatsDocs);
+                            }
+                            const hours = Array.from({ length: 24 }, (_, i) => i);
+                            await this.hourWiseStats.insertMany(hours.map((hour) => ({
+                                store: store._id,
+                                hour,
+                                data: {
+                                    ...defaultData,
+                                    store: store._id,
+                                    cameraId: 'xyz',
+                                },
+                            })));
                             return { success: true, stores, store };
                         }
                         else {
@@ -134,6 +174,7 @@ let StoreService = class StoreService {
             }
         }
         catch (error) {
+            console.log(error);
             return { success: false, error: error.code || 500, errorType: 'other' };
         }
     }
@@ -164,7 +205,11 @@ exports.StoreService = StoreService = __decorate([
     __param(0, (0, mongoose_1.InjectModel)('Store')),
     __param(1, (0, mongoose_1.InjectModel)('Company')),
     __param(2, (0, mongoose_1.InjectModel)('Region')),
+    __param(3, (0, mongoose_1.InjectModel)('Day Wise Stats')),
+    __param(4, (0, mongoose_1.InjectModel)('Hour Wise Stats')),
     __metadata("design:paramtypes", [mongoose_2.Model,
+        mongoose_2.Model,
+        mongoose_2.Model,
         mongoose_2.Model,
         mongoose_2.Model])
 ], StoreService);

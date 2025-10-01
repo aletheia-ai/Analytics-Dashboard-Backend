@@ -5,12 +5,35 @@ import { Model, Types } from 'mongoose';
 import type { Store } from '@utils/types/store-type';
 import type { Company } from '@src/utils/types/company-type';
 import type { Region } from '@src/utils/types/region-type';
+import { DayWiseStatsType } from '@src/utils/types/day-wise-stat-type';
+import { daysOfWeek } from '@src/utils/constants/days-of-week';
+import { HourWiseStatsType } from '@src/utils/types/hour-stat.type';
+const defaultData = {
+  enterCount: 0,
+  exitCount: 0,
+  maskCount: 0,
+  unMaskCount: 0,
+  maleCount: 0,
+  feMaleCount: 0,
+  passingBy: 0,
+  age_0_9_Count: 0,
+  age_10_18_Count: 0,
+  age_19_34_Count: 0,
+  age_35_60_Count: 0,
+  age_60plus_Count: 0,
+  interestedCustomers: 0,
+  buyingCustomers: 0,
+  liveOccupancy: 0,
+};
+
 @Injectable()
 export class StoreService {
   constructor(
     @InjectModel('Store') private store: Model<Store>,
     @InjectModel('Company') private company: Model<Company>,
-    @InjectModel('Region') private region: Model<Region>
+    @InjectModel('Region') private region: Model<Region>,
+    @InjectModel('Day Wise Stats') private dayWiseStats: Model<DayWiseStatsType>,
+    @InjectModel('Hour Wise Stats') private hourWiseStats: Model<HourWiseStatsType>
   ) {}
 
   async deleteStore(
@@ -132,6 +155,26 @@ export class StoreService {
               const stores = await this.store.find({
                 company: new Types.ObjectId(companyData._id),
               });
+              if (store) {
+                const dayWiseStatsDocs = daysOfWeek.map((day) => ({
+                  store: store._id,
+                  day: day.name,
+                  data: { ...defaultData, store: store._id, cameraId: 'xyz' },
+                }));
+                await this.dayWiseStats.insertMany(dayWiseStatsDocs);
+              }
+              const hours = Array.from({ length: 24 }, (_, i) => i);
+              await this.hourWiseStats.insertMany(
+                hours.map((hour) => ({
+                  store: store._id,
+                  hour,
+                  data: {
+                    ...defaultData,
+                    store: store._id,
+                    cameraId: 'xyz',
+                  },
+                }))
+              );
               return { success: true, stores, store };
             } else {
               return { success: false, error: 404, errorType: 'store' };
@@ -145,6 +188,7 @@ export class StoreService {
         return { success: false, error: 404, errorType: 'company' };
       }
     } catch (error) {
+      console.log(error);
       return { success: false, error: error.code || 500, errorType: 'other' };
     }
   }

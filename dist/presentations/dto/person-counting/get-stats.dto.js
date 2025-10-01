@@ -16,8 +16,8 @@ class GetStatsDto {
 }
 exports.GetStatsDto = GetStatsDto;
 __decorate([
-    (0, class_validator_1.IsMongoId)(),
+    (0, class_validator_1.IsMongoId)({ each: true }),
     (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", String)
+    __metadata("design:type", Array)
 ], GetStatsDto.prototype, "store", void 0);
 //# sourceMappingURL=get-stats.dto.js.map

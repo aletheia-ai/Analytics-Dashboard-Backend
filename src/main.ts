@@ -16,8 +16,8 @@ import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const httpsOptions = {
-    key: fs.readFileSync('./myapp.local-key.pem'),
-    cert: fs.readFileSync('./myapp.local.pem'),
+    key: fs.readFileSync('./localhost-key.pem'),
+    cert: fs.readFileSync('./localhost.pem'),
   };
   const app = await NestFactory.create(AppModule, { httpsOptions });
   const config = new DocumentBuilder()

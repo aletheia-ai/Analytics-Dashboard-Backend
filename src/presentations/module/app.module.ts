@@ -14,6 +14,10 @@ import { CompanyModule } from './company.module';
 import { RedisModule } from '@src/utils/shared/redis/redis.module';
 import { AppGateway } from '@src/utils/shared/socket';
 import { StatsModule } from './stats.module';
+import { QueueModule } from '@src/utils/queue/queue.module';
+import { DayWiseStatsModule } from './day-wise-stats.module';
+
+import { HourWiseStatsModule } from './hour-stat.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -24,7 +28,6 @@ import { StatsModule } from './stats.module';
       }),
       inject: [ConfigService],
     }),
-    // AppGateway,
     AuthModule,
     UserModule,
     RedisModule,
@@ -33,6 +36,9 @@ import { StatsModule } from './stats.module';
     StoreModule,
     CompanyModule,
     StatsModule,
+    QueueModule,
+    DayWiseStatsModule,
+    HourWiseStatsModule,
   ],
   controllers: [AppController],
   providers: [AppService, AppGateway],

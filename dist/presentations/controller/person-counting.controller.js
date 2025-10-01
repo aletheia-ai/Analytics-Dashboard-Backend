@@ -24,7 +24,7 @@ let PersonCountingController = class PersonCountingController {
     }
     async getStatistics(getStatsDto) {
         try {
-            const result = await this.personCounting.getStats(getStatsDto.store);
+            const result = await this.personCounting.getStats(getStatsDto.store, getStatsDto.range);
             if (result.success) {
                 return { message: result.data };
             }
@@ -71,15 +71,66 @@ let PersonCountingController = class PersonCountingController {
             throw new common_1.InternalServerErrorException();
         }
     }
+    async getStats(getStatsDto) {
+        try {
+            const result = await this.personCounting.getDayWiseStats(getStatsDto.store);
+            if (result.success) {
+                return { message: result.data };
+            }
+            else {
+                throw new common_1.InternalServerErrorException('Something Went wrong');
+            }
+        }
+        catch (err) {
+            if (err instanceof common_1.HttpException) {
+                throw err;
+            }
+            throw new common_1.InternalServerErrorException();
+        }
+    }
+    async getHourWiseStats(getStatsDto) {
+        try {
+            const result = await this.personCounting.getHourWiseStats(getStatsDto.store);
+            if (result.success) {
+                return { message: result.data };
+            }
+            else {
+                throw new common_1.InternalServerErrorException('Something Went wrong');
+            }
+        }
+        catch (err) {
+            if (err instanceof common_1.HttpException) {
+                throw err;
+            }
+            throw new common_1.InternalServerErrorException();
+        }
+    }
+    async getCurrentHourStats(getStatsDto) {
+        try {
+            const result = await this.personCounting.getCurrentHourStats(getStatsDto.store);
+            if (result.success) {
+                return { message: result.data };
+            }
+            else {
+                throw new common_1.InternalServerErrorException('Something Went wrong');
+            }
+        }
+        catch (err) {
+            if (err instanceof common_1.HttpException) {
+                throw err;
+            }
+            throw new common_1.InternalServerErrorException();
+        }
+    }
 };
 exports.PersonCountingController = PersonCountingController;
 __decorate([
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
     (0, common_1.HttpCode)(common_1.HttpStatus.OK),
-    (0, common_1.Get)('stats/:store'),
-    __param(0, (0, common_1.Param)()),
+    (0, common_1.Post)('stats'),
+    __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [person_counting_1.GetStatsDto]),
+    __metadata("design:paramtypes", [person_counting_1.GetTimelyStatsDto]),
     __metadata("design:returntype", Promise)
 ], PersonCountingController.prototype, "getStatistics", null);
 __decorate([
@@ -90,6 +141,33 @@ __decorate([
     __metadata("design:paramtypes", [person_counting_1.AddEntryDto]),
     __metadata("design:returntype", Promise)
 ], PersonCountingController.prototype, "addEntry", null);
+__decorate([
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    (0, common_1.Post)('day-wise-stats'),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [person_counting_1.GetStatsDto]),
+    __metadata("design:returntype", Promise)
+], PersonCountingController.prototype, "getStats", null);
+__decorate([
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    (0, common_1.Post)('hour-wise-stats'),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [person_counting_1.GetStatsDto]),
+    __metadata("design:returntype", Promise)
+], PersonCountingController.prototype, "getHourWiseStats", null);
+__decorate([
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    (0, common_1.Post)('current-hour-stats'),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [person_counting_1.GetStatsDto]),
+    __metadata("design:returntype", Promise)
+], PersonCountingController.prototype, "getCurrentHourStats", null);
 exports.PersonCountingController = PersonCountingController = __decorate([
     (0, common_1.Controller)('person-counting'),
     __metadata("design:paramtypes", [person_counting_service_1.PersonCountingService])

@@ -8,6 +8,7 @@ export const ProductStatsSchema = new Schema<StatsType>(
   {
     store: { type: Types.ObjectId, ref: 'Store', required: true },
     cameraId: { type: String, required: true },
+    range: { type: String, required: true },
     data: { type: PersonCountingSchema, required: true },
   },
   { timestamps: true }

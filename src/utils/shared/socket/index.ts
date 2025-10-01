@@ -37,7 +37,6 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     this.server.to(room).emit('joinedRoom', { room });
   }
   handlePepleStats(payload: any, userId: string) {
-    console.log('hello world');
     this.server.emit('people-stats', payload);
   }
 }

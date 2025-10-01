@@ -14,7 +14,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@utils/guards/auth.guard.';
 import { PersonCountingService } from '@presentations/service/person-counting.service';
-import { AddEntryDto, GetStatsDto } from '../dto/person-counting';
+import { AddEntryDto, GetStatsDto, GetTimelyStatsDto } from '../dto/person-counting';
 
 @Controller('person-counting')
 export class PersonCountingController {
@@ -22,9 +22,9 @@ export class PersonCountingController {
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   @Post('stats')
-  async getStatistics(@Body() getStatsDto: GetStatsDto) {
+  async getStatistics(@Body() getStatsDto: GetTimelyStatsDto) {
     try {
-      const result = await this.personCounting.getStats(getStatsDto.store);
+      const result = await this.personCounting.getStats(getStatsDto.store, getStatsDto.range);
       if (result.success) {
         return { message: result.data };
       } else {
@@ -93,7 +93,7 @@ export class PersonCountingController {
   @UseGuards(AuthGuard)
   async getHourWiseStats(@Body() getStatsDto: GetStatsDto) {
     try {
-      const result = await this.personCounting.getHourWiseStats(getStatsDto.store[0]);
+      const result = await this.personCounting.getHourWiseStats(getStatsDto.store);
 
       if (result.success) {
         return { message: result.data };

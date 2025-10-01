@@ -18,7 +18,6 @@ const dotenv = require("dotenv");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
 const socket_1 = require("../../utils/shared/socket");
-const queue_service_1 = require("../../utils/queue/queue.service");
 const range_type_1 = require("../../utils/types/range-type");
 const aggregated_stats_1 = require("../../utils/methods/aggregated-stats");
 dotenv.config();
@@ -29,15 +28,13 @@ let PersonCountingService = class PersonCountingService {
     dayWiseStats;
     hourWiseStats;
     appGateway;
-    queue;
-    constructor(personCounting, store, stats, dayWiseStats, hourWiseStats, appGateway, queue) {
+    constructor(personCounting, store, stats, dayWiseStats, hourWiseStats, appGateway) {
         this.personCounting = personCounting;
         this.store = store;
         this.stats = stats;
         this.dayWiseStats = dayWiseStats;
         this.hourWiseStats = hourWiseStats;
         this.appGateway = appGateway;
-        this.queue = queue;
     }
     async addEntry(data) {
         try {
@@ -92,12 +89,12 @@ let PersonCountingService = class PersonCountingService {
                                 cameraId: 'all',
                             });
                             if (statsData) {
-                                this.appGateway.handlePepleStats(statsData.data, 'abc');
+                                this.appGateway.handlePepleStats(result, 'abc');
                                 const dayName = entryData.createdAt.toLocaleDateString('en-US', {
                                     weekday: 'long',
                                 });
                                 const now = new Date();
-                                const currentHour = now.getUTCHours();
+                                const currentHour = now.getUTCHours() + 5;
                                 await this.dayWiseStats.updateOne({ store, day: dayName }, {
                                     $inc: incFields,
                                     $set: {
@@ -137,14 +134,14 @@ let PersonCountingService = class PersonCountingService {
             return { success: false, error: err.code || 500 };
         }
     }
-    async getStats(store) {
+    async getStats(store, range) {
         try {
             const objectIds = store.map((id) => new mongoose_2.Types.ObjectId(id));
             const data = await this.stats
                 .find({
                 store: { $in: objectIds },
                 cameraId: 'all',
-                range: 'all',
+                range: range,
             })
                 .lean();
             if (data) {
@@ -162,7 +159,79 @@ let PersonCountingService = class PersonCountingService {
     }
     async getDayWiseStats(store) {
         try {
-            const stats = await this.dayWiseStats.find({ store: store[0] });
+            const objectIds = store.map((id) => new mongoose_2.Types.ObjectId(id));
+            const stats = await this.dayWiseStats.aggregate([
+                {
+                    $match: { store: { $in: objectIds } },
+                },
+                {
+                    $group: {
+                        _id: '$day',
+                        store: { $first: '$store' },
+                        cameraId: { $first: '$data.cameraId' },
+                        enterCount: { $sum: '$data.enterCount' },
+                        exitCount: { $sum: '$data.exitCount' },
+                        maskCount: { $sum: '$data.maskCount' },
+                        unMaskCount: { $sum: '$data.unMaskCount' },
+                        maleCount: { $sum: '$data.maleCount' },
+                        feMaleCount: { $sum: '$data.feMaleCount' },
+                        passingBy: { $sum: '$data.passingBy' },
+                        age_0_9_Count: { $sum: '$data.age_0_9_Count' },
+                        age_10_18_Count: { $sum: '$data.age_10_18_Count' },
+                        age_19_34_Count: { $sum: '$data.age_19_34_Count' },
+                        age_35_60_Count: { $sum: '$data.age_35_60_Count' },
+                        age_60plus_Count: { $sum: '$data.age_60plus_Count' },
+                        interestedCustomers: { $sum: '$data.interestedCustomers' },
+                        buyingCustomers: { $sum: '$data.buyingCustomers' },
+                        liveOccupancy: { $sum: '$data.liveOccupancy' },
+                    },
+                },
+                {
+                    $addFields: {
+                        dayOrder: {
+                            $switch: {
+                                branches: [
+                                    { case: { $eq: ['$_id', 'Monday'] }, then: 1 },
+                                    { case: { $eq: ['$_id', 'Tuesday'] }, then: 2 },
+                                    { case: { $eq: ['$_id', 'Wednesday'] }, then: 3 },
+                                    { case: { $eq: ['$_id', 'Thursday'] }, then: 4 },
+                                    { case: { $eq: ['$_id', 'Friday'] }, then: 5 },
+                                    { case: { $eq: ['$_id', 'Saturday'] }, then: 6 },
+                                    { case: { $eq: ['$_id', 'Sunday'] }, then: 7 },
+                                ],
+                                default: 8,
+                            },
+                        },
+                    },
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        day: '$_id',
+                        data: {
+                            store: '$store',
+                            cameraId: '$cameraId',
+                            enterCount: '$enterCount',
+                            exitCount: '$exitCount',
+                            maskCount: '$maskCount',
+                            unMaskCount: '$unMaskCount',
+                            maleCount: '$maleCount',
+                            feMaleCount: '$feMaleCount',
+                            passingBy: '$passingBy',
+                            age_0_9_Count: '$age_0_9_Count',
+                            age_10_18_Count: '$age_10_18_Count',
+                            age_19_34_Count: '$age_19_34_Count',
+                            age_35_60_Count: '$age_35_60_Count',
+                            age_60plus_Count: '$age_60plus_Count',
+                            interestedCustomers: '$interestedCustomers',
+                            buyingCustomers: '$buyingCustomers',
+                            liveOccupancy: '$liveOccupancy',
+                        },
+                        dayOrder: 1,
+                    },
+                },
+                { $sort: { dayOrder: 1 } },
+            ]);
             return { success: true, data: stats };
         }
         catch (err) {
@@ -171,7 +240,60 @@ let PersonCountingService = class PersonCountingService {
     }
     async getHourWiseStats(store) {
         try {
-            const stats = await this.hourWiseStats.find({ store });
+            const objectIds = store.map((id) => new mongoose_2.Types.ObjectId(id));
+            const stats = await this.hourWiseStats.aggregate([
+                {
+                    $match: { store: { $in: objectIds } },
+                },
+                {
+                    $group: {
+                        _id: '$hour',
+                        store: { $first: '$store' },
+                        cameraId: { $first: '$data.cameraId' },
+                        enterCount: { $sum: '$data.enterCount' },
+                        exitCount: { $sum: '$data.exitCount' },
+                        maskCount: { $sum: '$data.maskCount' },
+                        unMaskCount: { $sum: '$data.unMaskCount' },
+                        maleCount: { $sum: '$data.maleCount' },
+                        feMaleCount: { $sum: '$data.feMaleCount' },
+                        passingBy: { $sum: '$data.passingBy' },
+                        age_0_9_Count: { $sum: '$data.age_0_9_Count' },
+                        age_10_18_Count: { $sum: '$data.age_10_18_Count' },
+                        age_19_34_Count: { $sum: '$data.age_19_34_Count' },
+                        age_35_60_Count: { $sum: '$data.age_35_60_Count' },
+                        age_60plus_Count: { $sum: '$data.age_60plus_Count' },
+                        interestedCustomers: { $sum: '$data.interestedCustomers' },
+                        buyingCustomers: { $sum: '$data.buyingCustomers' },
+                        liveOccupancy: { $sum: '$data.liveOccupancy' },
+                    },
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        hour: '$_id',
+                        data: {
+                            store: '$store',
+                            cameraId: '$cameraId',
+                            enterCount: '$enterCount',
+                            exitCount: '$exitCount',
+                            maskCount: '$maskCount',
+                            unMaskCount: '$unMaskCount',
+                            maleCount: '$maleCount',
+                            feMaleCount: '$feMaleCount',
+                            passingBy: '$passingBy',
+                            age_0_9_Count: '$age_0_9_Count',
+                            age_10_18_Count: '$age_10_18_Count',
+                            age_19_34_Count: '$age_19_34_Count',
+                            age_35_60_Count: '$age_35_60_Count',
+                            age_60plus_Count: '$age_60plus_Count',
+                            interestedCustomers: '$interestedCustomers',
+                            buyingCustomers: '$buyingCustomers',
+                            liveOccupancy: '$liveOccupancy',
+                        },
+                    },
+                },
+                { $sort: { hour: 1 } },
+            ]);
             return { success: true, data: stats };
         }
         catch (err) {
@@ -181,7 +303,7 @@ let PersonCountingService = class PersonCountingService {
     async getCurrentHourStats(store) {
         try {
             const now = new Date();
-            const currentHour = now.getUTCHours();
+            const currentHour = now.getUTCHours() + 5;
             const objectIds = store.map((id) => new mongoose_2.Types.ObjectId(id));
             const stats = await this.hourWiseStats
                 .find({ store: { $in: objectIds }, hour: currentHour })
@@ -233,7 +355,6 @@ exports.PersonCountingService = PersonCountingService = __decorate([
         mongoose_2.Model,
         mongoose_2.Model,
         mongoose_2.Model,
-        socket_1.AppGateway,
-        queue_service_1.QueueService])
+        socket_1.AppGateway])
 ], PersonCountingService);
 //# sourceMappingURL=person-counting.service.js.map

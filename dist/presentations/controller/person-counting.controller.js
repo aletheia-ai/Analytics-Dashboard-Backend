@@ -24,7 +24,7 @@ let PersonCountingController = class PersonCountingController {
     }
     async getStatistics(getStatsDto) {
         try {
-            const result = await this.personCounting.getStats(getStatsDto.store);
+            const result = await this.personCounting.getStats(getStatsDto.store, getStatsDto.range);
             if (result.success) {
                 return { message: result.data };
             }
@@ -90,7 +90,7 @@ let PersonCountingController = class PersonCountingController {
     }
     async getHourWiseStats(getStatsDto) {
         try {
-            const result = await this.personCounting.getHourWiseStats(getStatsDto.store[0]);
+            const result = await this.personCounting.getHourWiseStats(getStatsDto.store);
             if (result.success) {
                 return { message: result.data };
             }
@@ -130,7 +130,7 @@ __decorate([
     (0, common_1.Post)('stats'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [person_counting_1.GetStatsDto]),
+    __metadata("design:paramtypes", [person_counting_1.GetTimelyStatsDto]),
     __metadata("design:returntype", Promise)
 ], PersonCountingController.prototype, "getStatistics", null);
 __decorate([

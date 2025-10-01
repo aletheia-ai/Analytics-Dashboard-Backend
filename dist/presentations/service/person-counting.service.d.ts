@@ -3,7 +3,7 @@ import { Model } from 'mongoose';
 import { Store } from '@src/utils/types/store-type';
 import { StatsType } from '@src/utils/types/stats-type';
 import { AppGateway } from '@src/utils/shared/socket';
-import { QueueService } from '@src/utils/queue/queue.service';
+import { RangeType } from '@src/utils/types/range-type';
 import { DayWiseStatsType } from '@src/utils/types/day-wise-stat-type';
 import { HourWiseStatsType } from '@src/utils/types/hour-stat.type';
 export declare class PersonCountingService {
@@ -13,15 +13,14 @@ export declare class PersonCountingService {
     private dayWiseStats;
     private hourWiseStats;
     private readonly appGateway;
-    private readonly queue;
-    constructor(personCounting: Model<PeopleCountingType>, store: Model<Store>, stats: Model<StatsType>, dayWiseStats: Model<DayWiseStatsType>, hourWiseStats: Model<HourWiseStatsType>, appGateway: AppGateway, queue: QueueService);
+    constructor(personCounting: Model<PeopleCountingType>, store: Model<Store>, stats: Model<StatsType>, dayWiseStats: Model<DayWiseStatsType>, hourWiseStats: Model<HourWiseStatsType>, appGateway: AppGateway);
     addEntry(data: PeopleCountingType): Promise<{
         success: true;
     } | {
         success: false;
         error: number;
     }>;
-    getStats(store: string[]): Promise<{
+    getStats(store: string[], range: RangeType): Promise<{
         success: true;
         data: PeopleCountingType;
     } | {
@@ -35,7 +34,7 @@ export declare class PersonCountingService {
         success: false;
         error: number;
     }>;
-    getHourWiseStats(store: string): Promise<{
+    getHourWiseStats(store: string[]): Promise<{
         success: true;
         data: HourWiseStatsType[];
     } | {

@@ -6,7 +6,7 @@ import { Model, Types } from 'mongoose';
 import { Store } from '@src/utils/types/store-type';
 import { StatsType } from '@src/utils/types/stats-type';
 import { AppGateway } from '@src/utils/shared/socket';
-import { QueueService } from '@src/utils/queue/queue.service';
+// import { QueueService } from '@src/utils/queue/queue.service';
 import { RangeType } from '@src/utils/types/range-type';
 import { DayWiseStatsType } from '@src/utils/types/day-wise-stat-type';
 import { HourWiseStatsType } from '@src/utils/types/hour-stat.type';
@@ -22,8 +22,8 @@ export class PersonCountingService {
     @InjectModel('Product Stats') private stats: Model<StatsType>,
     @InjectModel('Day Wise Stats') private dayWiseStats: Model<DayWiseStatsType>,
     @InjectModel('Hour Wise Stats') private hourWiseStats: Model<HourWiseStatsType>,
-    private readonly appGateway: AppGateway,
-    private readonly queue: QueueService
+    private readonly appGateway: AppGateway
+    // private readonly queue: QueueService
   ) {}
 
   async addEntry(
@@ -90,14 +90,14 @@ export class PersonCountingService {
                 cameraId: 'all',
               });
               if (statsData) {
-                this.appGateway.handlePepleStats(statsData.data, 'abc');
+                this.appGateway.handlePepleStats(result, 'abc');
 
                 const dayName = (entryData as any).createdAt.toLocaleDateString('en-US', {
                   weekday: 'long',
                 });
 
                 const now = new Date();
-                const currentHour = now.getUTCHours();
+                const currentHour = now.getUTCHours() + 5;
 
                 await this.dayWiseStats.updateOne(
                   { store, day: dayName },
@@ -145,7 +145,8 @@ export class PersonCountingService {
   }
 
   async getStats(
-    store: string[]
+    store: string[],
+    range: RangeType
   ): Promise<{ success: true; data: PeopleCountingType } | { success: false; error: number }> {
     try {
       const objectIds = store.map((id) => new Types.ObjectId(id));
@@ -153,7 +154,7 @@ export class PersonCountingService {
         .find({
           store: { $in: objectIds },
           cameraId: 'all',
-          range: 'all',
+          range: range,
         })
         .lean();
       if (data) {
@@ -174,7 +175,80 @@ export class PersonCountingService {
     store: string[]
   ): Promise<{ success: true; data: DayWiseStatsType[] } | { success: false; error: number }> {
     try {
-      const stats = await this.dayWiseStats.find({ store: store[0] });
+      const objectIds = store.map((id) => new Types.ObjectId(id));
+
+      const stats = await this.dayWiseStats.aggregate([
+        {
+          $match: { store: { $in: objectIds } },
+        },
+        {
+          $group: {
+            _id: '$day',
+            store: { $first: '$store' },
+            cameraId: { $first: '$data.cameraId' },
+            enterCount: { $sum: '$data.enterCount' },
+            exitCount: { $sum: '$data.exitCount' },
+            maskCount: { $sum: '$data.maskCount' },
+            unMaskCount: { $sum: '$data.unMaskCount' },
+            maleCount: { $sum: '$data.maleCount' },
+            feMaleCount: { $sum: '$data.feMaleCount' },
+            passingBy: { $sum: '$data.passingBy' },
+            age_0_9_Count: { $sum: '$data.age_0_9_Count' },
+            age_10_18_Count: { $sum: '$data.age_10_18_Count' },
+            age_19_34_Count: { $sum: '$data.age_19_34_Count' },
+            age_35_60_Count: { $sum: '$data.age_35_60_Count' },
+            age_60plus_Count: { $sum: '$data.age_60plus_Count' },
+            interestedCustomers: { $sum: '$data.interestedCustomers' },
+            buyingCustomers: { $sum: '$data.buyingCustomers' },
+            liveOccupancy: { $sum: '$data.liveOccupancy' },
+          },
+        },
+        {
+          $addFields: {
+            dayOrder: {
+              $switch: {
+                branches: [
+                  { case: { $eq: ['$_id', 'Monday'] }, then: 1 },
+                  { case: { $eq: ['$_id', 'Tuesday'] }, then: 2 },
+                  { case: { $eq: ['$_id', 'Wednesday'] }, then: 3 },
+                  { case: { $eq: ['$_id', 'Thursday'] }, then: 4 },
+                  { case: { $eq: ['$_id', 'Friday'] }, then: 5 },
+                  { case: { $eq: ['$_id', 'Saturday'] }, then: 6 },
+                  { case: { $eq: ['$_id', 'Sunday'] }, then: 7 },
+                ],
+                default: 8,
+              },
+            },
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            day: '$_id',
+            data: {
+              store: '$store',
+              cameraId: '$cameraId',
+              enterCount: '$enterCount',
+              exitCount: '$exitCount',
+              maskCount: '$maskCount',
+              unMaskCount: '$unMaskCount',
+              maleCount: '$maleCount',
+              feMaleCount: '$feMaleCount',
+              passingBy: '$passingBy',
+              age_0_9_Count: '$age_0_9_Count',
+              age_10_18_Count: '$age_10_18_Count',
+              age_19_34_Count: '$age_19_34_Count',
+              age_35_60_Count: '$age_35_60_Count',
+              age_60plus_Count: '$age_60plus_Count',
+              interestedCustomers: '$interestedCustomers',
+              buyingCustomers: '$buyingCustomers',
+              liveOccupancy: '$liveOccupancy',
+            },
+            dayOrder: 1,
+          },
+        },
+        { $sort: { dayOrder: 1 } },
+      ]);
 
       return { success: true, data: stats };
     } catch (err) {
@@ -183,10 +257,64 @@ export class PersonCountingService {
   }
 
   async getHourWiseStats(
-    store: string
+    store: string[]
   ): Promise<{ success: true; data: HourWiseStatsType[] } | { success: false; error: number }> {
     try {
-      const stats = await this.hourWiseStats.find({ store });
+      const objectIds = store.map((id) => new Types.ObjectId(id));
+
+      const stats = await this.hourWiseStats.aggregate([
+        {
+          $match: { store: { $in: objectIds } },
+        },
+        {
+          $group: {
+            _id: '$hour',
+            store: { $first: '$store' },
+            cameraId: { $first: '$data.cameraId' },
+            enterCount: { $sum: '$data.enterCount' },
+            exitCount: { $sum: '$data.exitCount' },
+            maskCount: { $sum: '$data.maskCount' },
+            unMaskCount: { $sum: '$data.unMaskCount' },
+            maleCount: { $sum: '$data.maleCount' },
+            feMaleCount: { $sum: '$data.feMaleCount' },
+            passingBy: { $sum: '$data.passingBy' },
+            age_0_9_Count: { $sum: '$data.age_0_9_Count' },
+            age_10_18_Count: { $sum: '$data.age_10_18_Count' },
+            age_19_34_Count: { $sum: '$data.age_19_34_Count' },
+            age_35_60_Count: { $sum: '$data.age_35_60_Count' },
+            age_60plus_Count: { $sum: '$data.age_60plus_Count' },
+            interestedCustomers: { $sum: '$data.interestedCustomers' },
+            buyingCustomers: { $sum: '$data.buyingCustomers' },
+            liveOccupancy: { $sum: '$data.liveOccupancy' },
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            hour: '$_id',
+            data: {
+              store: '$store',
+              cameraId: '$cameraId',
+              enterCount: '$enterCount',
+              exitCount: '$exitCount',
+              maskCount: '$maskCount',
+              unMaskCount: '$unMaskCount',
+              maleCount: '$maleCount',
+              feMaleCount: '$feMaleCount',
+              passingBy: '$passingBy',
+              age_0_9_Count: '$age_0_9_Count',
+              age_10_18_Count: '$age_10_18_Count',
+              age_19_34_Count: '$age_19_34_Count',
+              age_35_60_Count: '$age_35_60_Count',
+              age_60plus_Count: '$age_60plus_Count',
+              interestedCustomers: '$interestedCustomers',
+              buyingCustomers: '$buyingCustomers',
+              liveOccupancy: '$liveOccupancy',
+            },
+          },
+        },
+        { $sort: { hour: 1 } }, // ensure sorted order 0 → 23
+      ]);
 
       return { success: true, data: stats };
     } catch (err) {
@@ -210,7 +338,7 @@ export class PersonCountingService {
   > {
     try {
       const now = new Date();
-      const currentHour = now.getUTCHours();
+      const currentHour = now.getUTCHours() + 5;
       const objectIds = store.map((id) => new Types.ObjectId(id));
       const stats = await this.hourWiseStats
         .find({ store: { $in: objectIds }, hour: currentHour })

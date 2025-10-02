@@ -27,7 +27,7 @@
     
     # Copy only required runtime files
     COPY package.json bun.lockb* ./
-    RUN bun install --production  # only prod deps, no dev deps
+    RUN bun install 
     
     # Copy built dist from builder stage
     COPY --from=builder /app/dist ./dist

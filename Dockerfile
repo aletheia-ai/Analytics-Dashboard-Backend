@@ -1,17 +1,42 @@
+# ----------------------
+# Stage 1: Build
+# ----------------------
+FROM oven/bun:1.1.13 AS builder
+
+WORKDIR /app
+
+# Copy deps files
+COPY package.json bun.lockb* tsconfig*.json nest-cli.json ./
+
+# Install all dependencies (including dev for build)
+RUN bun install
+
+# Copy full source
+COPY . .
+
+# Compile NestJS (TypeScript -> dist)
+RUN bunx tsc -p tsconfig.build.json
+
+
+# ----------------------
+# Stage 2: Runtime
+# ----------------------
 FROM oven/bun:1.1.13 AS runner
 
 WORKDIR /app
 
-# Install build tools (tiny overhead but solves gyp issues)
-RUN apt-get update && apt-get install -y python3 make g++ && rm -rf /var/lib/apt/lists/*
-
 ENV NODE_ENV=production
+ENV npm_config_build_from_source=false
 
-COPY --from=builder /app/package.json ./
-COPY --from=builder /app/bun.lockb ./
-COPY --from=builder /app/node_modules ./node_modules
+# Copy only prod deps
+COPY package.json bun.lockb* ./
+RUN bun install --production --frozen-lockfile
+
+# Copy built output from builder
 COPY --from=builder /app/dist ./dist
 
+# Expose the NestJS port
 EXPOSE 8000
 
-CMD ["bun", "run", "dist/main.js"]
+# Run NestJS backend
+CMD ["bun", "dist/main.js"]

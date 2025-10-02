@@ -12,12 +12,17 @@ const app_module_1 = require("./presentations/module/app.module");
 const exception_factory_1 = require("./utils/methods/exception-factory");
 const fs = require("fs");
 const cookieParser = require("cookie-parser");
+const dotenv = require("dotenv");
+dotenv.config();
 async function bootstrap() {
     const httpsOptions = {
         key: fs.readFileSync('./localhost-key.pem'),
         cert: fs.readFileSync('./localhost.pem'),
     };
-    const app = await core_1.NestFactory.create(app_module_1.AppModule, { httpsOptions });
+    const env = process.env.NODE_ENV;
+    const app = env === 'development'
+        ? await core_1.NestFactory.create(app_module_1.AppModule, { httpsOptions })
+        : await core_1.NestFactory.create(app_module_1.AppModule);
     const config = new swagger_1.DocumentBuilder()
         .setTitle('Brick&Mortars.ai')
         .setDescription('Endpoints')
@@ -39,7 +44,7 @@ async function bootstrap() {
     app.use((0, express_rate_limit_1.default)(rate_limiter_1.rateLimiter));
     app.use((0, helmet_1.default)());
     app.enableCors({
-        origin: ['https://localhost:5173'],
+        origin: true,
         methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization'],
         credentials: true,

@@ -13,13 +13,19 @@ import { AppModule } from '@presentations/module/app.module';
 import { exceptionFactory } from '@utils/methods/exception-factory';
 import * as fs from 'fs';
 import * as cookieParser from 'cookie-parser';
-
+import * as dotenv from 'dotenv';
+dotenv.config();
 async function bootstrap() {
   const httpsOptions = {
     key: fs.readFileSync('./localhost-key.pem'),
     cert: fs.readFileSync('./localhost.pem'),
   };
-  const app = await NestFactory.create(AppModule, { httpsOptions });
+
+  const env = process.env.NODE_ENV;
+  const app =
+    env === 'development'
+      ? await NestFactory.create(AppModule, { httpsOptions })
+      : await NestFactory.create(AppModule);
   const config = new DocumentBuilder()
     .setTitle('Brick&Mortars.ai')
     .setDescription('Endpoints')
@@ -44,7 +50,7 @@ async function bootstrap() {
   app.use(rateLimit(rateLimiter));
   app.use(Helmet());
   app.enableCors({
-    origin: ['https://localhost:5173'],
+    origin: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,

@@ -7,27 +7,27 @@ export class AddEntryDto {
 
   @IsNumber()
   @IsNotEmpty()
-  enterCount: number;
+  enterCount: number = 0;
 
   @IsNumber()
   @IsNotEmpty()
-  exitCount: number;
+  exitCount: number = 0;
 
   @IsNumber()
   @IsNotEmpty()
-  maskCount: number;
+  maskCount: number = 0;
 
   @IsNumber()
   @IsNotEmpty()
-  unMaskCount: number;
+  unMaskCount: number = 0;
 
   @IsNumber()
   @IsNotEmpty()
-  maleCount: number;
+  maleCount: number = 0;
 
   @IsNumber()
   @IsNotEmpty()
-  feMaleCount: number;
+  feMaleCount: number = 0;
 
   @IsString()
   @IsNotEmpty()
@@ -35,37 +35,37 @@ export class AddEntryDto {
 
   @IsNumber()
   @IsNotEmpty()
-  age_0_9_Count: number;
+  age_0_9_Count: number = 0;
 
   @IsNumber()
   @IsNotEmpty()
-  age_10_18_Count: number;
+  age_10_18_Count: number = 0;
 
   @IsNumber()
   @IsNotEmpty()
-  age_19_34_Count: number;
+  age_19_34_Count: number = 0;
 
   @IsNumber()
   @IsNotEmpty()
-  age_35_60_Count: number;
+  age_35_60_Count: number = 0;
 
   @IsNumber()
   @IsNotEmpty()
-  age_60plus_Count: number;
+  age_60plus_Count: number = 0;
 
   @IsNumber()
   @IsNotEmpty()
-  passingBy: number;
+  passingBy: number = 0;
 
   @IsNumber()
   @IsNotEmpty()
-  interestedCustomers: number;
+  interestedCustomers: number = 0;
 
   @IsNumber()
   @IsNotEmpty()
-  buyingCustomers: number;
+  buyingCustomers: number = 0;
 
   @IsNumber()
   @IsNotEmpty()
-  liveOccupancy: number;
+  liveOccupancy: number = 0;
 }

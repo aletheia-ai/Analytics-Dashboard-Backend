@@ -13,22 +13,22 @@ exports.AddEntryDto = void 0;
 const class_validator_1 = require("class-validator");
 class AddEntryDto {
     store;
-    enterCount;
-    exitCount;
-    maskCount;
-    unMaskCount;
-    maleCount;
-    feMaleCount;
+    enterCount = 0;
+    exitCount = 0;
+    maskCount = 0;
+    unMaskCount = 0;
+    maleCount = 0;
+    feMaleCount = 0;
     cameraId;
-    age_0_9_Count;
-    age_10_18_Count;
-    age_19_34_Count;
-    age_35_60_Count;
-    age_60plus_Count;
-    passingBy;
-    interestedCustomers;
-    buyingCustomers;
-    liveOccupancy;
+    age_0_9_Count = 0;
+    age_10_18_Count = 0;
+    age_19_34_Count = 0;
+    age_35_60_Count = 0;
+    age_60plus_Count = 0;
+    passingBy = 0;
+    interestedCustomers = 0;
+    buyingCustomers = 0;
+    liveOccupancy = 0;
 }
 exports.AddEntryDto = AddEntryDto;
 __decorate([

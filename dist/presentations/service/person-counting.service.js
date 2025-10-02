@@ -94,7 +94,7 @@ let PersonCountingService = class PersonCountingService {
                                     weekday: 'long',
                                 });
                                 const now = new Date();
-                                const currentHour = now.getUTCHours() + 5;
+                                const currentHour = (now.getUTCHours() + 5) % 24;
                                 await this.dayWiseStats.updateOne({ store, day: dayName }, {
                                     $inc: incFields,
                                     $set: {

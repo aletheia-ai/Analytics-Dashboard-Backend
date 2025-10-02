@@ -338,7 +338,7 @@ export class PersonCountingService {
   > {
     try {
       const now = new Date();
-      const currentHour = now.getUTCHours() + 5;
+      const currentHour = (now.getUTCHours() + 5) % 24;
       const objectIds = store.map((id) => new Types.ObjectId(id));
       const stats = await this.hourWiseStats
         .find({ store: { $in: objectIds }, hour: currentHour })

@@ -27,13 +27,16 @@
     
     # Copy only required runtime files
     COPY package.json bun.lockb* ./
-    RUN bun install 
+    RUN bun install  --production
     
     # Copy built dist from builder stage
     COPY --from=builder /app/dist ./dist
     
     # Expose the NestJS port
     EXPOSE 8000
+
+    ENV NODE_ENV=production
+
     
     # Run NestJS build output
     CMD ["bun", "dist/main.js"]

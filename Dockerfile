@@ -1,42 +1,44 @@
 # ----------------------
 # Stage 1: Build
 # ----------------------
-FROM oven/bun:1.1.13 AS builder
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copy deps files
-COPY package.json bun.lockb* tsconfig*.json nest-cli.json ./
+# Install build tools for native modules (bcrypt, msgpackr, etc.)
+RUN apk add --no-cache python3 make g++
 
-# Install all dependencies (including dev for build)
-RUN bun install
+# Copy package files
+COPY package*.json ./
 
-# Copy full source
+# Install dependencies (including dev)
+RUN npm install
+
+# Copy source code
 COPY . .
 
-# Compile NestJS (TypeScript -> dist)
-RUN bunx tsc -p tsconfig.build.json
+# Build NestJS (TypeScript -> dist)
+RUN npm run build
 
 
 # ----------------------
 # Stage 2: Runtime
 # ----------------------
-FROM oven/bun:1.1.13 AS runner
+FROM node:20-alpine AS runner
 
 WORKDIR /app
 
-ENV NODE_ENV=production
-ENV npm_config_build_from_source=false
+# Only copy package files
+COPY package*.json ./
 
-# Copy only prod deps
-COPY package.json bun.lockb* ./
-RUN bun install --production --frozen-lockfile
+# Install only production deps
+RUN npm install --omit=dev
 
-# Copy built output from builder
+# Copy built code from builder
 COPY --from=builder /app/dist ./dist
 
-# Expose the NestJS port
+# Expose app port
 EXPOSE 8000
 
-# Run NestJS backend
-CMD ["bun", "dist/main.js"]
+# Run NestJS
+CMD ["node", "dist/main.js"]

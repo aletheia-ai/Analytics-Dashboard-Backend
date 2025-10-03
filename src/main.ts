@@ -16,7 +16,7 @@ import * as cookieParser from 'cookie-parser';
 import * as dotenv from 'dotenv';
 dotenv.config();
 async function bootstrap() {
-  const httpsOptions={};
+  let httpsOptions={};
   const env = process.env.NODE_ENV;
   if(env === 'development'){
     httpsOptions = {

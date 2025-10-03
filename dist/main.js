@@ -15,11 +15,14 @@ const cookieParser = require("cookie-parser");
 const dotenv = require("dotenv");
 dotenv.config();
 async function bootstrap() {
-    const httpsOptions = {
-        key: fs.readFileSync('./localhost-key.pem'),
-        cert: fs.readFileSync('./localhost.pem'),
-    };
+    let httpsOptions = {};
     const env = process.env.NODE_ENV;
+    if (env === 'development') {
+        httpsOptions = {
+            key: fs.readFileSync('./localhost-key.pem'),
+            cert: fs.readFileSync('./localhost.pem'),
+        };
+    }
     const app = env === 'development'
         ? await core_1.NestFactory.create(app_module_1.AppModule, { httpsOptions })
         : await core_1.NestFactory.create(app_module_1.AppModule);

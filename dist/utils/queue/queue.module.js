@@ -10,10 +10,9 @@ exports.QueueModule = void 0;
 const common_1 = require("@nestjs/common");
 const bullmq_1 = require("@nestjs/bullmq");
 const queue_service_1 = require("./queue.service");
-const redisOptions = {
-    host: '127.0.0.1',
-    port: 6379,
-};
+const dotenv = require("dotenv");
+dotenv.config();
+const redisUrl = process.env.REDIS_URL || 'redis://127.0.0.1:6379';
 let QueueModule = class QueueModule {
 };
 exports.QueueModule = QueueModule;
@@ -22,7 +21,7 @@ exports.QueueModule = QueueModule = __decorate([
         imports: [
             bullmq_1.BullModule.registerQueue({
                 name: 'test',
-                connection: redisOptions,
+                connection: { url: redisUrl },
             }),
         ],
         providers: [queue_service_1.QueueService],

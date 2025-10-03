@@ -1,19 +1,17 @@
 import { Module } from '@nestjs/common';
 import { BullModule } from '@nestjs/bullmq';
 // import { Queue } from 'bullmq';
-import { RedisOptions } from 'ioredis';
+// import { RedisOptions } from 'ioredis';
 import { QueueService } from './queue.service';
-
-const redisOptions: RedisOptions = {
-  host: '127.0.0.1',
-  port: 6379,
-};
+import * as dotenv from 'dotenv';
+dotenv.config();
+const redisUrl = process.env.REDIS_URL || 'redis://127.0.0.1:6379';
 
 @Module({
   imports: [
     BullModule.registerQueue({
       name: 'test',
-      connection: redisOptions,
+      connection: { url: redisUrl },
     }),
   ],
   providers: [QueueService],

@@ -6,7 +6,7 @@ const RedisProvider = {
   provide: 'REDIS_CLIENT',
   useFactory: async () => {
     const client = createClient({
-      url: process.env.Redis_URL,
+      url: process.env.REDIS_URL,
       socket: {
         reconnectStrategy: (retries) => {
           const delay = Math.min(retries * 50, 2000);
@@ -16,7 +16,7 @@ const RedisProvider = {
       },
     });
 
-    console.log('🔍 Connecting to Redis with URL:', process.env.Redis_URL);
+    console.log('🔍 Connecting to Redis with URL:', process.env.REDIS_URL);
 
     client.on('connect', () => console.log('✅ Redis connected'));
     client.on('ready', () => console.log('🚀 Redis ready'));

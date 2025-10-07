@@ -21,7 +21,6 @@ const company_module_1 = require("./company.module");
 const redis_module_1 = require("../../utils/shared/redis/redis.module");
 const socket_1 = require("../../utils/shared/socket");
 const stats_module_1 = require("./stats.module");
-const queue_module_1 = require("../../utils/queue/queue.module");
 const day_wise_stats_module_1 = require("./day-wise-stats.module");
 const hour_stat_module_1 = require("./hour-stat.module");
 let AppModule = class AppModule {
@@ -46,7 +45,6 @@ exports.AppModule = AppModule = __decorate([
             store_module_1.StoreModule,
             company_module_1.CompanyModule,
             stats_module_1.StatsModule,
-            queue_module_1.QueueModule,
             day_wise_stats_module_1.DayWiseStatsModule,
             hour_stat_module_1.HourWiseStatsModule,
         ],

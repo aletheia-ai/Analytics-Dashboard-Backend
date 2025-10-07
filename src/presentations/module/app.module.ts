@@ -14,7 +14,7 @@ import { CompanyModule } from './company.module';
 import { RedisModule } from '@src/utils/shared/redis/redis.module';
 import { AppGateway } from '@src/utils/shared/socket';
 import { StatsModule } from './stats.module';
-import { QueueModule } from '@src/utils/queue/queue.module';
+
 import { DayWiseStatsModule } from './day-wise-stats.module';
 
 import { HourWiseStatsModule } from './hour-stat.module';
@@ -36,7 +36,7 @@ import { HourWiseStatsModule } from './hour-stat.module';
     StoreModule,
     CompanyModule,
     StatsModule,
-    QueueModule,
+
     DayWiseStatsModule,
     HourWiseStatsModule,
   ],

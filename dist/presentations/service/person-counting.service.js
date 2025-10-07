@@ -345,11 +345,11 @@ let PersonCountingService = class PersonCountingService {
 exports.PersonCountingService = PersonCountingService;
 exports.PersonCountingService = PersonCountingService = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, mongoose_1.InjectModel)('Person Counting')),
+    __param(0, (0, mongoose_1.InjectModel)('Person_Counting')),
     __param(1, (0, mongoose_1.InjectModel)('Store')),
-    __param(2, (0, mongoose_1.InjectModel)('Product Stats')),
-    __param(3, (0, mongoose_1.InjectModel)('Day Wise Stats')),
-    __param(4, (0, mongoose_1.InjectModel)('Hour Wise Stats')),
+    __param(2, (0, mongoose_1.InjectModel)('Product_Stats')),
+    __param(3, (0, mongoose_1.InjectModel)('Day_Wise_Stats')),
+    __param(4, (0, mongoose_1.InjectModel)('Hour_Wise_Stats')),
     __metadata("design:paramtypes", [mongoose_2.Model,
         mongoose_2.Model,
         mongoose_2.Model,

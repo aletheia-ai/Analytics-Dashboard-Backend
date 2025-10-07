@@ -8,4 +8,4 @@ export const DayWiseStatsSchema = new Schema<DayWiseStatsType>({
   day: { type: String, required: true },
   data: { type: PersonCountingSchema, required: true },
 });
-export const DayWiseStatsModel = mongoose.model('Day Wise Stats', DayWiseStatsSchema);
+export const DayWiseStatsModel = mongoose.model('Day_Wise_Stats', DayWiseStatsSchema);

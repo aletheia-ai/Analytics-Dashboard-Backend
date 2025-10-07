@@ -9,5 +9,5 @@ exports.ProductStatsSchema = new mongoose_1.Schema({
     range: { type: String, required: true },
     data: { type: person_counting_schema_1.PersonCountingSchema, required: true },
 }, { timestamps: true });
-exports.ProductStatsModel = mongoose_1.default.model('Product Stats', exports.ProductStatsSchema);
+exports.ProductStatsModel = mongoose_1.default.model('Product_Stats', exports.ProductStatsSchema);
 //# sourceMappingURL=product-stats.schema.js.map

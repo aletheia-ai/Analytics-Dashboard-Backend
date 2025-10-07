@@ -15,7 +15,7 @@ let HourWiseStatsModule = class HourWiseStatsModule {
 exports.HourWiseStatsModule = HourWiseStatsModule;
 exports.HourWiseStatsModule = HourWiseStatsModule = __decorate([
     (0, common_1.Module)({
-        imports: [mongoose_1.MongooseModule.forFeature([{ name: 'Hour Wise Stats', schema: hour_stats_schema_1.HourWiseStatsSchema }])],
+        imports: [mongoose_1.MongooseModule.forFeature([{ name: 'Hour_Wise_Stats', schema: hour_stats_schema_1.HourWiseStatsSchema }])],
         exports: [mongoose_1.MongooseModule],
     })
 ], HourWiseStatsModule);

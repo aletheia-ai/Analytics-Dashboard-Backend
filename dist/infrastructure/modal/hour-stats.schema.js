@@ -8,5 +8,5 @@ exports.HourWiseStatsSchema = new mongoose_1.Schema({
     hour: { type: Number, required: true },
     data: { type: person_counting_schema_1.PersonCountingSchema, required: true },
 });
-exports.HourWiseStatsModel = mongoose_1.default.model('Hour Wise Stats', exports.HourWiseStatsSchema);
+exports.HourWiseStatsModel = mongoose_1.default.model('Hour_Wise_Stats', exports.HourWiseStatsSchema);
 //# sourceMappingURL=hour-stats.schema.js.map

@@ -5,7 +5,7 @@ import { AppGateway } from '@src/utils/shared/socket';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: 'Product Stats', schema: ProductStatsSchema }]),
+    MongooseModule.forFeature([{ name: 'Product_Stats', schema: ProductStatsSchema }]),
     AppGateway,
   ],
   providers: [AppGateway],

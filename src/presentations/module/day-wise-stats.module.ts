@@ -4,7 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { DayWiseStatsSchema } from '@src/infrastructure/modal/day-wise-stat';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: 'Day Wise Stats', schema: DayWiseStatsSchema }])],
+  imports: [MongooseModule.forFeature([{ name: 'Day_Wise_Stats', schema: DayWiseStatsSchema }])],
 
   exports: [MongooseModule],
 })

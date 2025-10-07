@@ -17,7 +17,7 @@ exports.StatsModule = StatsModule;
 exports.StatsModule = StatsModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            mongoose_1.MongooseModule.forFeature([{ name: 'Product Stats', schema: product_stats_schema_1.ProductStatsSchema }]),
+            mongoose_1.MongooseModule.forFeature([{ name: 'Product_Stats', schema: product_stats_schema_1.ProductStatsSchema }]),
             socket_1.AppGateway,
         ],
         providers: [socket_1.AppGateway],

@@ -32,8 +32,8 @@ export class StoreService {
     @InjectModel('Store') private store: Model<Store>,
     @InjectModel('Company') private company: Model<Company>,
     @InjectModel('Region') private region: Model<Region>,
-    @InjectModel('Day Wise Stats') private dayWiseStats: Model<DayWiseStatsType>,
-    @InjectModel('Hour Wise Stats') private hourWiseStats: Model<HourWiseStatsType>
+    @InjectModel('Day_Wise_Stats') private dayWiseStats: Model<DayWiseStatsType>,
+    @InjectModel('Hour_Wise_Stats') private hourWiseStats: Model<HourWiseStatsType>
   ) {}
 
   async deleteStore(

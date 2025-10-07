@@ -15,7 +15,7 @@ let DayWiseStatsModule = class DayWiseStatsModule {
 exports.DayWiseStatsModule = DayWiseStatsModule;
 exports.DayWiseStatsModule = DayWiseStatsModule = __decorate([
     (0, common_1.Module)({
-        imports: [mongoose_1.MongooseModule.forFeature([{ name: 'Day Wise Stats', schema: day_wise_stat_1.DayWiseStatsSchema }])],
+        imports: [mongoose_1.MongooseModule.forFeature([{ name: 'Day_Wise_Stats', schema: day_wise_stat_1.DayWiseStatsSchema }])],
         exports: [mongoose_1.MongooseModule],
     })
 ], DayWiseStatsModule);

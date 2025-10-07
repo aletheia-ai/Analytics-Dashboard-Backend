@@ -13,4 +13,4 @@ export const ProductStatsSchema = new Schema<StatsType>(
   },
   { timestamps: true }
 );
-export const ProductStatsModel = mongoose.model('Product Stats', ProductStatsSchema);
+export const ProductStatsModel = mongoose.model('Product_Stats', ProductStatsSchema);

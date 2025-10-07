@@ -8,5 +8,5 @@ exports.DayWiseStatsSchema = new mongoose_1.Schema({
     day: { type: String, required: true },
     data: { type: person_counting_schema_1.PersonCountingSchema, required: true },
 });
-exports.DayWiseStatsModel = mongoose_1.default.model('Day Wise Stats', exports.DayWiseStatsSchema);
+exports.DayWiseStatsModel = mongoose_1.default.model('Day_Wise_Stats', exports.DayWiseStatsSchema);
 //# sourceMappingURL=day-wise-stat.js.map

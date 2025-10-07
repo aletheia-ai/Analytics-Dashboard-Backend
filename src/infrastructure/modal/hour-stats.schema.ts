@@ -8,4 +8,4 @@ export const HourWiseStatsSchema = new Schema<HourWiseStatsType>({
   hour: { type: Number, required: true },
   data: { type: PersonCountingSchema, required: true },
 });
-export const HourWiseStatsModel = mongoose.model('Hour Wise Stats', HourWiseStatsSchema);
+export const HourWiseStatsModel = mongoose.model('Hour_Wise_Stats', HourWiseStatsSchema);

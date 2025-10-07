@@ -6,7 +6,6 @@ import { Model, Types } from 'mongoose';
 import { Store } from '@src/utils/types/store-type';
 import { StatsType } from '@src/utils/types/stats-type';
 import { AppGateway } from '@src/utils/shared/socket';
-// import { QueueService } from '@src/utils/queue/queue.service';
 import { RangeType } from '@src/utils/types/range-type';
 import { DayWiseStatsType } from '@src/utils/types/day-wise-stat-type';
 import { HourWiseStatsType } from '@src/utils/types/hour-stat.type';
@@ -17,11 +16,11 @@ dotenv.config();
 @Injectable()
 export class PersonCountingService {
   constructor(
-    @InjectModel('Person Counting') private personCounting: Model<PeopleCountingType>,
+    @InjectModel('Person_Counting') private personCounting: Model<PeopleCountingType>,
     @InjectModel('Store') private store: Model<Store>,
-    @InjectModel('Product Stats') private stats: Model<StatsType>,
-    @InjectModel('Day Wise Stats') private dayWiseStats: Model<DayWiseStatsType>,
-    @InjectModel('Hour Wise Stats') private hourWiseStats: Model<HourWiseStatsType>,
+    @InjectModel('Product_Stats') private stats: Model<StatsType>,
+    @InjectModel('Day_Wise_Stats') private dayWiseStats: Model<DayWiseStatsType>,
+    @InjectModel('Hour_Wise_Stats') private hourWiseStats: Model<HourWiseStatsType>,
     private readonly appGateway: AppGateway
     // private readonly queue: QueueService
   ) {}

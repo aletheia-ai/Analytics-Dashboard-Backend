@@ -1,6 +1,6 @@
 import type { Store } from './store-type';
 export interface PeopleCountingType {
-  store: string | Store;
+  // store: string | Store;
   enterCount: number;
   exitCount: number;
   maskCount: number;
@@ -9,11 +9,11 @@ export interface PeopleCountingType {
   feMaleCount: number;
   cameraId: string;
   passingBy: number;
-  age_0_9_Count: number;
-  age_10_18_Count: number;
-  age_19_34_Count: number;
-  age_35_60_Count: number;
-  age_60plus_Count: number;
+  teen: number;
+  child: number;
+  adult: number;
+  middle_age: number;
+  old_age: number;
   interestedCustomers: number;
   buyingCustomers: number;
   liveOccupancy: number;

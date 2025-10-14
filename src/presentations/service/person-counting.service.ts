@@ -29,110 +29,100 @@ export class PersonCountingService {
     data: PeopleCountingType
   ): Promise<{ success: true } | { success: false; error: number }> {
     try {
-      const { store, cameraId, ...rest } = data;
-      const storeData = await this.store.find({ _id: new Types.ObjectId(store as string) });
-      if (storeData) {
-        const entryData = new this.personCounting({ ...data });
-        const result = await entryData.save();
+      const { cameraId, ...rest } = data;
 
-        if (result) {
-          const incFields: Record<string, number> = {};
-          const setFields: Record<string, any> = {};
+      const entryData = new this.personCounting({ ...data });
+      const result = await entryData.save();
 
-          for (const [key, value] of Object.entries(rest)) {
-            if (key === 'liveOccupancy') {
-              setFields[`data.${key}`] = value ?? 0;
-              continue;
-            }
-            if (typeof value === 'number') {
-              incFields[`data.${key}`] = value ?? 0;
-            } else {
-              setFields[`data.${key}`] = value;
-            }
+      if (result) {
+        const incFields: Record<string, number> = {};
+        const setFields: Record<string, any> = {};
+
+        for (const [key, value] of Object.entries(rest)) {
+          if (key === 'liveOccupancy') {
+            setFields[`data.${key}`] = value ?? 0;
+            continue;
           }
+          if (typeof value === 'number') {
+            incFields[`data.${key}`] = value ?? 0;
+          } else {
+            setFields[`data.${key}`] = value;
+          }
+        }
 
-          const aggregatedResult = await this.stats.updateOne(
-            { store, cameraId, range: RangeType.ALL_TIME },
+        const aggregatedResult = await this.stats.updateOne(
+          { cameraId, range: RangeType.ALL_TIME },
+          {
+            $inc: incFields,
+            $set: {
+              ...setFields,
+
+              'data.cameraId': cameraId,
+            },
+          },
+          { upsert: true }
+        );
+        if (!aggregatedResult) {
+          return { success: false, error: 400 };
+        } else {
+          const aggregatedAllResult = await this.stats.updateOne(
+            { cameraId: 'all', range: RangeType.ALL_TIME },
             {
               $inc: incFields,
               $set: {
                 ...setFields,
-                store,
-                'data.store': store,
+
                 'data.cameraId': cameraId,
               },
             },
             { upsert: true }
           );
-          if (!aggregatedResult) {
-            return { success: false, error: 400 };
+          if (!aggregatedAllResult) {
+            return { success: false, error: 404 };
           } else {
-            const aggregatedAllResult = await this.stats.updateOne(
-              { store, cameraId: 'all', range: RangeType.ALL_TIME },
-              {
-                $inc: incFields,
-                $set: {
-                  ...setFields,
-                  store,
+            const statsData = await this.stats.findOne({
+              cameraId: 'all',
+            });
+            if (statsData) {
+              this.appGateway.handlePepleStats(result, 'abc');
 
-                  'data.store': store,
-                  'data.cameraId': cameraId,
-                },
-              },
-              { upsert: true }
-            );
-            if (!aggregatedAllResult) {
-              return { success: false, error: 404 };
-            } else {
-              const statsData = await this.stats.findOne({
-                store: new Types.ObjectId(store as string),
-                cameraId: 'all',
+              const dayName = (entryData as any).createdAt.toLocaleDateString('en-US', {
+                weekday: 'long',
               });
-              if (statsData) {
-                this.appGateway.handlePepleStats(result, 'abc');
 
-                const dayName = (entryData as any).createdAt.toLocaleDateString('en-US', {
-                  weekday: 'long',
-                });
+              const now = new Date();
+              const currentHour = (now.getUTCHours() + 5) % 24;
 
-                const now = new Date();
-                const currentHour = (now.getUTCHours() + 5) % 24;
+              await this.dayWiseStats.updateOne(
+                { day: dayName },
+                {
+                  $inc: incFields,
+                  $set: {
+                    ...setFields,
 
-                await this.dayWiseStats.updateOne(
-                  { store, day: dayName },
-                  {
-                    $inc: incFields,
-                    $set: {
-                      ...setFields,
-                      store,
-                      'data.store': store,
-                      'data.cameraId': cameraId,
-                    },
+                    'data.cameraId': cameraId,
                   },
-                  { upsert: true }
-                );
+                },
+                { upsert: true }
+              );
 
-                await this.hourWiseStats.updateOne(
-                  { store, hour: currentHour },
-                  {
-                    $inc: incFields,
-                    $set: {
-                      ...setFields,
-                      store,
-                      'data.store': store,
-                      'data.cameraId': cameraId,
-                    },
+              await this.hourWiseStats.updateOne(
+                { hour: currentHour },
+                {
+                  $inc: incFields,
+                  $set: {
+                    ...setFields,
+
+                    'data.cameraId': cameraId,
                   },
-                  { upsert: true }
-                );
-                return { success: true };
-              } else {
-                return { success: false, error: 404 };
-              }
+                },
+                { upsert: true }
+              );
+              return { success: true };
+            } else {
+              return { success: false, error: 404 };
             }
           }
-        } else {
-          return { success: false, error: 401 };
         }
       } else {
         return { success: false, error: 404 };
@@ -144,14 +134,11 @@ export class PersonCountingService {
   }
 
   async getStats(
-    store: string[],
     range: RangeType
   ): Promise<{ success: true; data: PeopleCountingType } | { success: false; error: number }> {
     try {
-      const objectIds = store.map((id) => new Types.ObjectId(id));
       const data = await this.stats
         .find({
-          store: { $in: objectIds },
           cameraId: 'all',
           range: range,
         })
@@ -325,11 +312,11 @@ export class PersonCountingService {
     | {
         success: true;
         data: {
-          age_0_9_Count: number;
-          age_10_18_Count: number;
-          age_19_34_Count: number;
-          age_35_60_Count: number;
-          age_60plus_Count: number;
+          child: number;
+          teen: number;
+          middle_age: number;
+          adult: number;
+          old_age: number;
           enterCount: number;
         };
       }
@@ -344,22 +331,15 @@ export class PersonCountingService {
         .lean();
       if (stats && stats.length > 0) {
         const result = stats.map((item) => item.data);
-        const {
-          age_0_9_Count,
-          age_10_18_Count,
-          age_19_34_Count,
-          age_35_60_Count,
-          age_60plus_Count,
-          enterCount,
-        } = sumObjects(result);
+        const { child, teen, middle_age, adult, old_age, enterCount } = sumObjects(result);
         return {
           success: true,
           data: {
-            age_0_9_Count,
-            age_10_18_Count,
-            age_19_34_Count,
-            age_35_60_Count,
-            age_60plus_Count,
+            child,
+            teen,
+            middle_age,
+            adult,
+            old_age,
             enterCount,
           },
         };
@@ -367,11 +347,11 @@ export class PersonCountingService {
         return {
           success: true,
           data: {
-            age_0_9_Count: 0,
-            age_10_18_Count: 0,
-            age_19_34_Count: 0,
-            age_35_60_Count: 0,
-            age_60plus_Count: 0,
+            child: 0,
+            teen: 0,
+            middle_age: 0,
+            adult: 0,
+            old_age: 0,
             enterCount: 0,
           },
         };

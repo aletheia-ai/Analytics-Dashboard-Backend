@@ -3,7 +3,6 @@ import { Schema, Types } from 'mongoose';
 
 export const PersonCountingSchema = new Schema<PeopleCountingType>(
   {
-    store: { type: Types.ObjectId, ref: 'Store', required: true },
     enterCount: { type: Number, required: true },
     exitCount: { type: Number, required: true },
     maskCount: { type: Number, required: true },
@@ -12,11 +11,11 @@ export const PersonCountingSchema = new Schema<PeopleCountingType>(
     feMaleCount: { type: Number, required: true },
     cameraId: { type: String, required: true },
     passingBy: { type: Number, required: true },
-    age_0_9_Count: { type: Number, required: true },
-    age_10_18_Count: { type: Number, required: true },
-    age_19_34_Count: { type: Number, required: true },
-    age_35_60_Count: { type: Number, required: true },
-    age_60plus_Count: { type: Number, required: true },
+    teen: { type: Number, required: true },
+    child: { type: Number, required: true },
+    adult: { type: Number, required: true },
+    middle_age: { type: Number, required: true },
+    old_age: { type: Number, required: true },
     interestedCustomers: { type: Number, required: true },
     buyingCustomers: { type: Number, required: true },
     liveOccupancy: { type: Number, required: true },

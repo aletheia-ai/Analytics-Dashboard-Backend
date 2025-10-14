@@ -18,6 +18,7 @@ import { StatsModule } from './stats.module';
 import { DayWiseStatsModule } from './day-wise-stats.module';
 
 import { HourWiseStatsModule } from './hour-stat.module';
+import { LogModule } from './logs.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -36,7 +37,7 @@ import { HourWiseStatsModule } from './hour-stat.module';
     StoreModule,
     CompanyModule,
     StatsModule,
-
+    LogModule,
     DayWiseStatsModule,
     HourWiseStatsModule,
   ],

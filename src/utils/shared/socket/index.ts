@@ -39,4 +39,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   handlePepleStats(payload: any, userId: string) {
     this.server.emit('people-stats', payload);
   }
+  handleProductStats(payload: any, userId: string) {
+    this.server.emit('product-stats', payload);
+  }
 }

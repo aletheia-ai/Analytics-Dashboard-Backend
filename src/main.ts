@@ -16,21 +16,7 @@ import * as cookieParser from 'cookie-parser';
 import * as dotenv from 'dotenv';
 dotenv.config();
 async function bootstrap() {
-  let httpsOptions={};
-  const env = process.env.NODE_ENV;
-  if(env === 'development'){
-    httpsOptions = {
-    key: fs.readFileSync('./localhost-key.pem'),
-    cert: fs.readFileSync('./localhost.pem'),
-  };
-  }
- 
-
-  
-  const app =
-    env === 'development'
-      ? await NestFactory.create(AppModule, { httpsOptions })
-      : await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule);
   const config = new DocumentBuilder()
     .setTitle('Brick&Mortars.ai')
     .setDescription('Endpoints')
@@ -53,7 +39,7 @@ async function bootstrap() {
     })
   );
   app.use(rateLimit(rateLimiter));
-  app.use(Helmet());
+
   app.enableCors({
     origin: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],

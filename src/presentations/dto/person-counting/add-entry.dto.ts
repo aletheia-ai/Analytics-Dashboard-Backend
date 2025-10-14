@@ -51,7 +51,7 @@ export class AddEntryDto {
 
   @IsNumber()
   @IsNotEmpty()
-  passingBy: number = 0;
+  passingByCount: number = 0;
 
   @IsNumber()
   @IsNotEmpty()

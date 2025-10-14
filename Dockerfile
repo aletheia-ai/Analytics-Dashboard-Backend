@@ -38,7 +38,7 @@ RUN npm install --omit=dev
 COPY --from=builder /app/dist ./dist
 
 # Expose app port
-EXPOSE 8000
+EXPOSE 3000
 
 # Run NestJS
 CMD ["node", "dist/main.js"]

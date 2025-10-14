@@ -1,7 +1,7 @@
 name: Docker Build Upload CI
 on:
   push:
-    branches: [main]
+    branches: [usdemo]
 jobs:
   build_push_docker:
     runs-on: aletheia-ai

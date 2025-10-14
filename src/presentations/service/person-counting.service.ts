@@ -31,8 +31,7 @@ export class PersonCountingService {
   ): Promise<{ success: true } | { success: false; error: number }> {
     try {
       const { cameraId, ...rest } = data;
-
-      const entryData = new this.personCounting({ ...data, passingBy: data.passingByCount,interestedCustomers:data.enterCount ?? 0 });
+      const entryData = new this.personCounting({ ...data, passingBy: data.passingByCount});
       const result = await entryData.save();
 
       if (result) {

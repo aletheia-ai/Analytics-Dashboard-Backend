@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsNumber } from 'class-validator';
+import { IsString, IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
 
 export class AddEntryDto {
   @IsNumber()
@@ -64,4 +64,8 @@ export class AddEntryDto {
   @IsNumber()
   @IsNotEmpty()
   liveOccupancy: number = 0;
+  @IsOptional()
+  date: string;
+  @IsOptional()
+  time: string;
 }

@@ -11,8 +11,10 @@ export declare class AddEntryDto {
     adult: number;
     middle_age: number;
     old_age: number;
-    passingBy: number;
+    passingByCount: number;
     interestedCustomers: number;
     buyingCustomers: number;
     liveOccupancy: number;
+    date: string;
+    time: string;
 }

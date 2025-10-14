@@ -39,7 +39,7 @@ let PersonCountingService = class PersonCountingService {
     async addEntry(data) {
         try {
             const { cameraId, ...rest } = data;
-            const entryData = new this.personCounting({ ...data });
+            const entryData = new this.personCounting({ ...data, passingBy: data.passingByCount });
             const result = await entryData.save();
             if (result) {
                 const incFields = {};

@@ -24,10 +24,12 @@ class AddEntryDto {
     adult = 0;
     middle_age = 0;
     old_age = 0;
-    passingBy = 0;
+    passingByCount = 0;
     interestedCustomers = 0;
     buyingCustomers = 0;
     liveOccupancy = 0;
+    date;
+    time;
 }
 exports.AddEntryDto = AddEntryDto;
 __decorate([
@@ -94,7 +96,7 @@ __decorate([
     (0, class_validator_1.IsNumber)(),
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", Number)
-], AddEntryDto.prototype, "passingBy", void 0);
+], AddEntryDto.prototype, "passingByCount", void 0);
 __decorate([
     (0, class_validator_1.IsNumber)(),
     (0, class_validator_1.IsNotEmpty)(),
@@ -110,4 +112,12 @@ __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", Number)
 ], AddEntryDto.prototype, "liveOccupancy", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], AddEntryDto.prototype, "date", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], AddEntryDto.prototype, "time", void 0);
 //# sourceMappingURL=add-entry.dto.js.map

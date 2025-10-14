@@ -6,6 +6,7 @@ import { AppGateway } from '@src/utils/shared/socket';
 import { RangeType } from '@src/utils/types/range-type';
 import { DayWiseStatsType } from '@src/utils/types/day-wise-stat-type';
 import { HourWiseStatsType } from '@src/utils/types/hour-stat.type';
+import { AddEntryDto } from '../dto/person-counting';
 export declare class PersonCountingService {
     private personCounting;
     private store;
@@ -14,7 +15,7 @@ export declare class PersonCountingService {
     private hourWiseStats;
     private readonly appGateway;
     constructor(personCounting: Model<PeopleCountingType>, store: Model<Store>, stats: Model<StatsType>, dayWiseStats: Model<DayWiseStatsType>, hourWiseStats: Model<HourWiseStatsType>, appGateway: AppGateway);
-    addEntry(data: PeopleCountingType): Promise<{
+    addEntry(data: AddEntryDto): Promise<{
         success: true;
     } | {
         success: false;

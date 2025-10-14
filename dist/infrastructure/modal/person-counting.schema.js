@@ -10,7 +10,7 @@ exports.PersonCountingSchema = new mongoose_1.Schema({
     maleCount: { type: Number, required: true },
     feMaleCount: { type: Number, required: true },
     cameraId: { type: String, required: true },
-    passingBy: { type: Number, required: true },
+    passingByCount: { type: Number, required: true },
     teen: { type: Number, required: true },
     child: { type: Number, required: true },
     adult: { type: Number, required: true },

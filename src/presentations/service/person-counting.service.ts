@@ -27,11 +27,11 @@ export class PersonCountingService {
   ) {}
 
   async addEntry(
-    data: AddEntryDto
+    data: PeopleCountingType
   ): Promise<{ success: true } | { success: false; error: number }> {
     try {
       const { cameraId, ...rest } = data;
-      const entryData = new this.personCounting({ ...data, passingBy: data.passingByCount ?? 0 });
+      const entryData = new this.personCounting({ ...data });
       const result = await entryData.save();
 
       if (result) {
@@ -49,7 +49,7 @@ export class PersonCountingService {
             setFields[`data.${key}`] = value;
           }
         }
-
+        console.log(incFields);
         const aggregatedResult = await this.stats.updateOne(
           { cameraId, range: RangeType.ALL_TIME },
           {

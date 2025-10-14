@@ -21,6 +21,7 @@ class AddEntryDto {
     cameraId;
     child = 0;
     teen = 0;
+    type;
     adult = 0;
     middle_age = 0;
     old_age = 0;
@@ -77,6 +78,10 @@ __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", Number)
 ], AddEntryDto.prototype, "teen", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], AddEntryDto.prototype, "type", void 0);
 __decorate([
     (0, class_validator_1.IsNumber)(),
     (0, class_validator_1.IsNotEmpty)(),

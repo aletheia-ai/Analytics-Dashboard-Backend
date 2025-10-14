@@ -6,7 +6,7 @@ export interface PeopleCountingType {
     maleCount: number;
     feMaleCount: number;
     cameraId: string;
-    passingBy: number;
+    passingByCount: number;
     teen: number;
     child: number;
     adult: number;

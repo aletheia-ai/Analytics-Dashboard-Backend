@@ -36,7 +36,8 @@ export class AddEntryDto {
   @IsNumber()
   @IsNotEmpty()
   teen: number = 0;
-
+  @IsOptional()
+  type: string;
   @IsNumber()
   @IsNotEmpty()
   adult: number = 0;

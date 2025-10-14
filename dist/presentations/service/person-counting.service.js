@@ -39,7 +39,7 @@ let PersonCountingService = class PersonCountingService {
     async addEntry(data) {
         try {
             const { cameraId, ...rest } = data;
-            const entryData = new this.personCounting({ ...data, passingBy: data.passingByCount ?? 0 });
+            const entryData = new this.personCounting({ ...data });
             const result = await entryData.save();
             if (result) {
                 const incFields = {};
@@ -56,6 +56,7 @@ let PersonCountingService = class PersonCountingService {
                         setFields[`data.${key}`] = value;
                     }
                 }
+                console.log(incFields);
                 const aggregatedResult = await this.stats.updateOne({ cameraId, range: range_type_1.RangeType.ALL_TIME }, {
                     $inc: incFields,
                     $set: {

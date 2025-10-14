@@ -8,6 +8,7 @@ export declare class AddEntryDto {
     cameraId: string;
     child: number;
     teen: number;
+    type: string;
     adult: number;
     middle_age: number;
     old_age: number;

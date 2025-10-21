@@ -16,17 +16,16 @@ import * as cookieParser from 'cookie-parser';
 import * as dotenv from 'dotenv';
 dotenv.config();
 async function bootstrap() {
-  let httpsOptions={};
+  let httpsOptions = {};
   const env = process.env.NODE_ENV;
-  if(env === 'development'){
+  if (env === 'development') {
     httpsOptions = {
-    key: fs.readFileSync('./localhost-key.pem'),
-    cert: fs.readFileSync('./localhost.pem'),
-  };
+      key: fs.readFileSync('./localhost-key.pem'),
+      cert: fs.readFileSync('./localhost.pem'),
+    };
   }
- 
+  console.log('options', httpsOptions);
 
-  
   const app =
     env === 'development'
       ? await NestFactory.create(AppModule, { httpsOptions })

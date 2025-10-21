@@ -69,4 +69,7 @@ export class AddEntryDto {
   date: string;
   @IsOptional()
   time: string;
+
+  @IsOptional()
+  dateTime: any;
 }

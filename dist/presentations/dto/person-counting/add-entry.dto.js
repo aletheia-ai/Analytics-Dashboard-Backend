@@ -31,6 +31,7 @@ class AddEntryDto {
     liveOccupancy = 0;
     date;
     time;
+    dateTime;
 }
 exports.AddEntryDto = AddEntryDto;
 __decorate([
@@ -125,4 +126,8 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], AddEntryDto.prototype, "time", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Object)
+], AddEntryDto.prototype, "dateTime", void 0);
 //# sourceMappingURL=add-entry.dto.js.map

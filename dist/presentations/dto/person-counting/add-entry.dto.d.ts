@@ -18,4 +18,5 @@ export declare class AddEntryDto {
     liveOccupancy: number;
     date: string;
     time: string;
+    dateTime: any;
 }

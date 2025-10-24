@@ -35,6 +35,7 @@ exports.AppModule = AppModule = __decorate([
                 imports: [config_1.ConfigModule],
                 useFactory: (configService) => ({
                     uri: configService.get('MONGO_URL'),
+                    autoIndex: true,
                 }),
                 inject: [config_1.ConfigService],
             }),

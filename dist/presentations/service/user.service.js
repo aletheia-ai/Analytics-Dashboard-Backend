@@ -140,8 +140,8 @@ let UserService = class UserService {
                 return { success: false };
             }
         }
-        catch {
-            throw new common_1.InternalServerErrorException('Something Went Wrong');
+        catch (err) {
+            return { success: false };
         }
     }
     async deleteUser(userId) {

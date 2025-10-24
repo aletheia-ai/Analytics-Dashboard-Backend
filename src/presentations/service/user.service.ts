@@ -149,8 +149,8 @@ export class UserService {
       } else {
         return { success: false };
       }
-    } catch {
-      throw new InternalServerErrorException('Something Went Wrong');
+    } catch (err) {
+      return { success: false };
     }
   }
 

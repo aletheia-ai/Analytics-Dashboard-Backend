@@ -98,7 +98,9 @@ let AuthController = class AuthController {
                 res.cookie('access_token', access_token, cookie_options_1.cookiesOptions);
                 res.send({ message: 'Register Successful' });
             }
-            throw new common_1.ConflictException('User Already Exists');
+            else {
+                throw new common_1.ConflictException('User Already Exists');
+            }
         }
         catch (err) {
             if (err instanceof common_1.HttpException) {

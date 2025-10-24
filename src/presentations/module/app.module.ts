@@ -26,6 +26,7 @@ import { HeatMapsModule } from './heatmap.module';
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         uri: configService.get<string>('MONGO_URL'),
+        autoIndex: true,
       }),
       inject: [ConfigService],
     }),

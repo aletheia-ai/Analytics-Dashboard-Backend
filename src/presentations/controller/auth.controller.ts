@@ -112,12 +112,14 @@ export class AuthController {
         userType: UserRoleType.ADMIN,
         hasRegisteredBusiness: false,
       });
+
       if (result.success) {
         const { access_token } = result;
         res.cookie('access_token', access_token, cookiesOptions);
         res.send({ message: 'Register Successful' });
+      } else {
+        throw new ConflictException('User Already Exists');
       }
-      throw new ConflictException('User Already Exists');
     } catch (err) {
       if (err instanceof HttpException) {
         throw err;

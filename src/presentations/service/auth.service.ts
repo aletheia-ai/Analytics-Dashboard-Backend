@@ -19,9 +19,7 @@ export class AuthService {
     @InjectModel('Region') private region: Model<Region>
   ) {}
 
-  async getUserProfile(
-    id: string
-  ): Promise<
+  async getUserProfile(id: string): Promise<
     | {
         success: true;
         company: Company | null;
@@ -86,6 +84,7 @@ export class AuthService {
   async signUp(user: User): Promise<{ success: true; access_token: string } | { success: false }> {
     try {
       const result = await this.usersService.addUser(user);
+
       if (result.success) {
         const payload = {
           sub: user.email,

@@ -8,15 +8,24 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppGateway = void 0;
 const websockets_1 = require("@nestjs/websockets");
 const socket_io_1 = require("socket.io");
+const mongoose_1 = require("mongoose");
+const mongoose_2 = require("@nestjs/mongoose");
 let AppGateway = class AppGateway {
-    constructor() { }
+    connection;
+    constructor(connection) {
+        this.connection = connection;
+    }
+    changeStream = null;
     server;
     afterInit(server) {
-        console.log('client init');
+        this.startWatchingDb();
     }
     handleConnection(client, ...args) {
         console.log('connect');
@@ -30,6 +39,34 @@ let AppGateway = class AppGateway {
     }
     handlePepleStats(payload, userId) {
         this.server.emit('people-stats', payload);
+    }
+    handleResetStats(payload, userId) {
+        this.server.emit('reset-stats', payload);
+    }
+    startWatchingDb() {
+        this.changeStream = this.connection.collection('product_stats').watch([
+            {
+                $match: {
+                    'fullDocument.cameraId': 'all',
+                    'fullDocument.range': 'all',
+                    operationType: 'update',
+                },
+            },
+        ], { fullDocument: 'updateLookup' });
+        this.changeStream.on('change', (change) => {
+            if (change.operationType === 'update' && change.fullDocument) {
+                if (change.fullDocument.source === 'from-cron') {
+                    this.handleResetStats(change.fullDocument.data, '1');
+                }
+            }
+        });
+        this.changeStream.on('error', (err) => {
+            console.error('❌ Change Stream Error:', err);
+            this.changeStream = null;
+        });
+    }
+    async onModuleDestroy() {
+        await this.changeStream?.close();
     }
 };
 exports.AppGateway = AppGateway;
@@ -50,6 +87,7 @@ exports.AppGateway = AppGateway = __decorate([
         },
         transports: ['websocket'],
     }),
-    __metadata("design:paramtypes", [])
+    __param(0, (0, mongoose_2.InjectConnection)()),
+    __metadata("design:paramtypes", [mongoose_1.Connection])
 ], AppGateway);
 //# sourceMappingURL=index.js.map

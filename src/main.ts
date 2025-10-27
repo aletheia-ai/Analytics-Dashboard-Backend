@@ -14,6 +14,7 @@ import { exceptionFactory } from '@utils/methods/exception-factory';
 import * as fs from 'fs';
 import * as cookieParser from 'cookie-parser';
 import * as dotenv from 'dotenv';
+
 dotenv.config();
 async function bootstrap() {
   let httpsOptions = {};
@@ -24,12 +25,12 @@ async function bootstrap() {
       cert: fs.readFileSync('./localhost.pem'),
     };
   }
-  console.log('options', httpsOptions);
 
   const app =
     env === 'development'
       ? await NestFactory.create(AppModule, { httpsOptions })
       : await NestFactory.create(AppModule);
+
   const config = new DocumentBuilder()
     .setTitle('Brick&Mortars.ai')
     .setDescription('Endpoints')

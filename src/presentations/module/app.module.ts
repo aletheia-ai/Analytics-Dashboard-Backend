@@ -12,13 +12,13 @@ import { PersonCountingModule } from './person-counting.module';
 import { StoreModule } from './store.module';
 import { CompanyModule } from './company.module';
 import { RedisModule } from '@src/utils/shared/redis/redis.module';
-import { AppGateway } from '@src/utils/shared/socket';
 import { StatsModule } from './stats.module';
 
 import { DayWiseStatsModule } from './day-wise-stats.module';
 
 import { HourWiseStatsModule } from './hour-stat.module';
 import { HeatMapsModule } from './heatmap.module';
+import { SocketModule } from './socket.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -41,8 +41,10 @@ import { HeatMapsModule } from './heatmap.module';
     HeatMapsModule,
     DayWiseStatsModule,
     HourWiseStatsModule,
+    SocketModule,
   ],
   controllers: [AppController],
-  providers: [AppService, AppGateway],
+  providers: [AppService],
+  // exports: [AppGateway],
 })
 export class AppModule {}

@@ -10,7 +10,7 @@ exports.HeatMapsModule = void 0;
 const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const product_stats_schema_1 = require("../../infrastructure/modal/product-stats.schema");
-const socket_1 = require("../../utils/shared/socket");
+const socket_module_1 = require("./socket.module");
 let HeatMapsModule = class HeatMapsModule {
 };
 exports.HeatMapsModule = HeatMapsModule;
@@ -18,9 +18,8 @@ exports.HeatMapsModule = HeatMapsModule = __decorate([
     (0, common_1.Module)({
         imports: [
             mongoose_1.MongooseModule.forFeature([{ name: 'Heat_Maps', schema: product_stats_schema_1.ProductStatsSchema }]),
-            socket_1.AppGateway,
+            socket_module_1.SocketModule,
         ],
-        providers: [socket_1.AppGateway],
         exports: [mongoose_1.MongooseModule],
     })
 ], HeatMapsModule);

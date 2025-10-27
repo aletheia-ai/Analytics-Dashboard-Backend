@@ -65,6 +65,7 @@ let PersonCountingService = class PersonCountingService {
                             store,
                             'data.store': store,
                             'data.cameraId': cameraId,
+                            source: 'backend',
                         },
                     }, { upsert: true });
                     if (!aggregatedResult) {
@@ -78,6 +79,7 @@ let PersonCountingService = class PersonCountingService {
                                 store,
                                 'data.store': store,
                                 'data.cameraId': cameraId,
+                                source: 'backend',
                             },
                         }, { upsert: true });
                         if (!aggregatedAllResult) {
@@ -102,6 +104,7 @@ let PersonCountingService = class PersonCountingService {
                                         store,
                                         'data.store': store,
                                         'data.cameraId': cameraId,
+                                        source: 'backend',
                                     },
                                 }, { upsert: true });
                                 await this.hourWiseStats.updateOne({ store, hour: currentHour }, {
@@ -111,6 +114,7 @@ let PersonCountingService = class PersonCountingService {
                                         store,
                                         'data.store': store,
                                         'data.cameraId': cameraId,
+                                        source: 'backend',
                                     },
                                 }, { upsert: true });
                                 return { success: true };

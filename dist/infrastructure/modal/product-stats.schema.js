@@ -8,6 +8,10 @@ exports.ProductStatsSchema = new mongoose_1.Schema({
     cameraId: { type: String, required: true },
     range: { type: String, required: true },
     data: { type: person_counting_schema_1.PersonCountingSchema, required: true },
+    source: {
+        type: String,
+        default: 'backend',
+    },
 }, { timestamps: true });
 exports.ProductStatsModel = mongoose_1.default.model('Product_Stats', exports.ProductStatsSchema);
 //# sourceMappingURL=product-stats.schema.js.map

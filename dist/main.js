@@ -23,7 +23,6 @@ async function bootstrap() {
             cert: fs.readFileSync('./localhost.pem'),
         };
     }
-    console.log('options', httpsOptions);
     const app = env === 'development'
         ? await core_1.NestFactory.create(app_module_1.AppModule, { httpsOptions })
         : await core_1.NestFactory.create(app_module_1.AppModule);

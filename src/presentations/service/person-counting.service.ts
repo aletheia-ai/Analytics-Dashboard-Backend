@@ -60,6 +60,7 @@ export class PersonCountingService {
                 store,
                 'data.store': store,
                 'data.cameraId': cameraId,
+                source: 'backend',
               },
             },
             { upsert: true }
@@ -74,9 +75,9 @@ export class PersonCountingService {
                 $set: {
                   ...setFields,
                   store,
-
                   'data.store': store,
                   'data.cameraId': cameraId,
+                  source: 'backend',
                 },
               },
               { upsert: true }
@@ -107,6 +108,7 @@ export class PersonCountingService {
                       store,
                       'data.store': store,
                       'data.cameraId': cameraId,
+                      source: 'backend',
                     },
                   },
                   { upsert: true }
@@ -121,6 +123,7 @@ export class PersonCountingService {
                       store,
                       'data.store': store,
                       'data.cameraId': cameraId,
+                      source: 'backend',
                     },
                   },
                   { upsert: true }

@@ -6,9 +6,10 @@ import { PersonCountingService } from '../service/person-counting.service';
 import { PersonCountingSchema } from '@infrastructure/modal/person-counting.schema';
 import { StoreModule } from './store.module';
 import { StatsModule } from './stats.module';
-import { AppGateway } from '@src/utils/shared/socket';
+// import { AppGateway } from '@src/utils/shared/socket';
 import { DayWiseStatsModule } from './day-wise-stats.module';
 import { HourWiseStatsModule } from './hour-stat.module';
+import { SocketModule } from './socket.module';
 // import { BullModule } from '@nestjs/bullmq';
 
 @Module({
@@ -16,11 +17,11 @@ import { HourWiseStatsModule } from './hour-stat.module';
     MongooseModule.forFeature([{ name: 'Person_Counting', schema: PersonCountingSchema }]),
     StoreModule,
     StatsModule,
-
+    SocketModule,
     DayWiseStatsModule,
     HourWiseStatsModule,
   ],
-  providers: [PersonCountingService, AppGateway],
+  providers: [PersonCountingService],
   controllers: [PersonCountingController],
   exports: [MongooseModule],
 })

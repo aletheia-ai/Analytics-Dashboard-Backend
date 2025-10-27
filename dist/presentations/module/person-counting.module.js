@@ -14,9 +14,9 @@ const person_counting_service_1 = require("../service/person-counting.service");
 const person_counting_schema_1 = require("../../infrastructure/modal/person-counting.schema");
 const store_module_1 = require("./store.module");
 const stats_module_1 = require("./stats.module");
-const socket_1 = require("../../utils/shared/socket");
 const day_wise_stats_module_1 = require("./day-wise-stats.module");
 const hour_stat_module_1 = require("./hour-stat.module");
+const socket_module_1 = require("./socket.module");
 let PersonCountingModule = class PersonCountingModule {
 };
 exports.PersonCountingModule = PersonCountingModule;
@@ -26,10 +26,11 @@ exports.PersonCountingModule = PersonCountingModule = __decorate([
             mongoose_1.MongooseModule.forFeature([{ name: 'Person_Counting', schema: person_counting_schema_1.PersonCountingSchema }]),
             store_module_1.StoreModule,
             stats_module_1.StatsModule,
+            socket_module_1.SocketModule,
             day_wise_stats_module_1.DayWiseStatsModule,
             hour_stat_module_1.HourWiseStatsModule,
         ],
-        providers: [person_counting_service_1.PersonCountingService, socket_1.AppGateway],
+        providers: [person_counting_service_1.PersonCountingService],
         controllers: [person_counting_controller_1.PersonCountingController],
         exports: [mongoose_1.MongooseModule],
     })

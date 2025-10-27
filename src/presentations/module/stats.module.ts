@@ -1,14 +1,15 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ProductStatsSchema } from '@infrastructure/modal/product-stats.schema';
-import { AppGateway } from '@src/utils/shared/socket';
+
+import { SocketModule } from './socket.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: 'Product_Stats', schema: ProductStatsSchema }]),
-    AppGateway,
+    SocketModule,
   ],
-  providers: [AppGateway],
+
   exports: [MongooseModule],
 })
 export class StatsModule {}

@@ -6,21 +6,16 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.StatsModule = void 0;
+exports.SocketModule = void 0;
 const common_1 = require("@nestjs/common");
-const mongoose_1 = require("@nestjs/mongoose");
-const product_stats_schema_1 = require("../../infrastructure/modal/product-stats.schema");
-const socket_module_1 = require("./socket.module");
-let StatsModule = class StatsModule {
+const socket_1 = require("../../utils/shared/socket");
+let SocketModule = class SocketModule {
 };
-exports.StatsModule = StatsModule;
-exports.StatsModule = StatsModule = __decorate([
+exports.SocketModule = SocketModule;
+exports.SocketModule = SocketModule = __decorate([
     (0, common_1.Module)({
-        imports: [
-            mongoose_1.MongooseModule.forFeature([{ name: 'Product_Stats', schema: product_stats_schema_1.ProductStatsSchema }]),
-            socket_module_1.SocketModule,
-        ],
-        exports: [mongoose_1.MongooseModule],
+        providers: [socket_1.AppGateway],
+        exports: [socket_1.AppGateway],
     })
-], StatsModule);
-//# sourceMappingURL=stats.module.js.map
+], SocketModule);
+//# sourceMappingURL=socket.module.js.map

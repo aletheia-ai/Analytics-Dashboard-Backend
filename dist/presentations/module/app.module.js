@@ -19,11 +19,11 @@ const person_counting_module_1 = require("./person-counting.module");
 const store_module_1 = require("./store.module");
 const company_module_1 = require("./company.module");
 const redis_module_1 = require("../../utils/shared/redis/redis.module");
-const socket_1 = require("../../utils/shared/socket");
 const stats_module_1 = require("./stats.module");
 const day_wise_stats_module_1 = require("./day-wise-stats.module");
 const hour_stat_module_1 = require("./hour-stat.module");
 const heatmap_module_1 = require("./heatmap.module");
+const socket_module_1 = require("./socket.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -50,9 +50,10 @@ exports.AppModule = AppModule = __decorate([
             heatmap_module_1.HeatMapsModule,
             day_wise_stats_module_1.DayWiseStatsModule,
             hour_stat_module_1.HourWiseStatsModule,
+            socket_module_1.SocketModule,
         ],
         controllers: [app_controller_1.AppController],
-        providers: [app_service_1.AppService, socket_1.AppGateway],
+        providers: [app_service_1.AppService],
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map

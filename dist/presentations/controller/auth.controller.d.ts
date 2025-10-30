@@ -14,6 +14,7 @@ export declare class AuthController {
         stores: import("../../utils/types/store-type").Store[] | null;
         regions: import("../../utils/types/region-type").Region[] | null;
         user: import("@src/utils/types").User;
+        fixedStore: string | null;
     }>;
     deleteCompanyData(deleteAccountDto: DeleteAccountDto, res: Response): Promise<void>;
     changeUserPassword(changePasswordDto: ChangePasswordDto): Promise<{

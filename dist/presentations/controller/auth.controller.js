@@ -120,6 +120,7 @@ let AuthController = class AuthController {
                     stores: stores ? (stores.length > 0 ? stores : null) : null,
                     regions: regions ? (regions.length > 0 ? regions : null) : null,
                     user: user || null,
+                    fixedStore: process.env.STORE || null,
                 };
             }
             else {

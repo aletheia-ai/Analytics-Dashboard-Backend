@@ -1,0 +1,35 @@
+name: CI/CD Dispatch
+
+on:
+  workflow_run:
+    workflows: ["Docker Build Upload CI"]
+    types:
+      - completed
+
+jobs:
+  dispatch:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.event.workflow_run.head_repository.full_name }}
+          ref: ${{ github.event.workflow_run.head_sha }}
+      - name: Get image tag
+        run: |
+          # Extract the image tag from the workflow run, assuming it's logged or we can parse
+          # Since the build workflow pushes tags, we can assume the tag based on branch and date
+          BRANCH_NAME=${GITHUB_REF#refs/heads/}
+          DATE=$(date +"%d%m%Y")
+          IMAGE="aletheiaai/deployments"
+          TAG="dashboard.backend.${BRANCH_NAME}.${DATE}"
+          IMAGE_TAG="${IMAGE}:${TAG}"
+          echo "IMAGE_TAG=${IMAGE_TAG}" >> $GITHUB_ENV
+      - name: Send repository dispatch
+        run: |
+          curl -X POST \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/${{ github.repository_owner }}/Analytics-Dashboard-Production/dispatches \
+            -d "{\"event_type\": \"backend-deploy\", \"client_payload\": {\"image_tag\": \"${IMAGE_TAG}\"}}"

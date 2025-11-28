@@ -1,3 +1,4 @@
+//src/utils/methods/aggregated-stats.ts
 import { PeopleCountingType } from '@src/utils/types/people-counting-type';
 export function sumObjects(data: PeopleCountingType[]): PeopleCountingType {
   const result = data.reduce((acc, obj) => {

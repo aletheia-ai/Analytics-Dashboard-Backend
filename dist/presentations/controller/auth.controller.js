@@ -203,6 +203,20 @@ let AuthController = class AuthController {
             throw new common_1.InternalServerErrorException();
         }
     }
+    async verifyEmail(body) {
+        try {
+            const user = await this.authService.findByEmail(body.email);
+            if (!user) {
+                throw new common_1.NotFoundException('Email not found');
+            }
+            return { message: 'Email exists' };
+        }
+        catch (err) {
+            if (err instanceof common_1.HttpException)
+                throw err;
+            throw new common_1.InternalServerErrorException();
+        }
+    }
 };
 exports.AuthController = AuthController;
 __decorate([
@@ -279,6 +293,14 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "logout", null);
+__decorate([
+    (0, common_1.Post)('verify-email'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "verifyEmail", null);
 exports.AuthController = AuthController = __decorate([
     (0, common_1.Controller)('auth'),
     __metadata("design:paramtypes", [auth_service_1.AuthService])

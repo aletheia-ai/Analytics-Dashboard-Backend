@@ -1,3 +1,4 @@
+//src/utils/types/index.ts
 import { BusinessType } from './business-type';
 import { ServiceType } from './service-type';
 import { UserSpaceType } from './space-type';

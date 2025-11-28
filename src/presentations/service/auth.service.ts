@@ -1,3 +1,4 @@
+// src/presentations/service/auth.service.ts
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserService } from './user.service';
 import { JwtService } from '@nestjs/jwt';
@@ -192,4 +193,9 @@ export class AuthService {
       return { success: false, error: err.code || 500 };
     }
   }
+
+  async findByEmail(email: string) {
+  return await this.usersService.findOne(email);
+}
+
 }

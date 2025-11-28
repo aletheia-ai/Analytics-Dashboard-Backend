@@ -3,16 +3,151 @@ import { RedisClientType } from 'redis';
 
 @Injectable()
 export class RedisService {
-  constructor(@Inject('REDIS_CLIENT') private readonly redisClient: RedisClientType) {}
+  constructor(@Inject('REDIS_CLIENT') private readonly redisClient: RedisClientType<any, any>) {}
 
-  async blockingPop(queueName: string, timeout = 0): Promise<any> {
-    return await this.redisClient.sendCommand(['BRPOP', queueName, timeout.toString()]);
+  /**
+   * Add message to a stream
+   */
+  async addToStream(stream: string, message: Record<string, any>): Promise<string> {
+    const entries: string[] = [];
+
+    for (const [key, value] of Object.entries(message)) {
+      entries.push(key, typeof value === 'string' ? value : JSON.stringify(value));
+    }
+    // console.log(entries);
+
+    try {
+      // XADD stream * key1 value1 key2 value2 ...
+
+      const id = (await this.redisClient.sendCommand(['XADD', stream, '*', ...entries])) as string;
+      console.log('Added ID:', id);
+      return id;
+    } catch (err) {
+      console.error('❌ XADD error:', err);
+      throw err;
+    }
   }
 
-  async pushToQueue(queueName: string, message: any): Promise<void> {
-    await this.redisClient.lPush(queueName, JSON.stringify(message));
+  /**
+   * Read from a stream
+   */
+  async readStream(
+    stream: string,
+    lastId: string = '$',
+    block: number = 0
+  ): Promise<{ id: string; message: Record<string, any> }[]> {
+    const result = await this.redisClient.sendCommand([
+      'XREAD',
+      'BLOCK',
+      block.toString(),
+      'COUNT',
+      '100',
+      'STREAMS',
+      stream,
+      lastId,
+    ]);
+
+    if (!result) return [];
+
+    // result: [[streamKey, [[id, [key, value, ...]]]]]
+    const messages: { id: string; message: Record<string, any> }[] = [];
+
+    const entriesArray = result as unknown as any[]; // cast through unknown first
+
+    if (Array.isArray(entriesArray)) {
+      for (const streamEntry of entriesArray) {
+        // streamEntry: [streamKey, [[id, [key, val, key, val...]]]]
+        if (!Array.isArray(streamEntry) || streamEntry.length < 2) continue;
+        const [, streamMessages] = streamEntry;
+        if (!Array.isArray(streamMessages)) continue;
+
+        for (const [id, kvArray] of streamMessages) {
+          const message: Record<string, any> = {};
+          for (let i = 0; i < kvArray.length; i += 2) {
+            const key = kvArray[i];
+            const value = kvArray[i + 1];
+            try {
+              message[key] = JSON.parse(value);
+            } catch {
+              message[key] = value;
+            }
+          }
+          messages.push({ id, message });
+        }
+      }
+    }
+
+    return messages;
   }
-  async clearQueue(queueName: string): Promise<void> {
-    await this.redisClient.del(queueName);
+
+  /**
+   * Create consumer group
+   */
+  async createConsumerGroup(stream: string, group: string) {
+    try {
+      await this.redisClient.sendCommand(['XGROUP', 'CREATE', stream, group, '$', 'MKSTREAM']);
+    } catch (err: any) {
+      if (!err.message.includes('BUSYGROUP')) {
+        throw err;
+      }
+    }
+  }
+
+  /**
+   * Read stream with consumer group
+   */
+  async readStreamGroup(
+    group: string,
+    consumer: string,
+    stream: string,
+    lastId: string = '>'
+  ): Promise<{ id: string; message: Record<string, any> }[]> {
+    const result = await this.redisClient.sendCommand([
+      'XREADGROUP',
+      'GROUP',
+      group,
+      consumer,
+      'BLOCK',
+      '0',
+      'STREAMS',
+      stream,
+      lastId,
+    ]);
+
+    if (!result) return [];
+    const messages: { id: string; message: Record<string, any> }[] = [];
+
+    if (Array.isArray(result)) {
+      for (const streamEntry of result) {
+        // streamEntry format: [streamKey, [[id, [key1, val1, key2, val2]]]]
+        if (!Array.isArray(streamEntry) || streamEntry.length < 2) continue;
+
+        const [, entries] = streamEntry;
+        if (!Array.isArray(entries)) continue;
+
+        for (const entry of entries) {
+          if (!Array.isArray(entry) || entry.length < 2) continue;
+
+          const [id, kvArray] = entry;
+          const message: Record<string, any> = {};
+
+          if (Array.isArray(kvArray)) {
+            for (let i = 0; i < kvArray.length; i += 2) {
+              const key = kvArray[i];
+              const value = kvArray[i + 1];
+              try {
+                message[key] = JSON.parse(value);
+              } catch {
+                message[key] = value;
+              }
+            }
+          }
+
+          messages.push({ id, message });
+        }
+      }
+    }
+
+    return messages;
   }
 }

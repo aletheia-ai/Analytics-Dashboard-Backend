@@ -12,46 +12,19 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.StoreController = void 0;
+exports.HeatmapController = void 0;
 const common_1 = require("@nestjs/common");
-const store_service_1 = require("../service/store.service");
-const store_1 = require("../dto/store");
-const auth_guard_1 = require("../../utils/guards/auth.guard.");
-let StoreController = class StoreController {
-    storeService;
-    constructor(storeService) {
-        this.storeService = storeService;
+const add_entry_dto_1 = require("../dto/heatmap/add-entry.dto");
+const heatmap_service_1 = require("../service/heatmap.service");
+let HeatmapController = class HeatmapController {
+    heatmaps;
+    constructor(heatmaps) {
+        this.heatmaps = heatmaps;
     }
-    async addNewStore(addStoreDto, req) {
+    async addNewHeatmap(addStoreDto, req) {
         try {
-            const result = await this.storeService.addNewStore(addStoreDto, req.user.id);
-            if (result.success) {
-                const { stores, store } = result;
-                return { message: 'Store Created', stores, store };
-            }
-            else {
-                const { error, errorType } = result;
-                if (error === 403) {
-                    throw new common_1.ForbiddenException('Cannot create this store');
-                }
-                else if (error === 404) {
-                    if (errorType === 'store') {
-                        throw new common_1.NotFoundException('Store Not Found');
-                    }
-                    if (errorType === 'company') {
-                        throw new common_1.NotFoundException('Company Not Registered');
-                    }
-                    else if (errorType === 'region') {
-                        throw new common_1.NotFoundException('Region Not Valid');
-                    }
-                }
-                else if (error === 409) {
-                    throw new common_1.ConflictException('Store With this Name Already Exists');
-                }
-                else {
-                    throw new common_1.InternalServerErrorException('Something went wrong');
-                }
-            }
+            this.heatmaps.addHeatmapItem(addStoreDto);
+            return addStoreDto;
         }
         catch (err) {
             if (err instanceof common_1.HttpException) {
@@ -60,151 +33,30 @@ let StoreController = class StoreController {
             throw new common_1.InternalServerErrorException('Something went wrong');
         }
     }
-    async deleteExistingStore(deleteStoreDto, req) {
-        try {
-            const result = await this.storeService.deleteStore(deleteStoreDto.companyId, req.user.id, deleteStoreDto.storeId);
-            if (result.success) {
-                return {
-                    message: 'Store Deleted Successfully',
-                    stores: result.stores.length > 0 ? result.stores : null,
-                };
-            }
-            else {
-                const { error, errorType } = result;
-                if (error === 403) {
-                    throw new common_1.ForbiddenException('Cannot delete this store');
-                }
-                else if (error === 404) {
-                    if (errorType === 'store') {
-                        throw new common_1.NotFoundException('Store Not Found');
-                    }
-                    if (errorType === 'company') {
-                        throw new common_1.NotFoundException('Store is not related to specific company');
-                    }
-                    else if (errorType === 'region') {
-                        throw new common_1.NotFoundException('Region Not Valid');
-                    }
-                }
-                else if (error === 409) {
-                    throw new common_1.ConflictException('Store With this Name Already Exists');
-                }
-                else {
-                    throw new common_1.InternalServerErrorException('Something went wrong');
-                }
-            }
-        }
-        catch (err) {
-            if (err instanceof common_1.HttpException) {
-                throw err;
-            }
-            throw new common_1.InternalServerErrorException('Something went wrong');
-        }
-    }
-    async editExistingStore(EditStoreDto, req) {
-        try {
-            const { id, ...rest } = EditStoreDto;
-            const result = await this.storeService.editExistingStore(rest, req.user.id, id);
-            if (result.success) {
-                const { stores } = result;
-                return { message: 'Store Updated Successfully', stores };
-            }
-            else {
-                const { error, errorType } = result;
-                if (error === 403) {
-                    throw new common_1.ForbiddenException('Cannot edit this store');
-                }
-                else if (error === 404) {
-                    if (errorType === 'store') {
-                        throw new common_1.NotFoundException('Store Not Found');
-                    }
-                    if (errorType === 'company') {
-                        throw new common_1.NotFoundException('Company Not Registered');
-                    }
-                    else if (errorType === 'region') {
-                        throw new common_1.NotFoundException('Region Not Valid');
-                    }
-                }
-                else {
-                    throw new common_1.InternalServerErrorException('Something went wrong');
-                }
-            }
-        }
-        catch (err) {
-            if (err instanceof common_1.HttpException) {
-                throw err;
-            }
-            throw new common_1.InternalServerErrorException('Something went wrong');
-        }
-    }
-    async getAllStores(getStoresDto) {
-        try {
-            const result = await this.storeService.getAllStores(getStoresDto.company);
-            if (result.success) {
-                return { message: result.data };
-            }
-            else {
-                const { error, errorFrom } = result;
-                if (error === 403) {
-                    throw new common_1.ForbiddenException('Cannot Fetch stores');
-                }
-                else if (error === 404) {
-                    throw new common_1.NotFoundException(`${errorFrom === 'Company' ? 'Company' : 'Store(s)'} 'Not Registered`);
-                }
-                else {
-                    throw new common_1.InternalServerErrorException('Something went wrong');
-                }
-            }
-        }
-        catch (err) {
-            if (err instanceof common_1.HttpException) {
-                throw err;
-            }
-            throw new common_1.InternalServerErrorException('Something went wrong');
-        }
+    async getHeatmap(timestamp) {
+        console.log('hello');
     }
 };
-exports.StoreController = StoreController;
+exports.HeatmapController = HeatmapController;
 __decorate([
-    (0, common_1.HttpCode)(common_1.HttpStatus.CREATED),
-    (0, common_1.Post)('add'),
-    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    (0, common_1.Post)('add-entry'),
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [store_1.AddStoreDto, Object]),
+    __metadata("design:paramtypes", [add_entry_dto_1.HeatmapItemDto, Object]),
     __metadata("design:returntype", Promise)
-], StoreController.prototype, "addNewStore", null);
+], HeatmapController.prototype, "addNewHeatmap", null);
 __decorate([
     (0, common_1.HttpCode)(common_1.HttpStatus.OK),
-    (0, common_1.Delete)('delete-store'),
-    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
-    __param(0, (0, common_1.Body)()),
-    __param(1, (0, common_1.Request)()),
+    (0, common_1.Get)('heat-map'),
+    __param(0, (0, common_1.Query)('timestamp')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [store_1.DeleteStoreDto, Object]),
+    __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
-], StoreController.prototype, "deleteExistingStore", null);
-__decorate([
-    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
-    (0, common_1.Post)('edit'),
-    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
-    __param(0, (0, common_1.Body)()),
-    __param(1, (0, common_1.Request)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [store_1.EditStoreDto, Object]),
-    __metadata("design:returntype", Promise)
-], StoreController.prototype, "editExistingStore", null);
-__decorate([
-    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
-    (0, common_1.Get)('all/:company'),
-    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
-    __param(0, (0, common_1.Param)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [store_1.GetStoresDto]),
-    __metadata("design:returntype", Promise)
-], StoreController.prototype, "getAllStores", null);
-exports.StoreController = StoreController = __decorate([
-    (0, common_1.Controller)('store'),
-    __metadata("design:paramtypes", [store_service_1.StoreService])
-], StoreController);
+], HeatmapController.prototype, "getHeatmap", null);
+exports.HeatmapController = HeatmapController = __decorate([
+    (0, common_1.Controller)('heatmap'),
+    __metadata("design:paramtypes", [heatmap_service_1.HeatmapService])
+], HeatmapController);
 //# sourceMappingURL=heat-maps.controller.js.map

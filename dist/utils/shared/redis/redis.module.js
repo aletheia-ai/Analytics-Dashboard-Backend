@@ -10,6 +10,8 @@ exports.RedisModule = void 0;
 const common_1 = require("@nestjs/common");
 const redis_1 = require("redis");
 const redis_service_1 = require("./redis.service");
+const heatmap_producer_service_1 = require("../../../presentations/service/heatmap-producer.service");
+const heatmap_listener_service_1 = require("../../../presentations/service/heatmap-listener.service");
 const RedisProvider = {
     provide: 'REDIS_CLIENT',
     useFactory: async () => {
@@ -48,7 +50,7 @@ let RedisModule = class RedisModule {
 exports.RedisModule = RedisModule;
 exports.RedisModule = RedisModule = __decorate([
     (0, common_1.Module)({
-        providers: [RedisProvider, redis_service_1.RedisService],
+        providers: [RedisProvider, redis_service_1.RedisService, heatmap_producer_service_1.HeatmapProducerService, heatmap_listener_service_1.HeatmapStreamListener],
         exports: [redis_service_1.RedisService],
     })
 ], RedisModule);

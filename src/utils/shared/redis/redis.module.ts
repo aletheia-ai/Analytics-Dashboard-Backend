@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { createClient } from 'redis';
 import { RedisService } from './redis.service';
+import { HeatmapProducerService } from '@src/presentations/service/heatmap-producer.service';
+import { HeatmapStreamListener } from '@src/presentations/service/heatmap-listener.service';
 
 const RedisProvider = {
   provide: 'REDIS_CLIENT',
@@ -39,7 +41,7 @@ const RedisProvider = {
 };
 
 @Module({
-  providers: [RedisProvider, RedisService],
+  providers: [RedisProvider, RedisService, HeatmapProducerService, HeatmapStreamListener],
   exports: [RedisService],
 })
 export class RedisModule {}

@@ -19,14 +19,115 @@ let RedisService = class RedisService {
     constructor(redisClient) {
         this.redisClient = redisClient;
     }
-    async blockingPop(queueName, timeout = 0) {
-        return await this.redisClient.sendCommand(['BRPOP', queueName, timeout.toString()]);
+    async addToStream(stream, message) {
+        const entries = [];
+        for (const [key, value] of Object.entries(message)) {
+            entries.push(key, typeof value === 'string' ? value : JSON.stringify(value));
+        }
+        try {
+            const id = (await this.redisClient.sendCommand(['XADD', stream, '*', ...entries]));
+            console.log('Added ID:', id);
+            return id;
+        }
+        catch (err) {
+            console.error('❌ XADD error:', err);
+            throw err;
+        }
     }
-    async pushToQueue(queueName, message) {
-        await this.redisClient.lPush(queueName, JSON.stringify(message));
+    async readStream(stream, lastId = '$', block = 0) {
+        const result = await this.redisClient.sendCommand([
+            'XREAD',
+            'BLOCK',
+            block.toString(),
+            'COUNT',
+            '100',
+            'STREAMS',
+            stream,
+            lastId,
+        ]);
+        if (!result)
+            return [];
+        const messages = [];
+        const entriesArray = result;
+        if (Array.isArray(entriesArray)) {
+            for (const streamEntry of entriesArray) {
+                if (!Array.isArray(streamEntry) || streamEntry.length < 2)
+                    continue;
+                const [, streamMessages] = streamEntry;
+                if (!Array.isArray(streamMessages))
+                    continue;
+                for (const [id, kvArray] of streamMessages) {
+                    const message = {};
+                    for (let i = 0; i < kvArray.length; i += 2) {
+                        const key = kvArray[i];
+                        const value = kvArray[i + 1];
+                        try {
+                            message[key] = JSON.parse(value);
+                        }
+                        catch {
+                            message[key] = value;
+                        }
+                    }
+                    messages.push({ id, message });
+                }
+            }
+        }
+        return messages;
     }
-    async clearQueue(queueName) {
-        await this.redisClient.del(queueName);
+    async createConsumerGroup(stream, group) {
+        try {
+            await this.redisClient.sendCommand(['XGROUP', 'CREATE', stream, group, '$', 'MKSTREAM']);
+        }
+        catch (err) {
+            if (!err.message.includes('BUSYGROUP')) {
+                throw err;
+            }
+        }
+    }
+    async readStreamGroup(group, consumer, stream, lastId = '>') {
+        const result = await this.redisClient.sendCommand([
+            'XREADGROUP',
+            'GROUP',
+            group,
+            consumer,
+            'BLOCK',
+            '0',
+            'STREAMS',
+            stream,
+            lastId,
+        ]);
+        if (!result)
+            return [];
+        const messages = [];
+        if (Array.isArray(result)) {
+            for (const streamEntry of result) {
+                if (!Array.isArray(streamEntry) || streamEntry.length < 2)
+                    continue;
+                const [, entries] = streamEntry;
+                if (!Array.isArray(entries))
+                    continue;
+                for (const entry of entries) {
+                    if (!Array.isArray(entry) || entry.length < 2)
+                        continue;
+                    const [id, kvArray] = entry;
+                    const message = {};
+                    if (Array.isArray(kvArray)) {
+                        for (let i = 0; i < kvArray.length; i += 2) {
+                            const key = kvArray[i];
+                            const value = kvArray[i + 1];
+                            try {
+                                message[key] = JSON.parse(value);
+                            }
+                            catch {
+                                message[key] = value;
+                            }
+                        }
+                    }
+                    messages.push({ id, message });
+                }
+            }
+        }
+        return messages;
     }
 };
 exports.RedisService = RedisService;

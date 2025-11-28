@@ -9,17 +9,24 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.HeatMapsModule = void 0;
 const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
-const product_stats_schema_1 = require("../../infrastructure/modal/product-stats.schema");
+const heatmap_schema_1 = require("../../infrastructure/modal/heatmap.schema");
 const socket_module_1 = require("./socket.module");
+const heat_maps_controller_1 = require("../controller/heat-maps.controller");
+const heatmap_service_1 = require("../service/heatmap.service");
+const redis_module_1 = require("../../utils/shared/redis/redis.module");
+const queue_worker_service_1 = require("../service/queue-worker.service");
 let HeatMapsModule = class HeatMapsModule {
 };
 exports.HeatMapsModule = HeatMapsModule;
 exports.HeatMapsModule = HeatMapsModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            mongoose_1.MongooseModule.forFeature([{ name: 'Heat_Maps', schema: product_stats_schema_1.ProductStatsSchema }]),
+            mongoose_1.MongooseModule.forFeature([{ name: 'Heat_Maps', schema: heatmap_schema_1.HeatmapItemSchema }]),
+            redis_module_1.RedisModule,
             socket_module_1.SocketModule,
         ],
+        controllers: [heat_maps_controller_1.HeatmapController],
+        providers: [heatmap_service_1.HeatmapService, queue_worker_service_1.HeatmapStreamWorker],
         exports: [mongoose_1.MongooseModule],
     })
 ], HeatMapsModule);

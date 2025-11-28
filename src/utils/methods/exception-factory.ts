@@ -1,3 +1,4 @@
+//src/utils/methods/exception-factory.ts
 import { ValidationError, HttpException } from '@nestjs/common';
 export const exceptionFactory = (errors: ValidationError[]) => {
   const errorsException = errors.reduce<Record<string, string[]>>((acc, error) => {

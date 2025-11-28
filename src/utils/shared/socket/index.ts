@@ -1,3 +1,5 @@
+//src/utils/shared/socket/index.ts
+
 import {
   OnGatewayConnection,
   OnGatewayDisconnect,

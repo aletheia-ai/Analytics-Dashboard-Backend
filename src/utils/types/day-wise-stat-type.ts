@@ -1,3 +1,4 @@
+//src/utils/types/day-wise-stat-type.ts
 import { PeopleCountingType } from './people-counting-type';
 import { Store } from './store-type';
 

@@ -21,4 +21,9 @@ export declare class AuthController {
         message: string;
     }>;
     logout(res: Response): void;
+    verifyEmail(body: {
+        email: string;
+    }): Promise<{
+        message: string;
+    }>;
 }

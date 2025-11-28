@@ -1,3 +1,4 @@
+//  src/presentations/controller/auth.controller.ts
 import {
   Body,
   Controller,
@@ -223,4 +224,21 @@ export class AuthController {
       throw new InternalServerErrorException();
     }
   }
+
+  @Post('verify-email')
+@HttpCode(HttpStatus.OK)
+async verifyEmail(@Body() body: { email: string }) {
+  try {
+    const user = await this.authService.findByEmail(body.email);
+    if (!user) {
+      throw new NotFoundException('Email not found');
+    }
+
+    return { message: 'Email exists' };
+  } catch (err) {
+    if (err instanceof HttpException) throw err;
+    throw new InternalServerErrorException();
+  }
+}
+
 }

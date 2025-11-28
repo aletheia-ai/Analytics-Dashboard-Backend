@@ -181,6 +181,9 @@ let AuthService = class AuthService {
             return { success: false, error: err.code || 500 };
         }
     }
+    async findByEmail(email) {
+        return await this.usersService.findOne(email);
+    }
 };
 exports.AuthService = AuthService;
 exports.AuthService = AuthService = __decorate([

@@ -1,3 +1,5 @@
+//src/utils/constants/cookie-option.ts
+
 import { CookieOptions } from 'express';
 
 export const cookiesOptions: CookieOptions = {

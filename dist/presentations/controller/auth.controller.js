@@ -205,6 +205,9 @@ let AuthController = class AuthController {
     }
     async verifyEmail(body) {
         try {
+            if (!body.email) {
+                throw new common_1.BadRequestException('Email is required');
+            }
             const user = await this.authService.findByEmail(body.email);
             if (!user) {
                 throw new common_1.NotFoundException('Email not found');
@@ -212,9 +215,11 @@ let AuthController = class AuthController {
             return { message: 'Email exists' };
         }
         catch (err) {
-            if (err instanceof common_1.HttpException)
+            if (err instanceof common_1.HttpException) {
                 throw err;
-            throw new common_1.InternalServerErrorException();
+            }
+            console.error('verifyEmail error:', err);
+            throw new common_1.InternalServerErrorException('An unexpected error occurred while verifying email');
         }
     }
 };
@@ -298,7 +303,7 @@ __decorate([
     (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [auth_1.VerifyEmail]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "verifyEmail", null);
 exports.AuthController = AuthController = __decorate([

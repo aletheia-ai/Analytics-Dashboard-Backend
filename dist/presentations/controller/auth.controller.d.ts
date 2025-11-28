@@ -1,5 +1,5 @@
 import { AuthService } from '../service/auth.service';
-import { AuthorizeUserDto, ChangePasswordDto, DeleteAccountDto, SignInDto, SignUpDto } from '../dto/auth';
+import { AuthorizeUserDto, ChangePasswordDto, DeleteAccountDto, SignInDto, SignUpDto, VerifyEmail } from '../dto/auth';
 import { Response } from 'express';
 export declare class AuthController {
     private authService;
@@ -21,9 +21,7 @@ export declare class AuthController {
         message: string;
     }>;
     logout(res: Response): void;
-    verifyEmail(body: {
-        email: string;
-    }): Promise<{
+    verifyEmail(body: VerifyEmail): Promise<{
         message: string;
     }>;
 }

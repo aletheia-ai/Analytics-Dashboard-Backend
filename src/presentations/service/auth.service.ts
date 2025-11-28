@@ -1,5 +1,8 @@
 // src/presentations/service/auth.service.ts
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException,BadRequestException,
+  InternalServerErrorException,
+  NotFoundException,
+  HttpException, } from '@nestjs/common';
 import { UserService } from './user.service';
 import { JwtService } from '@nestjs/jwt';
 import { SignInExceptions, User } from '@utils/types';
@@ -195,7 +198,15 @@ export class AuthService {
   }
 
   async findByEmail(email: string) {
-  return await this.usersService.findOne(email);
+  try {
+    return await this.usersService.findOne(email);
+  } catch (err) {
+    console.error('findByEmail error:', err);
+
+    throw new InternalServerErrorException(
+      'Failed to fetch user by email'
+    );
+  }
 }
 
 }

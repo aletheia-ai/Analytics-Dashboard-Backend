@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ChangePasswordDto = exports.DeleteAccountDto = exports.AuthorizeUserDto = exports.SignUpDto = exports.SignInDto = void 0;
+exports.VerifyEmail = exports.ChangePasswordDto = exports.DeleteAccountDto = exports.AuthorizeUserDto = exports.SignUpDto = exports.SignInDto = void 0;
 const signin_dto_1 = require("./signin-dto");
 Object.defineProperty(exports, "SignInDto", { enumerable: true, get: function () { return signin_dto_1.SignInDto; } });
 const signup_dto_1 = require("./signup-dto");
@@ -11,4 +11,6 @@ const delete_account_dto_1 = require("./delete-account.dto");
 Object.defineProperty(exports, "DeleteAccountDto", { enumerable: true, get: function () { return delete_account_dto_1.DeleteAccountDto; } });
 const change_password_dto_1 = require("./change-password.dto");
 Object.defineProperty(exports, "ChangePasswordDto", { enumerable: true, get: function () { return change_password_dto_1.ChangePasswordDto; } });
+const verify_email_1 = require("./verify-email");
+Object.defineProperty(exports, "VerifyEmail", { enumerable: true, get: function () { return verify_email_1.VerifyEmail; } });
 //# sourceMappingURL=index.js.map

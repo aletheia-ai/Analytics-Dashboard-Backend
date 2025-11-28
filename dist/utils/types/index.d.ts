@@ -19,5 +19,7 @@ export type User = {
     isAuthorized: boolean;
     hasRegisteredBusiness: boolean;
     userType: UserRoleType;
+    emailVerificationToken?: string;
+    emailVerificationExpires?: Date;
 };
 export { BusinessType, ServiceType, UserSpaceType, PersonStatsType };

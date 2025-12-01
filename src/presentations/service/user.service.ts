@@ -121,6 +121,33 @@ export class UserService {
       return undefined;
     }
   }
+ async findemail(
+  email: string
+): Promise<
+  | { success: true; data: User }
+  | { success: false; error: number; message: string }
+> {
+  try {
+    const user = await this.userModel.findOne({ email }).exec();
+
+    if (!user) {
+      return {
+        success: false,
+        error: 404,
+        message: "Email not found",
+      };
+    }
+
+    return { success: true, data: user };
+    
+  } catch (err: any) {
+    return {
+      success: false,
+      error: err?.code || 500,
+      message: "Failed to query database",
+    };
+  }
+}
 
   async findUserById(
     userId: string

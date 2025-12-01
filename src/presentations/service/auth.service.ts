@@ -199,7 +199,7 @@ export class AuthService {
 
   async findByEmail(email: string) {
   try {
-    return await this.usersService.findOne(email);
+    return await this.usersService.findemail(email);
   } catch (err) {
     console.error('findByEmail error:', err);
 

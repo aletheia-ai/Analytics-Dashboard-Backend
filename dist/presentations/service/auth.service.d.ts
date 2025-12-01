@@ -66,5 +66,12 @@ export declare class AuthService {
         success: false;
         error: number;
     }>;
-    findByEmail(email: string): Promise<User | undefined>;
+    findByEmail(email: string): Promise<{
+        success: true;
+        data: User;
+    } | {
+        success: false;
+        error: number;
+        message: string;
+    }>;
 }

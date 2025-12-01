@@ -209,7 +209,7 @@ let AuthController = class AuthController {
                 throw new common_1.BadRequestException('Email is required');
             }
             const user = await this.authService.findByEmail(body.email);
-            if (!user) {
+            if (!user.success) {
                 throw new common_1.NotFoundException('Email not found');
             }
             return { message: 'Email exists' };

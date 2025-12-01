@@ -1,8 +1,12 @@
 // src/presentations/service/auth.service.ts
-import { Injectable, UnauthorizedException,BadRequestException,
+import {
+  Injectable,
+  UnauthorizedException,
+  BadRequestException,
   InternalServerErrorException,
   NotFoundException,
-  HttpException, } from '@nestjs/common';
+  HttpException,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { JwtService } from '@nestjs/jwt';
 import { SignInExceptions, User } from '@utils/types';
@@ -197,16 +201,18 @@ export class AuthService {
     }
   }
 
-  async findByEmail(email: string) {
-  try {
-    return await this.usersService.findemail(email);
-  } catch (err) {
-    console.error('findByEmail error:', err);
+  async findByEmail(
+    email: string
+  ): Promise<{ success: true; data: User } | { success: false; error: number; message: string }> {
+    try {
+      ///return promise
+      const data = await this.usersService.findemail(email);
 
-    throw new InternalServerErrorException(
-      'Failed to fetch user by email'
-    );
+      return data;
+    } catch (err) {
+      console.error('findByEmail error:', err);
+
+      throw new InternalServerErrorException('Failed to fetch user by email');
+    }
   }
-}
-
 }

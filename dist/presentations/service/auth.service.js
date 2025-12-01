@@ -183,7 +183,8 @@ let AuthService = class AuthService {
     }
     async findByEmail(email) {
         try {
-            return await this.usersService.findOne(email);
+            const data = await this.usersService.findemail(email);
+            return data;
         }
         catch (err) {
             console.error('findByEmail error:', err);

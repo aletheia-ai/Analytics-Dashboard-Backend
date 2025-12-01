@@ -32,6 +32,14 @@ export declare class UserService {
         error: number;
     }>;
     findOne(username: string): Promise<User | undefined>;
+    findemail(email: string): Promise<{
+        success: true;
+        data: User;
+    } | {
+        success: false;
+        error: number;
+        message: string;
+    }>;
     findUserById(userId: string): Promise<{
         success: true;
         data: User;

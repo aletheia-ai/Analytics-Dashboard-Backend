@@ -19,7 +19,6 @@ import {
   ForbiddenException,
   NotFoundException,
   BadRequestException,
-  
 } from '@nestjs/common';
 import { AuthGuard } from '@src/utils/guards/auth.guard.';
 import { AuthService } from '../service/auth.service';
@@ -229,36 +228,29 @@ export class AuthController {
   }
 
   @Post('verify-email')
-@HttpCode(HttpStatus.OK)
-async verifyEmail(@Body() body: VerifyEmail) {
-  try {
-    if (!body.email) {
-      throw new BadRequestException('Email is required');
+  @HttpCode(HttpStatus.OK)
+  async verifyEmail(@Body() body: VerifyEmail) {
+    try {
+      if (!body.email) {
+        throw new BadRequestException('Email is required');
+      }
+
+      const user = await this.authService.findByEmail(body.email);
+      if (!user.success) {
+        throw new NotFoundException('Email not found');
+      }
+
+      return { message: 'Email exists' };
+    } catch (err) {
+      // Re-throw known HTTP exceptions
+      if (err instanceof HttpException) {
+        throw err;
+      }
+
+      // Log unknown/unexpected errors (optional but useful)
+      console.error('verifyEmail error:', err);
+
+      throw new InternalServerErrorException('An unexpected error occurred while verifying email');
     }
-
-    const user = await this.authService.findByEmail(body.email);
-
-    if (!user) {
-      throw new NotFoundException('Email not found');
-    }
-
-    return { message: 'Email exists' };
-  } catch (err) {
-    // Re-throw known HTTP exceptions
-    if (err instanceof HttpException) {
-      throw err;
-    }
-
-    // Log unknown/unexpected errors (optional but useful)
-    console.error('verifyEmail error:', err);
-
-    throw new InternalServerErrorException(
-      'An unexpected error occurred while verifying email'
-    );
   }
-}
-
-
-
-
 }

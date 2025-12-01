@@ -112,6 +112,26 @@ let UserService = class UserService {
             return undefined;
         }
     }
+    async findemail(email) {
+        try {
+            const user = await this.userModel.findOne({ email }).exec();
+            if (!user) {
+                return {
+                    success: false,
+                    error: 404,
+                    message: 'Email not found',
+                };
+            }
+            return { success: true, data: user };
+        }
+        catch (err) {
+            return {
+                success: false,
+                error: err?.code || 500,
+                message: 'Failed to query database',
+            };
+        }
+    }
     async findUserById(userId) {
         try {
             const data = await this.userModel.findOne({ _id: new mongoose_2.Types.ObjectId(userId) }).exec();

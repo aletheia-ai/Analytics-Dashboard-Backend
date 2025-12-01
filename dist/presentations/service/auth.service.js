@@ -182,7 +182,13 @@ let AuthService = class AuthService {
         }
     }
     async findByEmail(email) {
-        return await this.usersService.findOne(email);
+        try {
+            return await this.usersService.findOne(email);
+        }
+        catch (err) {
+            console.error('findByEmail error:', err);
+            throw new common_1.InternalServerErrorException('Failed to fetch user by email');
+        }
     }
 };
 exports.AuthService = AuthService;

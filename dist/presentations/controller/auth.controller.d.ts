@@ -1,9 +1,13 @@
 import { AuthService } from '../service/auth.service';
+import { EmailService } from '@src/email/email.service';
+import { UserService } from '../service/user.service';
 import { AuthorizeUserDto, ChangePasswordDto, DeleteAccountDto, SignInDto, SignUpDto, VerifyEmail } from '../dto/auth';
 import { Response } from 'express';
 export declare class AuthController {
     private authService;
-    constructor(authService: AuthService);
+    private readonly userService;
+    private readonly emailService;
+    constructor(authService: AuthService, userService: UserService, emailService: EmailService);
     authorizeUser(authorizeUserDto: AuthorizeUserDto, res: Response): Promise<void>;
     verifyUser(authorizeUserDto: AuthorizeUserDto, res: Response): Promise<void>;
     signIn(signInDto: SignInDto, res: Response): Promise<void>;

@@ -78,4 +78,7 @@ export declare class UserService {
         success: false;
         error: number;
     }>;
+    updateUserByEmail(email: string, updateData: Partial<User>): Promise<{
+        success: boolean;
+    }>;
 }

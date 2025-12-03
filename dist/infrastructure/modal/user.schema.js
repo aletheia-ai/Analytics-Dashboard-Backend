@@ -27,6 +27,8 @@ exports.UserSchema = new mongoose_1.Schema({
         required: true,
         enum: Object.values(types_1.UserRoleType),
     },
+    resetPasswordToken: { type: String },
+    resetPasswordExpires: { type: Date },
 });
 exports.UserModel = (0, mongoose_1.model)('User', exports.UserSchema, 'users');
 //# sourceMappingURL=user.schema.js.map

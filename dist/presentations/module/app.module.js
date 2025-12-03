@@ -24,6 +24,7 @@ const day_wise_stats_module_1 = require("./day-wise-stats.module");
 const hour_stat_module_1 = require("./hour-stat.module");
 const heatmap_module_1 = require("./heatmap.module");
 const socket_module_1 = require("./socket.module");
+const email_module_1 = require("../../email/email.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -51,6 +52,7 @@ exports.AppModule = AppModule = __decorate([
             day_wise_stats_module_1.DayWiseStatsModule,
             hour_stat_module_1.HourWiseStatsModule,
             socket_module_1.SocketModule,
+            email_module_1.EmailModule
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

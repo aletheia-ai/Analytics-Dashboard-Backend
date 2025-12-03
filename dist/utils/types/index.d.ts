@@ -21,5 +21,7 @@ export type User = {
     userType: UserRoleType;
     emailVerificationToken?: string;
     emailVerificationExpires?: Date;
+    resetPasswordToken?: string;
+    resetPasswordExpires?: Date;
 };
 export { BusinessType, ServiceType, UserSpaceType, PersonStatsType };

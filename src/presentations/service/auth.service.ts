@@ -215,4 +215,12 @@ export class AuthService {
       throw new InternalServerErrorException('Failed to fetch user by email');
     }
   }
+
+  async generateResetToken(user: any) {
+  return this.jwtService.sign(
+    { sub: user._id, email: user.email },
+    { expiresIn: '15m' }
+  );
+}
+
 }

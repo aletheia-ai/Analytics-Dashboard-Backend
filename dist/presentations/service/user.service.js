@@ -231,6 +231,16 @@ let UserService = class UserService {
             return { success: false, error: err.code || 500 };
         }
     }
+    async updateUserByEmail(email, updateData) {
+        try {
+            const updated = await this.userModel.findOneAndUpdate({ email }, { $set: updateData }, { new: true });
+            return { success: !!updated };
+        }
+        catch (err) {
+            console.error('updateUserByEmail error:', err);
+            return { success: false };
+        }
+    }
 };
 exports.UserService = UserService;
 exports.UserService = UserService = __decorate([

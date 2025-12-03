@@ -6,13 +6,14 @@ import { JwtModule } from '@nestjs/jwt';
 import { StoreModule } from './store.module';
 import { CompanyModule } from './company.module';
 import { RegionModule } from './region.module';
-
+import { EmailModule } from '@src/email/email.module';
 @Module({
   imports: [
     UserModule,
     StoreModule,
     CompanyModule,
     RegionModule,
+    EmailModule,
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET,

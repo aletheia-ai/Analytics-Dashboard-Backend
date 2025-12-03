@@ -191,6 +191,9 @@ let AuthService = class AuthService {
             throw new common_1.InternalServerErrorException('Failed to fetch user by email');
         }
     }
+    async generateResetToken(user) {
+        return this.jwtService.sign({ sub: user._id, email: user.email }, { expiresIn: '15m' });
+    }
 };
 exports.AuthService = AuthService;
 exports.AuthService = AuthService = __decorate([

@@ -22,6 +22,8 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@src/utils/guards/auth.guard.';
 import { AuthService } from '../service/auth.service';
+import { EmailService } from '@src/email/email.service';
+import { UserService } from '../service/user.service';
 import {
   AuthorizeUserDto,
   ChangePasswordDto,
@@ -37,7 +39,9 @@ import { EditUserByIdDto } from '../dto/user';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService,private readonly userService: UserService,
+    private readonly emailService: EmailService, ) 
+  {}
 
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
@@ -228,29 +232,52 @@ export class AuthController {
   }
 
   @Post('verify-email')
-  @HttpCode(HttpStatus.OK)
-  async verifyEmail(@Body() body: VerifyEmail) {
-    try {
-      if (!body.email) {
-        throw new BadRequestException('Email is required');
-      }
-
-      const user = await this.authService.findByEmail(body.email);
-      if (!user.success) {
-        throw new NotFoundException('Email not found');
-      }
-
-      return { message: 'Email exists' };
-    } catch (err) {
-      // Re-throw known HTTP exceptions
-      if (err instanceof HttpException) {
-        throw err;
-      }
-
-      // Log unknown/unexpected errors (optional but useful)
-      console.error('verifyEmail error:', err);
-
-      throw new InternalServerErrorException('An unexpected error occurred while verifying email');
+@HttpCode(HttpStatus.OK)
+async verifyEmail(@Body() body: VerifyEmail) {
+  try {
+    if (!body.email) {
+      throw new BadRequestException('Email is required');
     }
+
+    // Find user by email
+    const user = await this.authService.findByEmail(body.email);
+    if (!user.success) {
+      throw new NotFoundException('Email not found');
+    }
+
+    const foundUser = user.data;
+
+    // Generate JWT token
+    const resetToken = await this.authService.generateResetToken(foundUser);
+    console.log("reset token ", resetToken);
+
+    // Token expiry (optional, can be stored if needed)
+    const expires = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
+    console.log("expires in ", expires);
+
+    // Update user in DB by email
+    await this.userService.updateUserByEmail(foundUser.email, {
+      isVerified: true,
+      emailVerificationToken: resetToken,
+      emailVerificationExpires: expires,
+    });
+
+    // Prepare display name
+    const displayName = `${foundUser.firstName || ''} ${foundUser.lastName || ''}`.trim() || 'User';
+
+    // Send verification/reset email
+    await this.emailService.sendPasswordResetEmail(foundUser.email, displayName, resetToken);
+
+    return { message: 'Verification email sent successfully' }; // ✅ final response
+  } catch (err) {
+    if (err instanceof HttpException) {
+      throw err;
+    }
+    console.error('verifyEmail error:', err);
+    throw new InternalServerErrorException('An unexpected error occurred while verifying email');
   }
 }
+
+}
+
+

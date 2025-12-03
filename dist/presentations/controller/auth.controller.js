@@ -16,13 +16,19 @@ exports.AuthController = void 0;
 const common_1 = require("@nestjs/common");
 const auth_guard_1 = require("../../utils/guards/auth.guard.");
 const auth_service_1 = require("../service/auth.service");
+const email_service_1 = require("../../email/email.service");
+const user_service_1 = require("../service/user.service");
 const auth_1 = require("../dto/auth");
 const cookie_options_1 = require("../../utils/constants/cookie-options");
 const types_1 = require("../../utils/types");
 let AuthController = class AuthController {
     authService;
-    constructor(authService) {
+    userService;
+    emailService;
+    constructor(authService, userService, emailService) {
         this.authService = authService;
+        this.userService = userService;
+        this.emailService = emailService;
     }
     async authorizeUser(authorizeUserDto, res) {
         try {
@@ -212,7 +218,19 @@ let AuthController = class AuthController {
             if (!user.success) {
                 throw new common_1.NotFoundException('Email not found');
             }
-            return { message: 'Email exists' };
+            const foundUser = user.data;
+            const resetToken = await this.authService.generateResetToken(foundUser);
+            console.log("reset token ", resetToken);
+            const expires = new Date(Date.now() + 15 * 60 * 1000);
+            console.log("expires in ", expires);
+            await this.userService.updateUserByEmail(foundUser.email, {
+                isVerified: true,
+                emailVerificationToken: resetToken,
+                emailVerificationExpires: expires,
+            });
+            const displayName = `${foundUser.firstName || ''} ${foundUser.lastName || ''}`.trim() || 'User';
+            await this.emailService.sendPasswordResetEmail(foundUser.email, displayName, resetToken);
+            return { message: 'Verification email sent successfully' };
         }
         catch (err) {
             if (err instanceof common_1.HttpException) {
@@ -308,6 +326,7 @@ __decorate([
 ], AuthController.prototype, "verifyEmail", null);
 exports.AuthController = AuthController = __decorate([
     (0, common_1.Controller)('auth'),
-    __metadata("design:paramtypes", [auth_service_1.AuthService])
+    __metadata("design:paramtypes", [auth_service_1.AuthService, user_service_1.UserService,
+        email_service_1.EmailService])
 ], AuthController);
 //# sourceMappingURL=auth.controller.js.map

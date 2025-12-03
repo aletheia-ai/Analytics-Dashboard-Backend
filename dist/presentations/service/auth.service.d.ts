@@ -74,4 +74,5 @@ export declare class AuthService {
         error: number;
         message: string;
     }>;
+    generateResetToken(user: any): Promise<string>;
 }

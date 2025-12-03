@@ -26,6 +26,10 @@ export const UserSchema = new Schema<User>({
     required: true,
     enum: Object.values(UserRoleType),
   },
-});
+  resetPasswordToken: { type: String },
+  resetPasswordExpires: { type: Date },
+  
+}
+);
 
 export const UserModel = model<User>('User', UserSchema, 'users');

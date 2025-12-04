@@ -18,31 +18,6 @@ let HeatmapStreamWorker = class HeatmapStreamWorker {
     constructor(redis) {
         this.redis = redis;
     }
-    async onModuleInit() {
-        console.log('📥 Heatmap Stream Worker started...');
-        this.startWorker();
-    }
-    async startWorker() {
-        const streamKey = 'heatmap:cam501:minute';
-        console.log('Worker running...');
-        while (true) {
-            try {
-                const messages = await this.redis.readStream(streamKey, this.lastId, 0);
-                if (messages.length) {
-                    for (const streamData of messages) {
-                        console.log('🔥 Stream message ID:', streamData.id);
-                        for (const [field, value] of Object.entries(streamData.message)) {
-                            console.log(`Field: ${field}, Value:`, value);
-                        }
-                        this.lastId = streamData.id;
-                    }
-                }
-            }
-            catch (err) {
-                console.error('❌ Stream read error:', err);
-            }
-        }
-    }
 };
 exports.HeatmapStreamWorker = HeatmapStreamWorker;
 exports.HeatmapStreamWorker = HeatmapStreamWorker = __decorate([

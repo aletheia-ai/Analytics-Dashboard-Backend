@@ -26,11 +26,9 @@ let RedisService = class RedisService {
         }
         try {
             const id = (await this.redisClient.sendCommand(['XADD', stream, '*', ...entries]));
-            console.log('Added ID:', id);
             return id;
         }
         catch (err) {
-            console.error('❌ XADD error:', err);
             throw err;
         }
     }

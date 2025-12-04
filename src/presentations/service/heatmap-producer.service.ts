@@ -13,6 +13,7 @@ export class HeatmapProducerService implements OnModuleInit {
         camera_id: 'cam501',
         timestamp: Date.now(),
         data: { heat: Math.floor(Math.random() * 100) },
+        world: 'hello',
       };
       const id = await this.redis.addToStream('heatmap:cam501:minute', msg);
       console.log('✅ Added message to stream:', id, msg);

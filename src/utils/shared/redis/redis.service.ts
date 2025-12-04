@@ -14,16 +14,12 @@ export class RedisService {
     for (const [key, value] of Object.entries(message)) {
       entries.push(key, typeof value === 'string' ? value : JSON.stringify(value));
     }
-    // console.log(entries);
 
     try {
-      // XADD stream * key1 value1 key2 value2 ...
-
       const id = (await this.redisClient.sendCommand(['XADD', stream, '*', ...entries])) as string;
-      console.log('Added ID:', id);
+
       return id;
     } catch (err) {
-      console.error('❌ XADD error:', err);
       throw err;
     }
   }
@@ -49,14 +45,12 @@ export class RedisService {
 
     if (!result) return [];
 
-    // result: [[streamKey, [[id, [key, value, ...]]]]]
     const messages: { id: string; message: Record<string, any> }[] = [];
 
     const entriesArray = result as unknown as any[]; // cast through unknown first
 
     if (Array.isArray(entriesArray)) {
       for (const streamEntry of entriesArray) {
-        // streamEntry: [streamKey, [[id, [key, val, key, val...]]]]
         if (!Array.isArray(streamEntry) || streamEntry.length < 2) continue;
         const [, streamMessages] = streamEntry;
         if (!Array.isArray(streamMessages)) continue;

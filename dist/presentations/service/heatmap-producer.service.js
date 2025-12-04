@@ -18,7 +18,6 @@ let HeatmapProducerService = class HeatmapProducerService {
         this.redis = redis;
     }
     async onModuleInit() {
-        console.log('HELLO WORLD');
         setInterval(async () => {
             const msg = {
                 camera_id: 'cam501',

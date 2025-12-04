@@ -8,7 +8,6 @@ export class HeatmapProducerService implements OnModuleInit {
   constructor(private readonly redis: RedisService) {}
 
   async onModuleInit() {
-    console.log('HELLO WORLD');
     setInterval(async () => {
       const msg = {
         camera_id: 'cam501',

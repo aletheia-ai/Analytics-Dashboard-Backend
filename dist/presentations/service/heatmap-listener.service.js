@@ -19,7 +19,6 @@ let HeatmapStreamListener = class HeatmapStreamListener {
         this.redis = redis;
     }
     async onModuleInit() {
-        console.log('📥 Heatmap Stream Listener started...');
         this.startListening();
     }
     async startListening() {

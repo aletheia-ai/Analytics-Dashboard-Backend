@@ -10,7 +10,6 @@ export class HeatmapStreamListener implements OnModuleInit {
   constructor(private readonly redis: RedisService) {}
 
   async onModuleInit() {
-    console.log('📥 Heatmap Stream Listener started...');
     this.startListening();
   }
 

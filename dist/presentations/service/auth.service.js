@@ -20,13 +20,14 @@ const types_1 = require("../../utils/types");
 const bcrypt = require("bcryptjs");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
+const verification_service_1 = require("./verification.service");
 let AuthService = class AuthService {
     usersService;
     jwtService;
     store;
     company;
     region;
-    constructor(usersService, jwtService, store, company, region) {
+    constructor(usersService, jwtService, verificationService, store, company, region) {
         this.usersService = usersService;
         this.jwtService = jwtService;
         this.store = store;
@@ -198,11 +199,13 @@ let AuthService = class AuthService {
 exports.AuthService = AuthService;
 exports.AuthService = AuthService = __decorate([
     (0, common_1.Injectable)(),
-    __param(2, (0, mongoose_1.InjectModel)('Store')),
-    __param(3, (0, mongoose_1.InjectModel)('Company')),
-    __param(4, (0, mongoose_1.InjectModel)('Region')),
+    __param(2, (0, mongoose_1.InjectModel)('User_Verification')),
+    __param(3, (0, mongoose_1.InjectModel)('Store')),
+    __param(4, (0, mongoose_1.InjectModel)('Company')),
+    __param(5, (0, mongoose_1.InjectModel)('Region')),
     __metadata("design:paramtypes", [user_service_1.UserService,
         jwt_1.JwtService,
+        verification_service_1.UserVerificationService,
         mongoose_2.Model,
         mongoose_2.Model,
         mongoose_2.Model])

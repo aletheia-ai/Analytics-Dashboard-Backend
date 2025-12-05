@@ -16,13 +16,14 @@ import { Model, Types } from 'mongoose';
 import { Store } from '@src/utils/types/store-type';
 import { Company } from '@src/utils/types/company-type';
 import { Region } from '@src/utils/types/region-type';
+import { UserVerificationService } from './verification.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UserService,
     private jwtService: JwtService,
-    
+    @InjectModel('User_Verification') verificationService: UserVerificationService,
     @InjectModel('Store') private store: Model<Store>,
     @InjectModel('Company') private company: Model<Company>,
     @InjectModel('Region') private region: Model<Region>
@@ -218,10 +219,6 @@ export class AuthService {
   }
 
   async generateResetToken(user: any) {
-  return this.jwtService.sign(
-    { sub: user._id, email: user.email },
-    { expiresIn: '15m' }
-  );
-}
-
+    return this.jwtService.sign({ sub: user._id, email: user.email }, { expiresIn: '15m' });
+  }
 }

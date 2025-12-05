@@ -5,13 +5,14 @@ import { Model } from 'mongoose';
 import { Store } from '@src/utils/types/store-type';
 import { Company } from '@src/utils/types/company-type';
 import { Region } from '@src/utils/types/region-type';
+import { UserVerificationService } from './verification.service';
 export declare class AuthService {
     private usersService;
     private jwtService;
     private store;
     private company;
     private region;
-    constructor(usersService: UserService, jwtService: JwtService, store: Model<Store>, company: Model<Company>, region: Model<Region>);
+    constructor(usersService: UserService, jwtService: JwtService, verificationService: UserVerificationService, store: Model<Store>, company: Model<Company>, region: Model<Region>);
     getUserProfile(id: string): Promise<{
         success: true;
         company: Company | null;

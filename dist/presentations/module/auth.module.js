@@ -16,6 +16,7 @@ const store_module_1 = require("./store.module");
 const company_module_1 = require("./company.module");
 const region_module_1 = require("./region.module");
 const email_module_1 = require("../../email/email.module");
+const verifications_module_1 = require("./verifications.module");
 let AuthModule = class AuthModule {
 };
 exports.AuthModule = AuthModule;
@@ -27,6 +28,7 @@ exports.AuthModule = AuthModule = __decorate([
             company_module_1.CompanyModule,
             region_module_1.RegionModule,
             email_module_1.EmailModule,
+            verifications_module_1.UserVerificationModule,
             jwt_1.JwtModule.register({
                 global: true,
                 secret: process.env.JWT_SECRET,

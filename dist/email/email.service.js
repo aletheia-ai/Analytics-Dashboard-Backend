@@ -36,6 +36,52 @@ let EmailService = class EmailService {
             console.error('Failed to save email to database:', error);
         }
     }
+    async sendBusinessVerificationEmail(to, name, otpCode, businessName, businessType) {
+        try {
+            await this.mailerService.sendMail({
+                to,
+                subject: 'Verify Your Business Registration',
+                template: 'business-verification',
+                context: {
+                    name,
+                    otpCode,
+                    businessName,
+                    businessType: businessType || 'Not specified',
+                    registrationDate: new Date().toLocaleDateString('en-US', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    })
+                },
+            });
+            await this.save({
+                to,
+                subject: 'Business Verification OTP',
+                template: 'business-verification',
+                context: { name, otpCode, businessName, businessType },
+                attachments: [],
+                sentStatus: true,
+            });
+            console.log(`✅ Business verification email sent to ${to}`);
+            return true;
+        }
+        catch (error) {
+            console.error('Business verification email sending error:', error);
+            await this.save({
+                to,
+                subject: 'Business Verification OTP',
+                template: 'business-verification',
+                context: { name, otpCode, businessName, businessType },
+                attachments: [],
+                sentStatus: false,
+            });
+            return false;
+        }
+    }
+    generateOTP() {
+        return Math.floor(100000 + Math.random() * 900000).toString();
+    }
     async sendPasswordResetEmail(to, name, resetToken) {
         try {
             const frontendUrl = process.env.FRONTEND_URL;

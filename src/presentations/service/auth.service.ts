@@ -22,6 +22,7 @@ export class AuthService {
   constructor(
     private usersService: UserService,
     private jwtService: JwtService,
+    
     @InjectModel('Store') private store: Model<Store>,
     @InjectModel('Company') private company: Model<Company>,
     @InjectModel('Region') private region: Model<Region>

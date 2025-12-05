@@ -11,14 +11,21 @@ const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const company_schema_1 = require("../../infrastructure/modal/company.schema");
 const company_service_1 = require("../service/company.service");
+const jwt_1 = require("@nestjs/jwt");
 const company_controller_1 = require("../controller/company.controller");
 const user_module_1 = require("./user.module");
+const email_module_1 = require("../../email/email.module");
 let CompanyModule = class CompanyModule {
 };
 exports.CompanyModule = CompanyModule;
 exports.CompanyModule = CompanyModule = __decorate([
     (0, common_1.Module)({
-        imports: [mongoose_1.MongooseModule.forFeature([{ name: 'Company', schema: company_schema_1.CompanySchema }]), user_module_1.UserModule],
+        imports: [mongoose_1.MongooseModule.forFeature([{ name: 'Company', schema: company_schema_1.CompanySchema }]), user_module_1.UserModule, jwt_1.JwtModule.registerAsync({
+                useFactory: () => ({
+                    secret: process.env.JWT_SECRET,
+                    signOptions: { expiresIn: '24h' },
+                }),
+            }), email_module_1.EmailModule],
         providers: [company_service_1.CompanyService],
         controllers: [company_controller_1.CompanyController],
         exports: [mongoose_1.MongooseModule],

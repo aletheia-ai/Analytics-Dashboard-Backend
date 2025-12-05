@@ -2,11 +2,13 @@ import { Model } from 'mongoose';
 import type { Company } from '@utils/types/company-type';
 import type { User } from '@utils/types';
 import { JwtService } from '@nestjs/jwt';
+import { EmailService } from '@src/email/email.service';
 export declare class CompanyService {
     private company;
     private user;
     private jwtService;
-    constructor(company: Model<Company>, user: Model<User>, jwtService: JwtService);
+    private readonly emailService;
+    constructor(company: Model<Company>, user: Model<User>, jwtService: JwtService, emailService: EmailService);
     editCompany(id: string, compnayData: Omit<Company, '_id'>): Promise<{
         success: true;
         data: Company;
@@ -29,4 +31,12 @@ export declare class CompanyService {
         success: false;
         error: Number;
     }>;
+    sendBusinessVerificationEmail(userId: string): Promise<{
+        success: true;
+        message: string;
+    } | {
+        success: false;
+        error: string;
+    }>;
+    private generateOTP;
 }

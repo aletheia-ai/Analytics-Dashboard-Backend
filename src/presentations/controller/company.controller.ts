@@ -1,3 +1,4 @@
+//Analytics-Dashboard-Backend/src/presentations/controller/company.controller.ts
 import {
   Body,
   ConflictException,
@@ -13,6 +14,7 @@ import {
   Post,
   Res,
   UseGuards,
+  Request as Req, // Rename Request import to avoid conflict
 } from '@nestjs/common';
 
 import { Response } from 'express';
@@ -21,7 +23,7 @@ import { CompanyService } from '../service/company.service';
 import { AddCompanyDto, EditCompanyDto, GetCompanyByUserDto } from '../dto/company';
 import { cookiesOptions } from '@src/utils/constants/cookie-options';
 import { AuthGuard } from '@src/utils/guards/auth.guard.';
-
+import { JwtService } from '@nestjs/jwt';
 @Controller('company')
 export class CompanyController {
   constructor(private readonly companyService: CompanyService) {}
@@ -102,6 +104,35 @@ export class CompanyController {
         throw err;
       }
       throw new InternalServerErrorException('Something went wrong');
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('send-verification-email')
+  @HttpCode(HttpStatus.OK)
+  async sendBusinessVerificationEmail(@Req() req: any) { // Use @Req() instead of @Request()
+    try {
+      const userId = req.user.id;
+      
+      console.log(`📧 Sending verification email for user: ${userId}`);
+      
+      const result = await this.companyService.sendBusinessVerificationEmail(userId);
+      
+      if (result.success) {
+        return { 
+          success: true, 
+          message: result.message || 'Verification email sent successfully' 
+        };
+      } else {
+        throw new InternalServerErrorException(result.error);
+      }
+      
+    } catch (err) {
+      if (err instanceof HttpException) {
+        throw err;
+      }
+      console.error('Send verification email error:', err);
+      throw new InternalServerErrorException('Failed to send verification email');
     }
   }
 }

@@ -25,6 +25,8 @@ let StoreController = class StoreController {
     async addNewStore(addStoreDto, req) {
         try {
             const result = await this.storeService.addNewStore(addStoreDto, req.user.id);
+            console.log("result in controller", result);
+            console.log("userid", req.user.id);
             if (result.success) {
                 const { stores, store } = result;
                 return { message: 'Store Created', stores, store };

@@ -11,4 +11,8 @@ export declare class CompanyController {
         message: import("../../utils/types/company-type").Company;
     }>;
     addNewCompany(addCompanyDto: AddCompanyDto, res: Response): Promise<void>;
+    sendBusinessVerificationEmail(req: any): Promise<{
+        success: boolean;
+        message: string;
+    }>;
 }

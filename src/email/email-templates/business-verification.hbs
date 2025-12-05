@@ -1,0 +1,103 @@
+<!-- src/email/email-templates/business-verification.hbs -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Your Business Registration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .email-container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 600px;
+            margin: auto;
+            box-shadow: 0px 0px 10px #cccccc;
+            text-align: center;
+        }
+        .logo {
+            width: 150px;
+            margin-bottom: 20px;
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .otp-container {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 2px solid #EFB033;
+        }
+        .otp-code {
+            font-size: 32px;
+            font-weight: bold;
+            letter-spacing: 10px;
+            color: #333;
+            margin: 15px 0;
+        }
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #777;
+            margin-top: 30px;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+        .expiry {
+            color: #d9534f;
+            font-weight: bold;
+        }
+        .info-box {
+            background: #e8f4fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            text-align: left;
+            border-left: 4px solid #2196F3;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <img src="https://yourcompany.com/logo.png" alt="Company Logo" class="logo">
+
+        <h2>Verify Your Business Registration</h2>
+        
+        <p>Hello <strong>{{name}}</strong>,</p>
+        
+        <p>Thank you for registering your business <strong>{{businessName}}</strong> on our platform.</p>
+        
+        <div class="info-box">
+            <p><strong>Business Details:</strong></p>
+            <p>Name: {{businessName}}</p>
+            <p>Type: {{businessType}}</p>
+            <p>Registration Date: {{registrationDate}}</p>
+        </div>
+        
+        <p>To complete your business setup, please use the following One-Time Password (OTP):</p>
+        
+        <div class="otp-container">
+            <h3>Your Verification Code</h3>
+            <div class="otp-code">{{otpCode}}</div>
+            <p>Enter this code in the verification page to complete your business registration.</p>
+        </div>
+        
+        <p class="expiry">This OTP will expire in 15 minutes.</p>
+        
+        <p>If you didn't register a business, please ignore this email or contact our support team immediately.</p>
+        
+        <div class="footer">
+            This is an automated message. Please do not reply to this email.<br>
+            Need help? Contact our support team at support@yourcompany.com
+        </div>
+    </div>
+</body>
+</html>

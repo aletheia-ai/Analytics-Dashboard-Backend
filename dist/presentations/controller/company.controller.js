@@ -98,6 +98,29 @@ let CompanyController = class CompanyController {
             throw new common_1.InternalServerErrorException('Something went wrong');
         }
     }
+    async sendBusinessVerificationEmail(req) {
+        try {
+            const userId = req.user.id;
+            console.log(`📧 Sending verification email for user: ${userId}`);
+            const result = await this.companyService.sendBusinessVerificationEmail(userId);
+            if (result.success) {
+                return {
+                    success: true,
+                    message: result.message || 'Verification email sent successfully'
+                };
+            }
+            else {
+                throw new common_1.InternalServerErrorException(result.error);
+            }
+        }
+        catch (err) {
+            if (err instanceof common_1.HttpException) {
+                throw err;
+            }
+            console.error('Send verification email error:', err);
+            throw new common_1.InternalServerErrorException('Failed to send verification email');
+        }
+    }
 };
 exports.CompanyController = CompanyController;
 __decorate([
@@ -128,6 +151,15 @@ __decorate([
     __metadata("design:paramtypes", [company_1.AddCompanyDto, Object]),
     __metadata("design:returntype", Promise)
 ], CompanyController.prototype, "addNewCompany", null);
+__decorate([
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    (0, common_1.Post)('send-verification-email'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    __param(0, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], CompanyController.prototype, "sendBusinessVerificationEmail", null);
 exports.CompanyController = CompanyController = __decorate([
     (0, common_1.Controller)('company'),
     __metadata("design:paramtypes", [company_service_1.CompanyService])

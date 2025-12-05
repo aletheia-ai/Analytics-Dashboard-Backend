@@ -17,14 +17,17 @@ const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
 const jwt_1 = require("@nestjs/jwt");
+const email_service_1 = require("../../email/email.service");
 let CompanyService = class CompanyService {
     company;
     user;
     jwtService;
-    constructor(company, user, jwtService) {
+    emailService;
+    constructor(company, user, jwtService, emailService) {
         this.company = company;
         this.user = user;
         this.jwtService = jwtService;
+        this.emailService = emailService;
     }
     async editCompany(id, compnayData) {
         try {
@@ -98,6 +101,45 @@ let CompanyService = class CompanyService {
             return { success: false, error: error.code };
         }
     }
+    async sendBusinessVerificationEmail(userId) {
+        try {
+            const user = await this.user.findById(userId);
+            if (!user) {
+                return { success: false, error: 'User not found' };
+            }
+            const company = await this.company.findOne({ user: userId });
+            if (!company) {
+                return { success: false, error: 'Business not found' };
+            }
+            const otpCode = this.generateOTP();
+            const userFullName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'Business Owner';
+            const emailSent = await this.emailService.sendBusinessVerificationEmail(user.email, userFullName, otpCode, company.name, company.businessType);
+            if (emailSent) {
+                console.log(`✅ Business verification email sent to ${user.email}`);
+                console.log(`📧 OTP for ${user.email}: ${otpCode}`);
+                return {
+                    success: true,
+                    message: 'Verification email sent successfully'
+                };
+            }
+            else {
+                return {
+                    success: false,
+                    error: 'Failed to send verification email'
+                };
+            }
+        }
+        catch (error) {
+            console.error('Error sending business verification email:', error);
+            return {
+                success: false,
+                error: 'Internal server error'
+            };
+        }
+    }
+    generateOTP() {
+        return Math.floor(100000 + Math.random() * 900000).toString();
+    }
 };
 exports.CompanyService = CompanyService;
 exports.CompanyService = CompanyService = __decorate([
@@ -106,6 +148,7 @@ exports.CompanyService = CompanyService = __decorate([
     __param(1, (0, mongoose_1.InjectModel)('User')),
     __metadata("design:paramtypes", [mongoose_2.Model,
         mongoose_2.Model,
-        jwt_1.JwtService])
+        jwt_1.JwtService,
+        email_service_1.EmailService])
 ], CompanyService);
 //# sourceMappingURL=company.service.js.map

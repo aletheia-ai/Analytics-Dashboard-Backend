@@ -79,12 +79,6 @@ let EmailController = class EmailController {
                     message: 'To, subject, and template are required'
                 };
             }
-            console.log('\n📧 ======= CUSTOM EMAIL =======');
-            console.log(`To: ${to}`);
-            console.log(`Subject: ${subject}`);
-            console.log(`Template: ${template}`);
-            console.log(`Data:`, data);
-            console.log('📧 ============================\n');
             return {
                 success: true,
                 message: 'Email would be sent (check console for details)'

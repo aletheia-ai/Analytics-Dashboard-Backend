@@ -15,4 +15,10 @@ export declare class CompanyController {
         success: boolean;
         message: string;
     }>;
+    verifyBusinessOTP(req: any, body: {
+        otp: string;
+    }): Promise<{
+        success: boolean;
+        message: string;
+    }>;
 }

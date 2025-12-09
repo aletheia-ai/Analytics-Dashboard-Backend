@@ -24,6 +24,7 @@ import { AuthGuard } from '@src/utils/guards/auth.guard.';
 import { AuthService } from '../service/auth.service';
 import { EmailService } from '@src/email/email.service';
 import { UserService } from '../service/user.service';
+import { UserVerificationService } from '@src/presentations/service/verification.service';
 import {
   AuthorizeUserDto,
   ChangePasswordDto,
@@ -40,7 +41,7 @@ import { EditUserByIdDto } from '../dto/user';
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService,private readonly userService: UserService,
-    private readonly emailService: EmailService, ) 
+    private readonly emailService: EmailService, private readonly userVerificationService: UserVerificationService  ) 
   {}
 
   @UseGuards(AuthGuard)
@@ -268,7 +269,7 @@ async verifyEmail(@Body() body: VerifyEmail) {
     // Send verification/reset email
     await this.emailService.sendPasswordResetEmail(foundUser.email, displayName, resetToken);
 
-    return { message: 'Verification email sent successfully' }; // ✅ final response
+    return { message: 'Verification email sent successfully' }; //  final response
   } catch (err) {
     if (err instanceof HttpException) {
       throw err;
@@ -277,35 +278,7 @@ async verifyEmail(@Body() body: VerifyEmail) {
     throw new InternalServerErrorException('An unexpected error occurred while verifying email');
   }
 }
-// // In your auth.controller.ts (backend)
-// @Post('verify-reset-token')
-// @HttpCode(HttpStatus.OK)
-// async verifyResetToken(@Body() body: { token: string }) {
-//   try {
-//     const { token } = body;
-    
-//     // Verify JWT token
-//     const decoded = this.authService.verifyToken(token);
-    
-//     // Check if user exists
-//     const user = await this.userService.findByEmail(decoded.email);
-    
-//     if (!user.success) {
-//       throw new BadRequestException('Invalid token');
-//     }
-    
-//     return { 
-//       success: true, 
-//       email: decoded.email,
-//       message: 'Token is valid' 
-//     };
-//   } catch (err) {
-//     if (err.name === 'TokenExpiredError') {
-//       throw new BadRequestException('Token has expired');
-//     }
-//     throw new BadRequestException('Invalid token');
-//   }
-// }
+
 
 
 

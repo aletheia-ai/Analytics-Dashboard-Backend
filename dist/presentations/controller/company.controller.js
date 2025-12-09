@@ -101,7 +101,6 @@ let CompanyController = class CompanyController {
     async sendBusinessVerificationEmail(req) {
         try {
             const userId = req.user.id;
-            console.log(`📧 Sending verification email for user: ${userId}`);
             const result = await this.companyService.sendBusinessVerificationEmail(userId);
             if (result.success) {
                 return {
@@ -119,6 +118,36 @@ let CompanyController = class CompanyController {
             }
             console.error('Send verification email error:', err);
             throw new common_1.InternalServerErrorException('Failed to send verification email');
+        }
+    }
+    async verifyBusinessOTP(req, body) {
+        try {
+            const userId = req.user?.id;
+            const { otp } = body;
+            if (!userId) {
+                throw new common_1.BadRequestException('User ID not found');
+            }
+            if (!otp || otp.length !== 6) {
+                throw new common_1.BadRequestException('Valid 6-digit OTP is required');
+            }
+            const result = await this.companyService.verifyBusinessOTP(userId, otp);
+            if (result.success) {
+                return {
+                    success: true,
+                    message: result.message
+                };
+            }
+            else {
+                throw new common_1.BadRequestException(result.error || 'Invalid OTP');
+            }
+        }
+        catch (err) {
+            console.error(' Error in verifyBusinessOTP controller:', err);
+            if (err instanceof common_1.HttpException) {
+                throw err;
+            }
+            console.error(' Unexpected error:', err);
+            throw new common_1.InternalServerErrorException('Failed to verify OTP');
         }
     }
 };
@@ -160,6 +189,16 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], CompanyController.prototype, "sendBusinessVerificationEmail", null);
+__decorate([
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    (0, common_1.Post)('verify-business-otp'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], CompanyController.prototype, "verifyBusinessOTP", null);
 exports.CompanyController = CompanyController = __decorate([
     (0, common_1.Controller)('company'),
     __metadata("design:paramtypes", [company_service_1.CompanyService])

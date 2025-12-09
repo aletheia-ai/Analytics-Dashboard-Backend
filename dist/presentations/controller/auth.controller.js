@@ -18,6 +18,7 @@ const auth_guard_1 = require("../../utils/guards/auth.guard.");
 const auth_service_1 = require("../service/auth.service");
 const email_service_1 = require("../../email/email.service");
 const user_service_1 = require("../service/user.service");
+const verification_service_1 = require("../service/verification.service");
 const auth_1 = require("../dto/auth");
 const cookie_options_1 = require("../../utils/constants/cookie-options");
 const types_1 = require("../../utils/types");
@@ -25,10 +26,12 @@ let AuthController = class AuthController {
     authService;
     userService;
     emailService;
-    constructor(authService, userService, emailService) {
+    userVerificationService;
+    constructor(authService, userService, emailService, userVerificationService) {
         this.authService = authService;
         this.userService = userService;
         this.emailService = emailService;
+        this.userVerificationService = userVerificationService;
     }
     async authorizeUser(authorizeUserDto, res) {
         try {
@@ -327,6 +330,6 @@ __decorate([
 exports.AuthController = AuthController = __decorate([
     (0, common_1.Controller)('auth'),
     __metadata("design:paramtypes", [auth_service_1.AuthService, user_service_1.UserService,
-        email_service_1.EmailService])
+        email_service_1.EmailService, verification_service_1.UserVerificationService])
 ], AuthController);
 //# sourceMappingURL=auth.controller.js.map

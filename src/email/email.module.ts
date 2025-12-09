@@ -14,7 +14,7 @@ import { ScheduleModule } from '@nestjs/schedule';
   imports: [
     ConfigModule.forRoot(),
     
-    // ✅ Mailer Module Configuration
+    //  Mailer Module Configuration
     MailerModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],

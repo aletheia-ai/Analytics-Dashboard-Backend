@@ -1,3 +1,4 @@
+//src/presentations/module/verifications.module.ts
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 
@@ -9,7 +10,6 @@ import { UserVerificationService } from '../service/verification.service';
     MongooseModule.forFeature([{ name: 'User_Verification', schema: UserVerifcationShema }]),
   ],
   providers: [UserVerificationService],
-  //   controllers: [StoreController],
-  exports: [MongooseModule],
+  exports: [MongooseModule,UserVerificationService],
 })
 export class UserVerificationModule {}

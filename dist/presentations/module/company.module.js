@@ -15,6 +15,7 @@ const jwt_1 = require("@nestjs/jwt");
 const company_controller_1 = require("../controller/company.controller");
 const user_module_1 = require("./user.module");
 const email_module_1 = require("../../email/email.module");
+const verifications_module_1 = require("./verifications.module");
 let CompanyModule = class CompanyModule {
 };
 exports.CompanyModule = CompanyModule;
@@ -25,7 +26,7 @@ exports.CompanyModule = CompanyModule = __decorate([
                     secret: process.env.JWT_SECRET,
                     signOptions: { expiresIn: '24h' },
                 }),
-            }), email_module_1.EmailModule],
+            }), email_module_1.EmailModule, verifications_module_1.UserVerificationModule,],
         providers: [company_service_1.CompanyService],
         controllers: [company_controller_1.CompanyController],
         exports: [mongoose_1.MongooseModule],

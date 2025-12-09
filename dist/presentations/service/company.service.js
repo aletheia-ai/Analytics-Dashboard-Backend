@@ -18,16 +18,19 @@ const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
 const jwt_1 = require("@nestjs/jwt");
 const email_service_1 = require("../../email/email.service");
+const verification_service_1 = require("./verification.service");
 let CompanyService = class CompanyService {
     company;
     user;
     jwtService;
     emailService;
-    constructor(company, user, jwtService, emailService) {
+    userVerificationService;
+    constructor(company, user, jwtService, emailService, userVerificationService) {
         this.company = company;
         this.user = user;
         this.jwtService = jwtService;
         this.emailService = emailService;
+        this.userVerificationService = userVerificationService;
     }
     async editCompany(id, compnayData) {
         try {
@@ -112,11 +115,16 @@ let CompanyService = class CompanyService {
                 return { success: false, error: 'Business not found' };
             }
             const otpCode = this.generateOTP();
+            const saveResult = await this.userVerificationService.addOtp(userId, otpCode);
+            if (!saveResult.success) {
+                return {
+                    success: false,
+                    error: 'Failed to save OTP'
+                };
+            }
             const userFullName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'Business Owner';
             const emailSent = await this.emailService.sendBusinessVerificationEmail(user.email, userFullName, otpCode, company.name, company.businessType);
             if (emailSent) {
-                console.log(`✅ Business verification email sent to ${user.email}`);
-                console.log(`📧 OTP for ${user.email}: ${otpCode}`);
                 return {
                     success: true,
                     message: 'Verification email sent successfully'
@@ -137,6 +145,37 @@ let CompanyService = class CompanyService {
             };
         }
     }
+    async verifyBusinessOTP(userId, otp) {
+        try {
+            const verifyResult = await this.userVerificationService.verifyOtp(userId, otp);
+            if (!verifyResult.success) {
+                return verifyResult;
+            }
+            const user = await this.user.findById(userId);
+            if (user) {
+                user.isAuthorized = true;
+                user.isVerified = true;
+                await user.save();
+                return {
+                    success: true,
+                    message: 'Business verified successfully'
+                };
+            }
+            else {
+                return {
+                    success: false,
+                    error: 'User not found'
+                };
+            }
+        }
+        catch (error) {
+            console.error('Error verifying OTP:', error);
+            return {
+                success: false,
+                error: 'Internal server error'
+            };
+        }
+    }
     generateOTP() {
         return Math.floor(100000 + Math.random() * 900000).toString();
     }
@@ -149,6 +188,7 @@ exports.CompanyService = CompanyService = __decorate([
     __metadata("design:paramtypes", [mongoose_2.Model,
         mongoose_2.Model,
         jwt_1.JwtService,
-        email_service_1.EmailService])
+        email_service_1.EmailService,
+        verification_service_1.UserVerificationService])
 ], CompanyService);
 //# sourceMappingURL=company.service.js.map

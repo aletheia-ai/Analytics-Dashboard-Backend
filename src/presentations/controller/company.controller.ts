@@ -1,6 +1,7 @@
 //Analytics-Dashboard-Backend/src/presentations/controller/company.controller.ts
 import {
   Body,
+  BadRequestException,
   ConflictException,
   Controller,
   Delete,
@@ -114,7 +115,7 @@ export class CompanyController {
     try {
       const userId = req.user.id;
       
-      console.log(`📧 Sending verification email for user: ${userId}`);
+
       
       const result = await this.companyService.sendBusinessVerificationEmail(userId);
       
@@ -135,4 +136,54 @@ export class CompanyController {
       throw new InternalServerErrorException('Failed to send verification email');
     }
   }
+
+
+// In company.controller.ts - verify endpoint
+@UseGuards(AuthGuard)
+@Post('verify-business-otp')
+@HttpCode(HttpStatus.OK)
+async verifyBusinessOTP(@Req() req: any, @Body() body: { otp: string }) {
+  try {
+    const userId = req.user?.id;
+    const { otp } = body;
+    
+    
+    
+    if (!userId) {
+      
+      throw new BadRequestException('User ID not found');
+    }
+    
+    if (!otp || otp.length !== 6) {
+      
+      throw new BadRequestException('Valid 6-digit OTP is required');
+    }
+
+    const result = await this.companyService.verifyBusinessOTP(userId, otp);
+    
+
+    
+    if (result.success) {
+    
+      return { 
+        success: true, 
+        message: result.message 
+      };
+    } else {
+     
+      throw new BadRequestException(result.error || 'Invalid OTP');
+    }
+    
+  } catch (err) {
+    console.error(' Error in verifyBusinessOTP controller:', err);
+    
+    if (err instanceof HttpException) {
+    
+      throw err;
+    }
+    
+    console.error(' Unexpected error:', err);
+    throw new InternalServerErrorException('Failed to verify OTP');
+  }
+}
 }

@@ -30,7 +30,6 @@ let EmailService = class EmailService {
         try {
             const email = new this.emailModel(data);
             await email.save();
-            console.log('✅ Email logged to database');
         }
         catch (error) {
             console.error('Failed to save email to database:', error);
@@ -63,7 +62,6 @@ let EmailService = class EmailService {
                 attachments: [],
                 sentStatus: true,
             });
-            console.log(`✅ Business verification email sent to ${to}`);
             return true;
         }
         catch (error) {
@@ -82,36 +80,34 @@ let EmailService = class EmailService {
     generateOTP() {
         return Math.floor(100000 + Math.random() * 900000).toString();
     }
-    async sendPasswordResetEmail(to, name, resetToken) {
+    async sendPasswordResetEmail(to, name, otpCode) {
         try {
-            const frontendUrl = process.env.FRONTEND_URL;
-            const resetLink = `${frontendUrl}/reset-password/verify?token=${resetToken}`;
             await this.mailerService.sendMail({
                 to,
-                subject: 'Reset Your Password',
-                template: 'password-reset',
+                subject: 'Reset Your Password - OTP Verification',
+                template: 'password-reset-otp',
                 context: {
                     name,
-                    resetLink,
+                    otpCode,
                 },
             });
             await this.save({
                 to,
-                subject: 'Reset Your Password',
-                template: 'password-reset',
-                context: { name, resetLink },
+                subject: 'Reset Your Password - OTP Verification',
+                template: 'password-reset-otp',
+                context: { name, otpCode },
                 attachments: [],
                 sentStatus: true,
             });
             return true;
         }
         catch (error) {
-            console.error(' Email sending error:', error);
+            console.error('Password reset OTP email sending error:', error);
             await this.save({
                 to,
-                subject: 'Reset Your Password',
-                template: 'password-reset',
-                context: { name },
+                subject: 'Reset Your Password - OTP Verification',
+                template: 'password-reset-otp',
+                context: { name, otpCode },
                 attachments: [],
                 sentStatus: false,
             });

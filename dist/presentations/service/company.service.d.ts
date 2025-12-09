@@ -3,12 +3,14 @@ import type { Company } from '@utils/types/company-type';
 import type { User } from '@utils/types';
 import { JwtService } from '@nestjs/jwt';
 import { EmailService } from '@src/email/email.service';
+import { UserVerificationService } from '@src/presentations/service/verification.service';
 export declare class CompanyService {
     private company;
     private user;
     private jwtService;
     private readonly emailService;
-    constructor(company: Model<Company>, user: Model<User>, jwtService: JwtService, emailService: EmailService);
+    private readonly userVerificationService;
+    constructor(company: Model<Company>, user: Model<User>, jwtService: JwtService, emailService: EmailService, userVerificationService: UserVerificationService);
     editCompany(id: string, compnayData: Omit<Company, '_id'>): Promise<{
         success: true;
         data: Company;
@@ -32,6 +34,13 @@ export declare class CompanyService {
         error: Number;
     }>;
     sendBusinessVerificationEmail(userId: string): Promise<{
+        success: true;
+        message: string;
+    } | {
+        success: false;
+        error: string;
+    }>;
+    verifyBusinessOTP(userId: string, otp: string): Promise<{
         success: true;
         message: string;
     } | {

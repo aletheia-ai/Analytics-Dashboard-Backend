@@ -6,6 +6,7 @@ import type { Company } from '@utils/types/company-type';
 import type { User } from '@utils/types';
 import { JwtService } from '@nestjs/jwt';
 import { EmailService } from '@src/email/email.service';
+import { UserVerificationService } from '@src/presentations/service/verification.service'; // Add this
 @Injectable()
 export class CompanyService {
   constructor(
@@ -13,6 +14,7 @@ export class CompanyService {
     @InjectModel('User') private user: Model<User>,
     private jwtService: JwtService,
        private readonly emailService: EmailService, 
+        private readonly userVerificationService: UserVerificationService, // Add this
   ) {}
 
   async editCompany(
@@ -98,130 +100,119 @@ export class CompanyService {
       return { success: false, error: error.code };
     }
   }
-// In CompanyService - add this new method
-async sendBusinessVerificationEmail(userId: string): Promise<{
-  success: true;
-  message: string;
-} | {
-  success: false;
-  error: string;
-}> {
-  try {
-    // 1. Get user details
-    const user = await this.user.findById(userId);
-    if (!user) {
-      return { success: false, error: 'User not found' };
-    }
-    
-    // 2. Get company details for this user
-    const company = await this.company.findOne({ user: userId });
-    if (!company) {
-      return { success: false, error: 'Business not found' };
-    }
-    
-    // 3. Generate OTP
-    const otpCode = this.generateOTP();
-    
-    // 4. Get user's full name
-    const userFullName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'Business Owner';
-    
-    // 5. Send email
-    const emailSent = await this.emailService.sendBusinessVerificationEmail(
-      user.email,
-      userFullName,
-      otpCode,
-      company.name,
-      company.businessType
-    );
-    
-    if (emailSent) {
-      console.log(`✅ Business verification email sent to ${user.email}`);
-      console.log(`📧 OTP for ${user.email}: ${otpCode}`);
+
+
+  async sendBusinessVerificationEmail(userId: string): Promise<{
+    success: true;
+    message: string;
+  } | {
+    success: false;
+    error: string;
+  }> {
+    try {
+      // 1. Get user details
+      const user = await this.user.findById(userId);
+      if (!user) {
+        return { success: false, error: 'User not found' };
+      }
       
-      // Optional: Save OTP to database for verification
-      // await this.saveOTPToDatabase(user.email, otpCode, user._id, company._id);
+      // 2. Get company details for this user
+      const company = await this.company.findOne({ user: userId });
+      if (!company) {
+        return { success: false, error: 'Business not found' };
+      }
       
-      return { 
-        success: true, 
-        message: 'Verification email sent successfully' 
-      };
-    } else {
+      // 3. Generate OTP
+      const otpCode = this.generateOTP();
+      
+      // 4. Save OTP using UserVerificationService
+      const saveResult = await this.userVerificationService.addOtp(userId, otpCode);
+      
+      if (!saveResult.success) {
+        return { 
+          success: false, 
+          error: 'Failed to save OTP' 
+        };
+      }
+      
+      // 5. Get user's full name
+      const userFullName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'Business Owner';
+      
+      // 6. Send email
+      const emailSent = await this.emailService.sendBusinessVerificationEmail(
+        user.email,
+        userFullName,
+        otpCode,
+        company.name,
+        company.businessType
+      );
+      
+      if (emailSent) {
+        
+        return { 
+          success: true, 
+          message: 'Verification email sent successfully' 
+        };
+      } else {
+        return { 
+          success: false, 
+          error: 'Failed to send verification email' 
+        };
+      }
+      
+    } catch (error) {
+      console.error('Error sending business verification email:', error);
       return { 
         success: false, 
-        error: 'Failed to send verification email' 
+        error: 'Internal server error' 
       };
     }
-    
-  } catch (error) {
-    console.error('Error sending business verification email:', error);
-    return { 
-      success: false, 
-      error: 'Internal server error' 
-    };
   }
-}
+ async verifyBusinessOTP(userId: string, otp: string): Promise<{
+    success: true;
+    message: string;
+  } | {
+    success: false;
+    error: string;
+  }> {
+    try {
+      // 1. Verify OTP using UserVerificationService
+      const verifyResult = await this.userVerificationService.verifyOtp(userId, otp);
+      
+      if (!verifyResult.success) {
+        return verifyResult; // Return the error from verification service
+      }
+      
+      // 2. Update user as authorized/verified
+      const user = await this.user.findById(userId);
+      if (user) {
+        user.isAuthorized = true;
+        user.isVerified = true;
+        await user.save();
+        
+        
+        return { 
+          success: true, 
+          message: 'Business verified successfully' 
+        };
+      } else {
+        return { 
+          success: false, 
+          error: 'User not found' 
+        };
+      }
+      
+    } catch (error) {
+      console.error('Error verifying OTP:', error);
+      return { 
+        success: false, 
+        error: 'Internal server error' 
+      };
+    }
+  }
 
-// Keep this helper method
-private generateOTP(): string {
-  return Math.floor(100000 + Math.random() * 900000).toString();
-}
-  // private async sendBusinessVerificationEmail(user: any, company: Company): Promise<void> {
-  //   try {
-  //     // Generate OTP (6-digit code)
-  //     const otpCode = this.generateOTP();
-      
-  //     // Get user's full name
-  //     const userFullName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'Business Owner';
-      
-  //     // Send the email using EmailService
-  //     await this.emailService.sendBusinessVerificationEmail(
-  //       user.email,
-  //       userFullName,
-  //       otpCode,
-  //       company.name,
-  //       company.businessType
-  //     );
-      
-  //     console.log(`✅ Business verification email sent to ${user.email}`);
-  //     console.log(`📧 OTP for ${user.email}: ${otpCode}`);
-      
-  //     // Optional: Save OTP to database for later verification
-  //     // You can implement this if you need OTP verification
-  //     // await this.saveOTPToDatabase(user.email, otpCode, user._id, company._id);
-      
-  //   } catch (emailError) {
-  //     console.error('Failed to send verification email:', emailError);
-  //     // Don't throw error - email failure shouldn't fail the business creation
-  //     // Just log the error and continue
-  //   }
-  // }
+  private generateOTP(): string {
+    return Math.floor(100000 + Math.random() * 900000).toString();
+  }
 
-  // // ✅ NEW FUNCTION: Generate OTP
-  // private generateOTP(): string {
-  //   return Math.floor(100000 + Math.random() * 900000).toString();
-  // }
-
-  // // ✅ NEW FUNCTION: Verify OTP (optional - if you need OTP verification)
-  // async verifyBusinessOTP(
-  //   email: string,
-  //   otp: string
-  // ): Promise<{ success: true } | { success: false; error: string }> {
-  //   try {
-  //     // Implement OTP verification logic here
-  //     // For now, returning mock success
-  //     console.log(`Verifying OTP ${otp} for email ${email}`);
-      
-  //     // You would typically:
-  //     // 1. Check OTP from database
-  //     // 2. Verify it's not expired
-  //     // 3. Mark as verified
-      
-  //     return { success: true };
-  //   } catch (error) {
-  //     return { 
-  //       success: false, 
-  //       error: 'OTP verification failed' 
-  //     };
-  //   }
-  // }
 }

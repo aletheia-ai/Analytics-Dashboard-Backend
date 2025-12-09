@@ -99,14 +99,6 @@ export class EmailController {
           message: 'To, subject, and template are required'
         };
       }
-
-      // This is a simplified version - you would need to extend your email service
-      console.log('\n📧 ======= CUSTOM EMAIL =======');
-      console.log(`To: ${to}`);
-      console.log(`Subject: ${subject}`);
-      console.log(`Template: ${template}`);
-      console.log(`Data:`, data);
-      console.log('📧 ============================\n');
       
       return {
         success: true,

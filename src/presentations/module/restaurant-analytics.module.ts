@@ -1,19 +1,20 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 
-import { StoreService } from '@presentations/service/store.service';
-import { StoreController } from '../controller/store.controller';
-
 import { RestaurantAnalyticsSchema } from '@src/infrastructure/modal/restaurant-analytics.schema';
+import { RestaurantAnalyticsService } from '../service/restaurant-analytics.service';
+import { RestaurantAnalyticsController } from '../controller/restaurant.analytics.controller';
+import { StoreModule } from './store.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: 'Restaurant-Analytics', schema: RestaurantAnalyticsSchema },
     ]),
+    StoreModule,
   ],
-  providers: [StoreService],
-  controllers: [StoreController],
+  providers: [RestaurantAnalyticsService],
+  controllers: [RestaurantAnalyticsController],
   exports: [MongooseModule],
 })
 export class RestauranAnalyticsModule {}

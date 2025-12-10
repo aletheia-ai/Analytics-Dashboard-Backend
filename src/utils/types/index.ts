@@ -2,6 +2,7 @@ import { BusinessType } from './business-type';
 import { ServiceType } from './service-type';
 import { UserSpaceType } from './space-type';
 import { PersonStatsType } from './person-stats-type';
+import { RestaurantAnalyticsType } from './analytics-type';
 export enum SignInExceptions {
   NO_USER = 'No User Registered With this Email',
   INVALID_PASSWORD = 'Password Is Incorrect',
@@ -23,4 +24,4 @@ export type User = {
   userType: UserRoleType;
 };
 
-export { BusinessType, ServiceType, UserSpaceType, PersonStatsType };
+export { BusinessType, ServiceType, UserSpaceType, PersonStatsType, RestaurantAnalyticsType };

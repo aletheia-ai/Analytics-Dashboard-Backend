@@ -85,7 +85,7 @@ let EmailService = class EmailService {
             await this.mailerService.sendMail({
                 to,
                 subject: 'Reset Your Password - OTP Verification',
-                template: 'password-reset-otp',
+                template: 'password-reset',
                 context: {
                     name,
                     otpCode,
@@ -94,7 +94,7 @@ let EmailService = class EmailService {
             await this.save({
                 to,
                 subject: 'Reset Your Password - OTP Verification',
-                template: 'password-reset-otp',
+                template: 'password-reset',
                 context: { name, otpCode },
                 attachments: [],
                 sentStatus: true,
@@ -102,11 +102,10 @@ let EmailService = class EmailService {
             return true;
         }
         catch (error) {
-            console.error('Password reset OTP email sending error:', error);
             await this.save({
                 to,
                 subject: 'Reset Your Password - OTP Verification',
-                template: 'password-reset-otp',
+                template: 'password-reset',
                 context: { name, otpCode },
                 attachments: [],
                 sentStatus: false,

@@ -278,6 +278,36 @@ async updateUserByEmail(
     return { success: false };
   }
 }
+// src/presentations/service/user.service.ts
+async resetPassword(
+  userId: string,
+  newPassword: string
+): Promise<{ success: true; data: User } | { success: false; error: number }> {
+  try {
+    const userData = await this.userModel.findOne({ _id: new Types.ObjectId(userId) });
+    if (!userData) {
+      return { success: false, error: 404 };
+    }
 
+    // Hash the new password
+    const saltRounds = Number(process.env.SALT_ROUNDS) || 10;
+    const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+    
+    // Update the password
+    const updatedUser = await this.userModel.findByIdAndUpdate(
+      userId,
+      { password: hashedPassword },
+      { new: true }
+    );
+    
+    if (updatedUser) {
+      return { success: true, data: updatedUser };
+    } else {
+      return { success: false, error: 500 };
+    }
+  } catch (err) {
+    return { success: false, error: err.code || 500 };
+  }
+}
 
 }

@@ -241,6 +241,26 @@ let UserService = class UserService {
             return { success: false };
         }
     }
+    async resetPassword(userId, newPassword) {
+        try {
+            const userData = await this.userModel.findOne({ _id: new mongoose_2.Types.ObjectId(userId) });
+            if (!userData) {
+                return { success: false, error: 404 };
+            }
+            const saltRounds = Number(process.env.SALT_ROUNDS) || 10;
+            const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+            const updatedUser = await this.userModel.findByIdAndUpdate(userId, { password: hashedPassword }, { new: true });
+            if (updatedUser) {
+                return { success: true, data: updatedUser };
+            }
+            else {
+                return { success: false, error: 500 };
+            }
+        }
+        catch (err) {
+            return { success: false, error: err.code || 500 };
+        }
+    }
 };
 exports.UserService = UserService;
 exports.UserService = UserService = __decorate([

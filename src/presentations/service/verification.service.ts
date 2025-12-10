@@ -24,7 +24,7 @@ export class UserVerificationService {
         userId, 
         otp,
         expiresAt
-      });
+      });         
       await result.save();
       
      

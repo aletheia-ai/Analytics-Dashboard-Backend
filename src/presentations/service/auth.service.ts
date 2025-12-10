@@ -217,8 +217,22 @@ export class AuthService {
       throw new InternalServerErrorException('Failed to fetch user by email');
     }
   }
-
-  async generateResetToken(user: any) {
-    return this.jwtService.sign({ sub: user._id, email: user.email }, { expiresIn: '15m' });
+// src/presentations/service/auth.service.ts
+async resetPassword(
+  userId: string,
+  newPassword: string
+): Promise<{ success: true } | { success: false; error: number }> {
+  try {
+    const result = await this.usersService.resetPassword(userId, newPassword);
+    if (result.success) {
+      return { success: true };
+    } else {
+      const { error } = result;
+      return { success: false, error };
+    }
+  } catch (err) {
+    return { success: false, error: err.code || 500 };
   }
+}
+
 }

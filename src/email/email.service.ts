@@ -90,7 +90,7 @@ async sendPasswordResetEmail(
     await this.mailerService.sendMail({
       to,
       subject: 'Reset Your Password - OTP Verification',
-      template: 'password-reset-otp', // New template for OTP
+      template: 'password-reset', // New template for OTP
       context: {
         name,
         otpCode,
@@ -100,7 +100,7 @@ async sendPasswordResetEmail(
     await this.save({
       to,
       subject: 'Reset Your Password - OTP Verification',
-      template: 'password-reset-otp',
+      template: 'password-reset',
       context: { name, otpCode },
       attachments: [],
       sentStatus: true,
@@ -108,12 +108,12 @@ async sendPasswordResetEmail(
 
     return true;
   } catch (error) {
-    console.error('Password reset OTP email sending error:', error);
+   
 
     await this.save({
       to,
       subject: 'Reset Your Password - OTP Verification',
-      template: 'password-reset-otp',
+      template: 'password-reset',
       context: { name, otpCode },
       attachments: [],
       sentStatus: false,

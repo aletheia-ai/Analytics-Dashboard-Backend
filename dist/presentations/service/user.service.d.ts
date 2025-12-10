@@ -81,4 +81,11 @@ export declare class UserService {
     updateUserByEmail(email: string, updateData: Partial<User>): Promise<{
         success: boolean;
     }>;
+    resetPassword(userId: string, newPassword: string): Promise<{
+        success: true;
+        data: User;
+    } | {
+        success: false;
+        error: number;
+    }>;
 }

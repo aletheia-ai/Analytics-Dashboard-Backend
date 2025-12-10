@@ -41,7 +41,7 @@ import { EditUserByIdDto } from '../dto/user';
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService,private readonly userService: UserService,
-    private readonly emailService: EmailService, private readonly userVerificationService: UserVerificationService  ) 
+    private readonly emailService: EmailService,  private readonly userVerificationService: UserVerificationService) 
   {}
 
   @UseGuards(AuthGuard)
@@ -232,7 +232,7 @@ export class AuthController {
     }
   }
 
-  @Post('verify-email')
+@Post('verify-email')
 @HttpCode(HttpStatus.OK)
 async verifyEmail(@Body() body: VerifyEmail) {
   try {
@@ -240,48 +240,150 @@ async verifyEmail(@Body() body: VerifyEmail) {
       throw new BadRequestException('Email is required');
     }
 
-    // Find user by email
-    const user = await this.authService.findByEmail(body.email);
-    if (!user.success) {
-      throw new NotFoundException('Email not found');
+    // Find user by email using UserService directly
+    const userResult = await this.userService.findemail(body.email);
+    
+    if (!userResult.success) {
+      // For security, return success even if email doesn't exist
+      return { 
+        success: true, 
+        message: 'If the email exists, a reset OTP has been sent' 
+      };
     }
 
-    const foundUser = user.data;
+    // Type assertion to access the document
+    const userDoc = userResult.data as any;
+    const userId = userDoc._id?.toString();
+    
+    if (!userId) {
+      console.error('User ID not found for email:', body.email);
+      return { 
+        success: true, 
+        message: 'If the email exists, a reset OTP has been sent' 
+      };
+    }
 
-    // Generate JWT token
-    const resetToken = await this.authService.generateResetToken(foundUser);
-    console.log("reset token ", resetToken);
+    // Generate OTP
+    const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+    
+    // Save OTP
+    const saveResult = await this.userVerificationService.addOtp(userId, otpCode);
+    
+    if (!saveResult.success) {
+      console.error('Failed to save OTP for user:', userId);
+      return { 
+        success: true, 
+        message: 'If the email exists, a reset OTP has been sent' 
+      };
+    }
 
-    // Token expiry (optional, can be stored if needed)
-    const expires = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
-    console.log("expires in ", expires);
-
-    // Update user in DB by email
-    await this.userService.updateUserByEmail(foundUser.email, {
-      isVerified: true,
-      emailVerificationToken: resetToken,
-      emailVerificationExpires: expires,
-    });
 
     // Prepare display name
-    const displayName = `${foundUser.firstName || ''} ${foundUser.lastName || ''}`.trim() || 'User';
+    const displayName = `${userDoc.firstName || ''} ${userDoc.lastName || ''}`.trim() || 'User';
 
-    // Send verification/reset email
-    await this.emailService.sendPasswordResetEmail(foundUser.email, displayName, resetToken);
+    // Send OTP email
+    await this.emailService.sendPasswordResetEmail(body.email, displayName, otpCode);
 
-    return { message: 'Verification email sent successfully' }; //  final response
+    return { 
+      success: true, 
+      message: 'If the email exists, a reset OTP has been sent' 
+    };
   } catch (err) {
     if (err instanceof HttpException) {
       throw err;
     }
     console.error('verifyEmail error:', err);
-    throw new InternalServerErrorException('An unexpected error occurred while verifying email');
+    return { 
+      success: true, 
+      message: 'If the email exists, a reset OTP has been sent' 
+    };
+  }
+}
+
+// Update your verifyResetOTP endpoint in auth.controller.ts
+@Post('verify-reset-otp')
+@HttpCode(HttpStatus.OK)
+async verifyResetOTP(@Body() body: { email: string; otp: string }) {
+  try {
+    const { email, otp } = body;
+    if (!email || !otp) {
+      
+      throw new BadRequestException('Email and OTP are required');
+    }
+    if (otp.length !== 6) {
+     
+      throw new BadRequestException('Valid 6-digit OTP is required');
+    }
+
+    // Find user by email
+    const userResult = await this.userService.findemail(email);
+    if (!userResult.success) {
+      
+      throw new BadRequestException('Invalid email or OTP');
+    }
+
+    const userDoc = userResult.data as any;
+    const userId = userDoc._id?.toString();
+    
+    if (!userId) {
+  
+      throw new BadRequestException('Invalid email or OTP');
+    }
+    const verifyResult = await this.userVerificationService.verifyOtp(userId, otp);
+    if (!verifyResult.success) {
+      throw new BadRequestException(verifyResult.error);
+    }
+
+    
+    return { 
+      success: true, 
+      message: 'OTP verified successfully',
+      userId
+    };
+  } catch (err) {
+    
+    if (err instanceof HttpException) {
+      throw err;
+    }
+    throw new InternalServerErrorException('Failed to verify OTP');
   }
 }
 
 
+// src/presentations/controller/auth.controller.ts
+@Post('reset-password')
+@HttpCode(HttpStatus.OK)
+async resetPassword(@Body() body: { userId: string; newPassword: string }) {
+  try {
+    const { userId, newPassword } = body;
+    
+    if (!userId || !newPassword) {
+      throw new BadRequestException('User ID and new password are required');
+    }
 
+    // Add password validation
+    if (newPassword.length < 6) {
+      throw new BadRequestException('Password must be at least 6 characters long');
+    }
 
+    // Call a reset password service method
+    const result = await this.authService.resetPassword(userId, newPassword);
+    
+    if (result.success) {
+      return { 
+        success: true, 
+        message: 'Password reset successfully' 
+      };
+    } else {
+      throw new InternalServerErrorException('Failed to reset password');
+    }
+  } catch (err) {
+    if (err instanceof HttpException) {
+      throw err;
+    }
+    throw new InternalServerErrorException('Failed to reset password');
+  }
+}
 }
 
 

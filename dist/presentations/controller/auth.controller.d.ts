@@ -28,6 +28,22 @@ export declare class AuthController {
     }>;
     logout(res: Response): void;
     verifyEmail(body: VerifyEmail): Promise<{
+        success: boolean;
+        message: string;
+    }>;
+    verifyResetOTP(body: {
+        email: string;
+        otp: string;
+    }): Promise<{
+        success: boolean;
+        message: string;
+        userId: any;
+    }>;
+    resetPassword(body: {
+        userId: string;
+        newPassword: string;
+    }): Promise<{
+        success: boolean;
         message: string;
     }>;
 }

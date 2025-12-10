@@ -14,6 +14,7 @@ export enum UserRoleType {
 }
 
 export type User = {
+  
   email: string;
   password: string;
   firstName: string;

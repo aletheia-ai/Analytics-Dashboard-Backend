@@ -75,5 +75,10 @@ export declare class AuthService {
         error: number;
         message: string;
     }>;
-    generateResetToken(user: any): Promise<string>;
+    resetPassword(userId: string, newPassword: string): Promise<{
+        success: true;
+    } | {
+        success: false;
+        error: number;
+    }>;
 }

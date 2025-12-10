@@ -217,30 +217,109 @@ let AuthController = class AuthController {
             if (!body.email) {
                 throw new common_1.BadRequestException('Email is required');
             }
-            const user = await this.authService.findByEmail(body.email);
-            if (!user.success) {
-                throw new common_1.NotFoundException('Email not found');
+            const userResult = await this.userService.findemail(body.email);
+            if (!userResult.success) {
+                return {
+                    success: true,
+                    message: 'If the email exists, a reset OTP has been sent'
+                };
             }
-            const foundUser = user.data;
-            const resetToken = await this.authService.generateResetToken(foundUser);
-            console.log("reset token ", resetToken);
-            const expires = new Date(Date.now() + 15 * 60 * 1000);
-            console.log("expires in ", expires);
-            await this.userService.updateUserByEmail(foundUser.email, {
-                isVerified: true,
-                emailVerificationToken: resetToken,
-                emailVerificationExpires: expires,
-            });
-            const displayName = `${foundUser.firstName || ''} ${foundUser.lastName || ''}`.trim() || 'User';
-            await this.emailService.sendPasswordResetEmail(foundUser.email, displayName, resetToken);
-            return { message: 'Verification email sent successfully' };
+            const userDoc = userResult.data;
+            const userId = userDoc._id?.toString();
+            if (!userId) {
+                console.error('User ID not found for email:', body.email);
+                return {
+                    success: true,
+                    message: 'If the email exists, a reset OTP has been sent'
+                };
+            }
+            const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+            const saveResult = await this.userVerificationService.addOtp(userId, otpCode);
+            if (!saveResult.success) {
+                console.error('Failed to save OTP for user:', userId);
+                return {
+                    success: true,
+                    message: 'If the email exists, a reset OTP has been sent'
+                };
+            }
+            const displayName = `${userDoc.firstName || ''} ${userDoc.lastName || ''}`.trim() || 'User';
+            await this.emailService.sendPasswordResetEmail(body.email, displayName, otpCode);
+            return {
+                success: true,
+                message: 'If the email exists, a reset OTP has been sent'
+            };
         }
         catch (err) {
             if (err instanceof common_1.HttpException) {
                 throw err;
             }
             console.error('verifyEmail error:', err);
-            throw new common_1.InternalServerErrorException('An unexpected error occurred while verifying email');
+            return {
+                success: true,
+                message: 'If the email exists, a reset OTP has been sent'
+            };
+        }
+    }
+    async verifyResetOTP(body) {
+        try {
+            const { email, otp } = body;
+            if (!email || !otp) {
+                throw new common_1.BadRequestException('Email and OTP are required');
+            }
+            if (otp.length !== 6) {
+                throw new common_1.BadRequestException('Valid 6-digit OTP is required');
+            }
+            const userResult = await this.userService.findemail(email);
+            if (!userResult.success) {
+                throw new common_1.BadRequestException('Invalid email or OTP');
+            }
+            const userDoc = userResult.data;
+            const userId = userDoc._id?.toString();
+            if (!userId) {
+                throw new common_1.BadRequestException('Invalid email or OTP');
+            }
+            const verifyResult = await this.userVerificationService.verifyOtp(userId, otp);
+            if (!verifyResult.success) {
+                throw new common_1.BadRequestException(verifyResult.error);
+            }
+            return {
+                success: true,
+                message: 'OTP verified successfully',
+                userId
+            };
+        }
+        catch (err) {
+            if (err instanceof common_1.HttpException) {
+                throw err;
+            }
+            throw new common_1.InternalServerErrorException('Failed to verify OTP');
+        }
+    }
+    async resetPassword(body) {
+        try {
+            const { userId, newPassword } = body;
+            if (!userId || !newPassword) {
+                throw new common_1.BadRequestException('User ID and new password are required');
+            }
+            if (newPassword.length < 6) {
+                throw new common_1.BadRequestException('Password must be at least 6 characters long');
+            }
+            const result = await this.authService.resetPassword(userId, newPassword);
+            if (result.success) {
+                return {
+                    success: true,
+                    message: 'Password reset successfully'
+                };
+            }
+            else {
+                throw new common_1.InternalServerErrorException('Failed to reset password');
+            }
+        }
+        catch (err) {
+            if (err instanceof common_1.HttpException) {
+                throw err;
+            }
+            throw new common_1.InternalServerErrorException('Failed to reset password');
         }
     }
 };
@@ -327,6 +406,22 @@ __decorate([
     __metadata("design:paramtypes", [auth_1.VerifyEmail]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "verifyEmail", null);
+__decorate([
+    (0, common_1.Post)('verify-reset-otp'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "verifyResetOTP", null);
+__decorate([
+    (0, common_1.Post)('reset-password'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "resetPassword", null);
 exports.AuthController = AuthController = __decorate([
     (0, common_1.Controller)('auth'),
     __metadata("design:paramtypes", [auth_service_1.AuthService, user_service_1.UserService,

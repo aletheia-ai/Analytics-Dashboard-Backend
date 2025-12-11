@@ -5,7 +5,6 @@ import { SocketModule } from './socket.module';
 import { HeatmapController } from '../controller/heat-maps.controller';
 import { HeatmapService } from '../service/heatmap.service';
 import { RedisModule } from '@src/utils/shared/redis/redis.module';
-// import { HeatmapListenerService } from '../service/heatmap-listener.service';
 import { HeatmapStreamWorker } from '../service/queue-worker.service';
 
 @Module({

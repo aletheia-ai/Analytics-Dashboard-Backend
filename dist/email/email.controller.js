@@ -15,36 +15,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.EmailController = void 0;
 const common_1 = require("@nestjs/common");
 const email_service_1 = require("./email.service");
+const email_1 = require("../presentations/dto/email");
 let EmailController = class EmailController {
     emailService;
     constructor(emailService) {
         this.emailService = emailService;
-    }
-    async sendTestEmail(body) {
-        try {
-            const { to, name } = body;
-            if (!to || !name) {
-                return {
-                    success: false,
-                    message: 'Email and name are required'
-                };
-            }
-            const testToken = 'test-token-' + Date.now();
-            const sent = await this.emailService.sendPasswordResetEmail(to, name, testToken);
-            return {
-                success: sent,
-                message: sent
-                    ? 'Test email sent (check console for details)'
-                    : 'Failed to send test email'
-            };
-        }
-        catch (error) {
-            console.error('Test email error:', error);
-            return {
-                success: false,
-                message: 'Internal server error'
-            };
-        }
     }
     async triggerPasswordReset(body) {
         try {
@@ -110,19 +85,11 @@ let EmailController = class EmailController {
 };
 exports.EmailController = EmailController;
 __decorate([
-    (0, common_1.Post)('test'),
-    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
-    __param(0, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", Promise)
-], EmailController.prototype, "sendTestEmail", null);
-__decorate([
     (0, common_1.Post)('password-reset'),
     (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [email_1.PasswordResetEmailDto]),
     __metadata("design:returntype", Promise)
 ], EmailController.prototype, "triggerPasswordReset", null);
 __decorate([
@@ -130,7 +97,7 @@ __decorate([
     (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [email_1.SendEmailDto]),
     __metadata("design:returntype", Promise)
 ], EmailController.prototype, "sendCustomEmail", null);
 __decorate([

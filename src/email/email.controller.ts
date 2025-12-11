@@ -1,53 +1,17 @@
 // src/email/email.controller.ts
 import { Controller, Post, Body, HttpCode, HttpStatus, Get, Query } from '@nestjs/common';
 import { EmailService } from './email.service';
-
+import { SendEmailDto, PasswordResetEmailDto } from '../presentations/dto/email';
 @Controller('email')
 export class EmailController {
   constructor(private readonly emailService: EmailService) {}
-
-  /**
-   * Send a test email (for development)
-   */
-  @Post('test')
-  @HttpCode(HttpStatus.OK)
-  async sendTestEmail(@Body() body: { to: string; name: string }) {
-    try {
-      const { to, name } = body;
-      
-      if (!to || !name) {
-        return {
-          success: false,
-          message: 'Email and name are required'
-        };
-      }
-
-      // Generate a dummy token for testing
-      const testToken = 'test-token-' + Date.now();
-      
-      const sent = await this.emailService.sendPasswordResetEmail(to, name, testToken);
-      
-      return {
-        success: sent,
-        message: sent 
-          ? 'Test email sent (check console for details)' 
-          : 'Failed to send test email'
-      };
-    } catch (error) {
-      console.error('Test email error:', error);
-      return {
-        success: false,
-        message: 'Internal server error'
-      };
-    }
-  }
 
   /**
    * Trigger password reset email via API
    */
   @Post('password-reset')
   @HttpCode(HttpStatus.OK)
-  async triggerPasswordReset(@Body() body: { email: string; name: string }) {
+  async triggerPasswordReset(@Body() body: PasswordResetEmailDto) {
     try {
       const { email, name } = body;
       
@@ -83,12 +47,7 @@ export class EmailController {
   @Post('send')
   @HttpCode(HttpStatus.OK)
   async sendCustomEmail(
-    @Body() body: { 
-      to: string; 
-      subject: string; 
-      template: string; 
-      data: any;
-    }
+    @Body() body: SendEmailDto
   ) {
     try {
       const { to, subject, template, data } = body;

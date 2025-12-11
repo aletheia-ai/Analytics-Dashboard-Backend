@@ -349,8 +349,6 @@ async verifyResetOTP(@Body() body: { email: string; otp: string }) {
   }
 }
 
-
-// src/presentations/controller/auth.controller.ts
 @Post('reset-password')
 @HttpCode(HttpStatus.OK)
 async resetPassword(@Body() body: { userId: string; newPassword: string }) {

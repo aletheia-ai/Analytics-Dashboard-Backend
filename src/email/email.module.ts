@@ -35,7 +35,7 @@ import { ScheduleModule } from '@nestjs/schedule';
         
         // Template configuration
         template: {
-       dir: join(process.cwd(), 'src/email/email-templates'), // absolute from project root
+       dir: join(process.cwd(), 'src/email/email-templates'), 
           adapter: new HandlebarsAdapter(),
           options: {
             strict: true,

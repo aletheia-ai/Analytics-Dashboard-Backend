@@ -3,6 +3,7 @@ import { BusinessType } from './business-type';
 import { ServiceType } from './service-type';
 import { UserSpaceType } from './space-type';
 import { PersonStatsType } from './person-stats-type';
+export * from './email-type';
 export enum SignInExceptions {
   NO_USER = 'No User Registered With this Email',
   INVALID_PASSWORD = 'Password Is Incorrect',

@@ -2,6 +2,10 @@
 import { Module } from '@nestjs/common';
 import { createClient } from 'redis';
 import { RedisService } from './redis.service';
+import { HeatmapProducerService } from '@src/presentations/service/heatmap-producer.service';
+import { HeatmapStreamListener } from '@src/presentations/service/heatmap-listener.service';
+import { MongooseModule } from '@nestjs/mongoose';
+import { HeatmapItemSchema } from '@src/infrastructure/modal/heatmap.schema';
 
 const RedisProvider = {
   provide: 'REDIS_CLIENT',
@@ -40,7 +44,8 @@ const RedisProvider = {
 };
 
 @Module({
-  providers: [RedisProvider, RedisService],
+  imports: [MongooseModule.forFeature([{ name: 'Heat_Maps', schema: HeatmapItemSchema }])],
+  providers: [RedisProvider, RedisService, HeatmapProducerService, HeatmapStreamListener],
   exports: [RedisService],
 })
 export class RedisModule {}

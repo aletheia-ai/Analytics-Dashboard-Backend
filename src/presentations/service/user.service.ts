@@ -1,3 +1,4 @@
+//src/presentations/service/user.service.ts
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
@@ -120,6 +121,29 @@ export class UserService {
       return undefined;
     }
   }
+  async findemail(
+    email: string
+  ): Promise<{ success: true; data: User } | { success: false; error: number; message: string }> {
+    try {
+      const user = await this.userModel.findOne({ email }).exec();
+
+      if (!user) {
+        return {
+          success: false,
+          error: 404,
+          message: 'Email not found',
+        };
+      }
+
+      return { success: true, data: user };
+    } catch (err: any) {
+      return {
+        success: false,
+        error: err?.code || 500,
+        message: 'Failed to query database',
+      };
+    }
+  }
 
   async findUserById(
     userId: string
@@ -237,4 +261,53 @@ export class UserService {
       return { success: false, error: err.code || 500 };
     }
   }
+async updateUserByEmail(
+  email: string,
+  updateData: Partial<User>
+): Promise<{ success: boolean }> {
+  try {
+    const updated = await this.userModel.findOneAndUpdate(
+      { email },
+      { $set: updateData },
+      { new: true }
+    );
+
+    return { success: !!updated };
+  } catch (err) {
+    console.error('updateUserByEmail error:', err);
+    return { success: false };
+  }
+}
+// src/presentations/service/user.service.ts
+async resetPassword(
+  userId: string,
+  newPassword: string
+): Promise<{ success: true; data: User } | { success: false; error: number }> {
+  try {
+    const userData = await this.userModel.findOne({ _id: new Types.ObjectId(userId) });
+    if (!userData) {
+      return { success: false, error: 404 };
+    }
+
+    // Hash the new password
+    const saltRounds = Number(process.env.SALT_ROUNDS) || 10;
+    const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+    
+    // Update the password
+    const updatedUser = await this.userModel.findByIdAndUpdate(
+      userId,
+      { password: hashedPassword },
+      { new: true }
+    );
+    
+    if (updatedUser) {
+      return { success: true, data: updatedUser };
+    } else {
+      return { success: false, error: 500 };
+    }
+  } catch (err) {
+    return { success: false, error: err.code || 500 };
+  }
+}
+
 }

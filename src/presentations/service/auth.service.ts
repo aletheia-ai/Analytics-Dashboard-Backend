@@ -1,4 +1,12 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+// src/presentations/service/auth.service.ts
+import {
+  Injectable,
+  UnauthorizedException,
+  BadRequestException,
+  InternalServerErrorException,
+  NotFoundException,
+  HttpException,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { JwtService } from '@nestjs/jwt';
 import { SignInExceptions, User } from '@utils/types';
@@ -8,12 +16,14 @@ import { Model, Types } from 'mongoose';
 import { Store } from '@src/utils/types/store-type';
 import { Company } from '@src/utils/types/company-type';
 import { Region } from '@src/utils/types/region-type';
+import { UserVerificationService } from './verification.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UserService,
     private jwtService: JwtService,
+    @InjectModel('User_Verification') verificationService: UserVerificationService,
     @InjectModel('Store') private store: Model<Store>,
     @InjectModel('Company') private company: Model<Company>,
     @InjectModel('Region') private region: Model<Region>
@@ -192,4 +202,37 @@ export class AuthService {
       return { success: false, error: err.code || 500 };
     }
   }
+
+  async findByEmail(
+    email: string
+  ): Promise<{ success: true; data: User } | { success: false; error: number; message: string }> {
+    try {
+      ///return promise
+      const data = await this.usersService.findemail(email);
+
+      return data;
+    } catch (err) {
+      console.error('findByEmail error:', err);
+
+      throw new InternalServerErrorException('Failed to fetch user by email');
+    }
+  }
+// src/presentations/service/auth.service.ts
+async resetPassword(
+  userId: string,
+  newPassword: string
+): Promise<{ success: true } | { success: false; error: number }> {
+  try {
+    const result = await this.usersService.resetPassword(userId, newPassword);
+    if (result.success) {
+      return { success: true };
+    } else {
+      const { error } = result;
+      return { success: false, error };
+    }
+  } catch (err) {
+    return { success: false, error: err.code || 500 };
+  }
+}
+
 }

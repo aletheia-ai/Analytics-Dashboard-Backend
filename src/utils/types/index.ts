@@ -1,7 +1,9 @@
+//src/utils/types/index.ts
 import { BusinessType } from './business-type';
 import { ServiceType } from './service-type';
 import { UserSpaceType } from './space-type';
 import { PersonStatsType } from './person-stats-type';
+export * from './email-type';
 export enum SignInExceptions {
   NO_USER = 'No User Registered With this Email',
   INVALID_PASSWORD = 'Password Is Incorrect',
@@ -13,6 +15,7 @@ export enum UserRoleType {
 }
 
 export type User = {
+  
   email: string;
   password: string;
   firstName: string;
@@ -21,6 +24,11 @@ export type User = {
   isAuthorized: boolean;
   hasRegisteredBusiness: boolean;
   userType: UserRoleType;
+  emailVerificationToken?: string;
+  emailVerificationExpires?: Date;
+   resetPasswordToken?: string;  
+  resetPasswordExpires?: Date;  
+  
 };
 
 export { BusinessType, ServiceType, UserSpaceType, PersonStatsType };

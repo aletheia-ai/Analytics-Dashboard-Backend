@@ -19,6 +19,8 @@ import { DayWiseStatsModule } from './day-wise-stats.module';
 import { HourWiseStatsModule } from './hour-stat.module';
 import { HeatMapsModule } from './heatmap.module';
 import { SocketModule } from './socket.module';
+import { EmailModule } from '@src/email/email.module';
+import { UserVerificationModule } from './verifications.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -42,6 +44,8 @@ import { SocketModule } from './socket.module';
     DayWiseStatsModule,
     HourWiseStatsModule,
     SocketModule,
+    EmailModule,
+    UserVerificationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

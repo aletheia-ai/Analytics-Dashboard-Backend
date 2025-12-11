@@ -1,3 +1,4 @@
+// Analytics-Dashboard-Backend/src/presentations/controller/store.controller.ts
 import {
   Body,
   Controller,
@@ -30,6 +31,8 @@ export class StoreController {
   async addNewStore(@Body() addStoreDto: AddStoreDto, @Request() req) {
     try {
       const result = await this.storeService.addNewStore(addStoreDto, req.user.id);
+      console.log("result in controller",result);
+      console.log("userid",req.user.id);
       if (result.success) {
         const { stores, store } = result;
         return { message: 'Store Created', stores, store };

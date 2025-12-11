@@ -1,3 +1,4 @@
+//src/utils/types/company-type.ts
 import { User } from '.';
 import { BusinessType } from './business-type';
 import { ServiceType } from './service-type';
